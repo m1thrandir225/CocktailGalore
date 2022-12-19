@@ -1,12 +1,12 @@
 import { View, Text } from "react-native";
 import React from "react";
 
-const DiscoverScreen = () => {
+const AppNavigation = () => {
   return (
     <View>
-      <Text>DiscoverScreen</Text>
+      <Text>AppNavigation</Text>
     </View>
   );
 };
 
-export default DiscoverScreen;
+export default AppNavigation;
