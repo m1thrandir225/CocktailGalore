@@ -8,14 +8,15 @@ import {
 } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { AuthStackParamList } from "../../navigation/navigationTypes";
-import HeaderLoginSignup from "../../components/Login-Signup-Components/Header";
+import { WelcomeStackParamList } from "../../navigation/navigationTypes";
+import HeaderLoginSignup from "../../components/Login-Signup-Components/HeaderLoginSignup";
 import { Tar, Cream, globalStyles } from "../../constants/globalStyles";
-import { Lock, Mail, User } from "react-native-feather";
+import { Lock, Mail } from "react-native-feather";
 import FormGroup from "../../components/Login-Signup-Components/FormGroup";
 import ContinueWithButton from "../../components/Login-Signup-Components/ContinueButton";
-type NavigationProps = NativeStackScreenProps<AuthStackParamList, "Login">;
+import { StackScreenProps } from "@react-navigation/stack";
+
+type NavigationProps = StackScreenProps<WelcomeStackParamList, "Auth">;
 
 const LoginScreen = ({ navigation, route }: NavigationProps) => {
   const [email, setEmail] = React.useState<string>("");
@@ -54,13 +55,16 @@ const LoginScreen = ({ navigation, route }: NavigationProps) => {
           ]}
         />
         <View style={styles.buttonsContainer}>
-          <Pressable style={globalStyles.filledButtonContainerTar}>
+          <Pressable
+            style={globalStyles.filledButtonContainerTar}
+            onPress={() => navigation.navigate("AppStack", { screen: "Home" })}
+          >
             <Text style={globalStyles.filledButtonTextTar}> Continue </Text>
           </Pressable>
           <Pressable style={globalStyles.outlinedButtonContainerTar}>
             <Text
               style={globalStyles.outlinedButtonTextTar}
-              onPress={() => navigation.push("SignUp")}
+              onPress={() => navigation.push("Auth", { screen: "SignUp" })}
             >
               Don't Have an Account ?
             </Text>

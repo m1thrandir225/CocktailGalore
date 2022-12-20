@@ -2,7 +2,10 @@ import { NavigatorScreenParams } from "@react-navigation/native";
 
 export type WelcomeStackParamList = {
   Welcome: undefined;
+  Flavours: undefined;
+  FeatureOverview: undefined;
   Auth: NavigatorScreenParams<AuthStackParamList>;
+  AppStack: NavigatorScreenParams<AppStackParamList>;
 };
 
 export type AuthStackParamList = {

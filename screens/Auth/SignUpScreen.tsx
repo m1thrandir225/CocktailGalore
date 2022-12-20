@@ -7,17 +7,20 @@ import {
   Image,
 } from "react-native";
 import React from "react";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { AuthStackParamList } from "../../navigation/navigationTypes";
+import {
+  AuthStackParamList,
+  WelcomeStackParamList,
+} from "../../navigation/navigationTypes";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Cream, Tar, globalStyles } from "../../constants/globalStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Lock, Mail, User } from "react-native-feather";
-import HeaderLoginSignup from "../../components/Login-Signup-Components/Header";
+import HeaderLoginSignup from "../../components/Login-Signup-Components/HeaderLoginSignup";
 import FormGroup from "../../components/Login-Signup-Components/FormGroup";
 import ContinueWithButton from "../../components/Login-Signup-Components/ContinueButton";
+import { StackScreenProps } from "@react-navigation/stack";
 
-type NavigationProps = NativeStackScreenProps<AuthStackParamList, "SignUp">;
+type NavigationProps = StackScreenProps<WelcomeStackParamList, "Auth">;
 
 const SignUpScreen = ({ navigation, route }: NavigationProps) => {
   const [name, setName] = React.useState<string>("");
@@ -69,12 +72,15 @@ const SignUpScreen = ({ navigation, route }: NavigationProps) => {
           ]}
         />
         <View style={style.buttonsContainer}>
-          <Pressable style={globalStyles.filledButtonContainerTar}>
+          <Pressable
+            style={globalStyles.filledButtonContainerTar}
+            onPress={() => navigation.navigate("Flavours")}
+          >
             <Text style={globalStyles.filledButtonTextTar}> Continue </Text>
           </Pressable>
           <Pressable
             style={globalStyles.outlinedButtonContainerTar}
-            onPress={() => navigation.push("Login")}
+            onPress={() => navigation.push("Auth", { screen: "Login" })}
           >
             <Text style={globalStyles.outlinedButtonTextTar}>
               Already Have an Account ?

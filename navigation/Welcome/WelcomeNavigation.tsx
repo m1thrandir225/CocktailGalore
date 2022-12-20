@@ -7,6 +7,9 @@ import {
 } from "@react-navigation/stack";
 import { WelcomeStackParamList } from "../navigationTypes";
 import AuthNavigation from "../Auth/AuthNavigation";
+import FlavourScreen from "../../screens/Welcome/FlavourScreen";
+import FeatureOverviewScreen from "../../screens/Welcome/FeatureOverviewScreen";
+import AppNavigation from "../Home/AppNavigation";
 
 const WelcomeStack = createStackNavigator<WelcomeStackParamList>();
 
@@ -20,7 +23,13 @@ const WelcomeNavigation = () => {
       }}
     >
       <WelcomeStack.Screen name="Welcome" component={WelcomeScreen} />
+      <WelcomeStack.Screen name="Flavours" component={FlavourScreen} />
+      <WelcomeStack.Screen
+        name="FeatureOverview"
+        component={FeatureOverviewScreen}
+      />
       <WelcomeStack.Screen name="Auth" component={AuthNavigation} />
+      <WelcomeStack.Screen name="AppStack" component={AppNavigation} />
     </WelcomeStack.Navigator>
   );
 };

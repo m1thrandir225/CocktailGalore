@@ -7,11 +7,9 @@ import {
   WelcomeStackParamList,
 } from "../../navigation/navigationTypes";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { StackScreenProps } from "@react-navigation/stack";
 
-type NavigationProps = NativeStackScreenProps<
-  AuthStackParamList,
-  "Login" | "SignUp"
->;
+type NavigationProps = StackScreenProps<WelcomeStackParamList>;
 const HeaderLoginSignup = ({ navigation, route }: NavigationProps) => {
   return (
     <View style={styles.container}>
