@@ -47,7 +47,12 @@ const FeatureOverviewScreen = ({ navigation, route }: NavigationProps) => {
         <View style={styles.buttonContainer}>
           <Pressable
             style={globalStyles.filledButtonContainerTar}
-            onPress={() => navigation.navigate("AppStack", { screen: "Home" })}
+            onPress={() =>
+              navigation.navigate("AppStack", {
+                screen: "HomeStack",
+                params: { screen: "Home" },
+              })
+            }
           >
             <Text style={globalStyles.filledButtonTextTar}> Continue </Text>
           </Pressable>

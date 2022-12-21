@@ -9,14 +9,14 @@ import { WelcomeStackParamList } from "../navigationTypes";
 import AuthNavigation from "../Auth/AuthNavigation";
 import FlavourScreen from "../../screens/Welcome/FlavourScreen";
 import FeatureOverviewScreen from "../../screens/Welcome/FeatureOverviewScreen";
-import AppNavigation from "../Home/AppNavigation";
+import AppNavigation from "../AppNavigation";
 
 const WelcomeStack = createStackNavigator<WelcomeStackParamList>();
 
 const WelcomeNavigation = () => {
   return (
     <WelcomeStack.Navigator
-      initialRouteName="Welcome"
+      initialRouteName="AppStack"
       screenOptions={{
         headerShown: false,
         ...TransitionPresets.SlideFromRightIOS,

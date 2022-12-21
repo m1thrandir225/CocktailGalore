@@ -57,7 +57,12 @@ const LoginScreen = ({ navigation, route }: NavigationProps) => {
         <View style={styles.buttonsContainer}>
           <Pressable
             style={globalStyles.filledButtonContainerTar}
-            onPress={() => navigation.navigate("AppStack", { screen: "Home" })}
+            onPress={() =>
+              navigation.navigate("AppStack", {
+                screen: "HomeStack",
+                params: { screen: "Home" },
+              })
+            }
           >
             <Text style={globalStyles.filledButtonTextTar}> Continue </Text>
           </Pressable>
