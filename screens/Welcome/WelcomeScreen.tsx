@@ -1,10 +1,10 @@
-import { View, Text } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 const WelcomeScreen = () => {
   return (
     <SafeAreaView>
-      <Text>WelcomeScreen</Text>
+      <Text> Our Daily {"\n"} Recommendation</Text>
     </SafeAreaView>
   );
 };

@@ -20,6 +20,10 @@ export type AppParamList = {
   Cocktails: undefined;
   Insights: undefined;
   Settings: undefined;
+};
+
+export type RootStackParamList = {
+  Drawer: NavigatorScreenParams<AppParamList>;
   Search: undefined;
 };
 
