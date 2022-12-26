@@ -12,7 +12,9 @@ import {
 import { DrawerActions } from "@react-navigation/native";
 import FeatherIcons from "@expo/vector-icons/Feather";
 import { useFonts, Raleway_700Bold } from "@expo-google-fonts/raleway";
+
 const RootStack = createStackNavigator<RootStackParamList>();
+
 const RootNavigation = () => {
   const [fontsLoaded] = useFonts({
     Raleway_700Bold,
@@ -43,9 +45,10 @@ const RootNavigation = () => {
                 onPress={() => navigation.goBack()}
                 style={{
                   marginLeft: 25,
-                  padding: 5,
-                  borderRadius: 55,
+                  padding: 13,
+                  borderRadius: 50 / 2,
                   backgroundColor: RedLight,
+                  shadowColor: "transparent",
                 }}
               >
                 <FeatherIcons name="x" size={24} color={AlmostWhite} />

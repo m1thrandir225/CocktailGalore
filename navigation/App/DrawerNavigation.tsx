@@ -105,17 +105,18 @@ const AppNavigation = () => {
         headerShown: true,
         headerStyle: {
           backgroundColor: AlmostWhite,
-          height: 130,
+          height: 110,
         },
         headerTitleAlign: "center",
         headerTitleStyle: {
           fontFamily: "Raleway_700Bold",
           fontSize: 20,
           textTransform: "uppercase",
-          padding: 5,
-
-          borderBottomWidth: 2,
+        },
+        headerTitleContainerStyle: {
           borderBottomColor: RedLight,
+          borderBottomWidth: 4,
+          margin: 15,
         },
         headerLeft: () => (
           <Pressable

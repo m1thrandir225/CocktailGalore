@@ -1,11 +1,10 @@
 import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import { AlmostDark, RedLight } from "../../constants/globalStyles";
-import {
-  useFonts,
-  Montserrat_600SemiBold,
-} from "@expo-google-fonts/montserrat";
+import { useFonts } from "expo-font";
+import { Montserrat_600SemiBold } from "@expo-google-fonts/montserrat";
 import { Raleway_600SemiBold } from "@expo-google-fonts/raleway";
+
 const HomeTitle = ({
   title,
   subtitle,
@@ -23,9 +22,19 @@ const HomeTitle = ({
   return (
     <View style={{ marginTop: 25 }}>
       <View style={styles.container}>
-        <View style={styles.line} />
+        <View
+          style={[
+            styles.line,
+            { borderTopRightRadius: 50 / 2, borderBottomRightRadius: 50 / 2 },
+          ]}
+        />
         <Text style={styles.text}>{title}</Text>
-        <View style={styles.line} />
+        <View
+          style={[
+            styles.line,
+            { borderTopLeftRadius: 50 / 2, borderBottomLeftRadius: 50 / 2 },
+          ]}
+        />
       </View>
       <Text style={styles.subtitle}>{subtitle}</Text>
     </View>
@@ -40,9 +49,8 @@ const styles = StyleSheet.create({
   },
   line: {
     width: 50,
-    height: 5,
+    height: 4,
     backgroundColor: AlmostDark,
-    borderRadius: 50 / 2,
   },
   text: {
     fontSize: 28,

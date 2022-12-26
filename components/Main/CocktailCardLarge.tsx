@@ -18,6 +18,7 @@ import {
 } from "../../constants/globalStyles";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Animated from "react-native-reanimated";
+
 const CocktailCardLarge = ({
   image,
   title,

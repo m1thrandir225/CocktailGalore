@@ -16,10 +16,10 @@ import {
   RedLight,
 } from "../../constants/globalStyles";
 import {
-  useFonts,
   Raleway_700Bold,
   Raleway_600SemiBold,
 } from "@expo-google-fonts/raleway";
+import { useFonts } from "expo-font";
 import { Montserrat_600SemiBold } from "@expo-google-fonts/montserrat";
 import CocktailCardLarge from "../../components/Main/CocktailCardLarge";
 import HomeTitle from "../../components/Main/HomeTitle";
@@ -27,12 +27,14 @@ import Slider from "../../components/Main/Slider";
 import InsightCard from "../../components/Main/InsightCard";
 
 type NavigationProps = DrawerScreenProps<AppParamList, "Home">;
+
 const HomeScreen = ({ navigation, route }: NavigationProps) => {
-  const [loaded] = useFonts({
+  const [fontsLoaded] = useFonts({
     Raleway_700Bold,
     Raleway_600SemiBold,
+    Montserrat_600SemiBold,
   });
-  if (!loaded) {
+  if (!fontsLoaded) {
     return null;
   }
   const cocktailData = [
@@ -43,13 +45,18 @@ const HomeScreen = ({ navigation, route }: NavigationProps) => {
     },
     {
       id: "2",
-      title: "Spagliato",
-      image: require("../../assets/cocktail-image-2.png"),
+      title: "Martini",
+      image: require("../../assets/cocktail-image-3.png"),
     },
     {
       id: "3",
-      title: "Negroni",
-      image: require("../../assets/cocktail-image-1.png"),
+      title: "Russian Spring Punch",
+      image: require("../../assets/cocktail-image-2.png"),
+    },
+    {
+      id: "4",
+      title: "Old Fashioned",
+      image: require("../../assets/cocktail-image-4.png"),
     },
   ];
   return (
@@ -81,10 +88,14 @@ const HomeScreen = ({ navigation, route }: NavigationProps) => {
         }
       />
       <InsightCard
-        image={require("../../assets/insight-image-1.png")}
-        author={"James Gunn"}
-        authorImage={}
+        author="James Gunn"
+        authorImage={require("../../assets/author-image.jpg")}
+        image={require("../../assets/insight-card-image.jpg")}
+        title="Cocktail Mastery 101"
       />
+      <Pressable style={[styles.viewAllButton, { marginBottom: 63 }]}>
+        <Text style={styles.viewAllButtonText}> View All</Text>
+      </Pressable>
     </ScrollView>
   );
 };
