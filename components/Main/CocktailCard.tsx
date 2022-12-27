@@ -2,63 +2,55 @@ import {
   View,
   Text,
   ImageSourcePropType,
-  StyleSheet,
-  Image,
   Pressable,
+  Image,
+  StyleSheet,
 } from "react-native";
-import {
-  useFonts,
-  Montserrat_600SemiBold,
-} from "@expo-google-fonts/montserrat";
 import React from "react";
+import { useFonts } from "expo-font";
+import { Montserrat_600SemiBold } from "@expo-google-fonts/montserrat";
 import {
   AlmostDark,
   AlmostWhite,
   RedLight,
 } from "../../constants/globalStyles";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import Animated from "react-native-reanimated";
 
-const CocktailCardLarge = ({
-  image,
-  title,
-  animatedStyle,
-}: {
+export interface CocktailCardProps {
   image: ImageSourcePropType;
   title: string;
-  animatedStyle?: any;
-}) => {
-  const [loaded] = useFonts({
-    Montserrat_600SemiBold,
-  });
+  isSmall?: boolean;
+  additionalStyles?: any;
+}
+const CocktailCard = ({
+  image,
+  title,
+  isSmall,
+  additionalStyles,
+}: CocktailCardProps) => {
   const [pressed, setPressed] = React.useState(false);
-  if (!loaded) {
-    return null;
-  }
-  if (animatedStyle) {
+  if (isSmall) {
     return (
-      <Animated.View style={[styles.container, animatedStyle]}>
-        <Pressable
-          onPress={() => console.log("cocktail slider image pressed ")}
-        >
-          <Image source={image} style={styles.image} />
+      <Pressable style={[styles.containerSmall, additionalStyles]}>
+        <View style={styles.imageSmall}>
+          <Image source={image} style={styles.imageSmall} />
           <Pressable
-            style={styles.heartContainer}
             onPress={() => setPressed(!pressed)}
+            style={styles.heartContainerSmall}
           >
             <FontAwesome
               name={pressed ? "heart" : "heart-o"}
-              size={24}
+              size={13.1}
               color={AlmostWhite}
             />
           </Pressable>
-          <Text style={styles.text}>{title}</Text>
-        </Pressable>
-      </Animated.View>
+        </View>
+        <Text style={styles.textSmall}>{title}</Text>
+      </Pressable>
     );
   }
   return (
-    <Pressable style={[styles.container]}>
+    <Pressable style={[styles.container, additionalStyles]}>
       <Image source={image} style={styles.image} />
       <Pressable
         style={styles.heartContainer}
@@ -74,14 +66,20 @@ const CocktailCardLarge = ({
     </Pressable>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     width: 252,
     height: 410,
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
+  },
+  containerSmall: {
+    width: 156,
+    height: 261.75,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "flex-start",
   },
   heartContainer: {
     position: "absolute",
@@ -91,9 +89,22 @@ const styles = StyleSheet.create({
     right: 15,
     bottom: 74,
   },
+  heartContainerSmall: {
+    position: "absolute",
+    padding: 7.1,
+    backgroundColor: RedLight,
+    borderRadius: 50 / 2,
+    right: 11.5,
+    bottom: 12.5,
+  },
   image: {
     width: 252,
     height: 351,
+    resizeMode: "cover",
+  },
+  imageSmall: {
+    width: 156,
+    height: 217.29,
     resizeMode: "cover",
   },
   text: {
@@ -102,6 +113,11 @@ const styles = StyleSheet.create({
     color: AlmostDark,
     textAlign: "center",
   },
+  textSmall: {
+    fontFamily: "Montserrat_600SemiBold",
+    fontSize: 16,
+    color: AlmostDark,
+    textAlign: "center",
+  },
 });
-
-export default CocktailCardLarge;
+export default CocktailCard;

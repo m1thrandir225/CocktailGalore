@@ -1,70 +1,27 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  Dimensions,
-  useWindowDimensions,
-} from "react-native";
-import React, { useState } from "react";
-import CocktailCardLarge from "./CocktailCardLarge";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  useAnimatedScrollHandler,
-  interpolate,
-} from "react-native-reanimated";
+import { View, useWindowDimensions, FlatList } from "react-native";
+import React from "react";
+import CocktailCard from "./CocktailCard";
+
 const Slider = ({ data }: { data: any }) => {
   const { width } = useWindowDimensions();
-  const SIZE = width * 0.7;
-  const SPACER = (width - SIZE) / 2;
-  const [newData] = useState([
-    { key: "spacer-left" },
-    ...data,
-    { key: "spacer-right" },
-  ]);
-  const x = useSharedValue(0);
-  const onScroll = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      x.value = event.contentOffset.x;
-    },
-  });
+  const renderItem = ({ item, index }: { item: any; index: number }) => {
+    return <CocktailCard title={item.title} image={item.image} key={index} />;
+  };
   return (
-    <View>
-      <Animated.ScrollView
-        scrollEventThrottle={16}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-        bounces={false}
-        snapToInterval={SIZE}
-        decelerationRate={0}
-        onScroll={onScroll}
-      >
-        {newData.map((item, index) => {
-          const style = useAnimatedStyle(() => {
-            const scale = interpolate(
-              x.value,
-              [(index - 2) * SIZE, (index - 1) * SIZE, index * SIZE],
-              [0.85, 1, 0.9],
-            );
-            return {
-              transform: [{ scale }],
-            };
-          });
-          if (!item.image) {
-            return <View style={{ width: SPACER }} key={index}></View>;
-          }
-          return (
-            <View style={{ width: SIZE }} key={index}>
-              <CocktailCardLarge
-                title={item.title}
-                image={item.image}
-                animatedStyle={style}
-              />
-            </View>
-          );
-        })}
-      </Animated.ScrollView>
-    </View>
+    <FlatList
+      data={data}
+      renderItem={renderItem}
+      horizontal={true}
+      snapToAlignment="center"
+      ItemSeparatorComponent={() => <View style={{ width: width * 0.02 }} />}
+      disableIntervalMomentum={true}
+      snapToInterval={252 + width * 0.02}
+      decelerationRate={0}
+      showsHorizontalScrollIndicator={false}
+      initialNumToRender={3}
+      bounces={false}
+      centerContent={true}
+    />
   );
 };
 

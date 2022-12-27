@@ -10,6 +10,7 @@ import {
 import CategorySlider from "../../components/Reusable/CategorySlider";
 import CocktailCardLarge from "../../components/Main/CocktailCardLarge";
 import CocktailCardSmall from "../../components/Main/CocktailCardSmall";
+import CocktailCard from "../../components/Main/CocktailCard";
 const SearchScreen = () => {
   const [fontsLoaded] = useFonts({
     Montserrat_400Regular,
@@ -59,7 +60,7 @@ const SearchScreen = () => {
       <Text style={styles.quickAccess}> Quick Access </Text>
       <CategorySlider
         CategoryElement={Category}
-        PostsElement={CocktailCardSmall}
+        PostsElement={CocktailCard}
         categories={categories}
         posts={cocktailData}
         title="Cocktails"

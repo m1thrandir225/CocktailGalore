@@ -25,6 +25,7 @@ import CocktailCardLarge from "../../components/Main/CocktailCardLarge";
 import HomeTitle from "../../components/Main/HomeTitle";
 import Slider from "../../components/Main/Slider";
 import InsightCard from "../../components/Main/InsightCard";
+import CocktailCard from "../../components/Main/CocktailCard";
 
 type NavigationProps = DrawerScreenProps<AppParamList, "Home">;
 
@@ -66,7 +67,7 @@ const HomeScreen = ({ navigation, route }: NavigationProps) => {
         subtitle={"Your daily cocktail"}
       />
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <CocktailCardLarge
+        <CocktailCard
           image={require("../../assets/cocktail-image-1.png")}
           title={"Negroni"}
         />

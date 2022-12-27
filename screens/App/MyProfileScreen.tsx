@@ -20,7 +20,7 @@ import Feather from "@expo/vector-icons/Feather";
 import { useFonts } from "expo-font";
 import { Montserrat_600SemiBold } from "@expo-google-fonts/montserrat";
 import { FlatList } from "react-native-gesture-handler";
-import CocktailCardSmall from "../../components/Main/CocktailCardSmall";
+import CocktailCard from "../../components/Main/CocktailCard";
 
 type NavigationProps = DrawerScreenProps<AppParamList, "MyProfile">;
 
@@ -103,8 +103,9 @@ const MyProfileScreen = ({ navigation, route }: NavigationProps) => {
         </>
       )}
       renderItem={({ item }) => (
-        <CocktailCardSmall title={item.title} image={item.image} />
+        <CocktailCard title={item.title} image={item.image} isSmall={true} />
       )}
+      keyExtractor={(item) => item.id}
       data={cocktailData}
       numColumns={2}
       style={[styles.container]}
