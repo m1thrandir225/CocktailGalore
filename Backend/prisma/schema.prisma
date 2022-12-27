@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Flavour {
+  SWEET
+  SOUR
+  BITTER
+  SPICY
+  SMOKEY
+  SAVORY
+  HERBAL
+  FRUITY
+}
+
+enum UserType {
+  ADMIN
+  USER
+}
+
+//user model that has email/name and flavours, favorite cocktails
+model User {
+  id                     Int        @id @default(autoincrement())
+  createdAt              DateTime   @default(now())
+  updatedAt              DateTime   @updatedAt
+  email                  String     @unique
+  name                   String
+  password               String
+  userType               UserType   @default(USER)
+  favouriteCocktails     Cocktail[]
+  flavourRecommendations Flavour[]
+  readInsights           Insight[]
+}
+
+//cocktail model that has name, ingredients, instructions, flavours, favorite by users
+model Cocktail {
+  id           Int       @id @default(autoincrement())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  name         String
+  flavours     Flavour[]
+  timeToMake   Int
+  ingredients  String[]
+  instructions String
+  favouriteBy  User[]
+}
+
+//author model that has name, image
+model Author {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  name      String
+  image     String
+  insights  Insight[]
+}
+
+//insights that have an author, date, image, title, description
+model Insight {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  author      Author   @relation(fields: [authorId], references: [id])
+  date        DateTime
+  image       String
+  title       String
+  description Json
+  authorId    Int
+  readTime    Int
+  readBy      User[]
+}
