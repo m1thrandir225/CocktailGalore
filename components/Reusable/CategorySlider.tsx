@@ -1,41 +1,67 @@
-import { View, Text, StyleSheet } from "react-native";
-import React, { ReactElement } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  useWindowDimensions,
+  FlatList,
+} from "react-native";
+import React from "react";
 import { AlmostDark, AlmostWhite } from "../../constants/globalStyles";
-import { FlatList } from "react-native-gesture-handler";
 import { useFonts } from "expo-font";
 import { Montserrat_600SemiBold } from "@expo-google-fonts/montserrat";
+import Category from "./Category";
 
 const CategorySlider = ({
   categories,
   posts,
   title,
   PostsElement,
-  CategoryElement,
   PostsElementWidth,
   CategoryElementWidth,
+  PostIsSmall,
+  style,
 }: {
   categories: any[];
   posts: any[];
   title: string;
   PostsElement: React.FC<any>;
-  CategoryElement: React.FC<any>;
   PostsElementWidth?: number;
   CategoryElementWidth?: number;
+  PostIsSmall?: boolean;
+  style?: any;
 }) => {
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
   });
+  const { width } = useWindowDimensions();
+
+  const [currentCategory, setCurrentCategory] = React.useState<string>(
+    categories[0].title,
+  );
   const renderCategory = ({ item, index }: { item: any; index: number }) => {
-    return <CategoryElement {...item} key={index} />;
+    return (
+      <Category
+        {...item}
+        key={index}
+        isCurrent={currentCategory == item.title}
+        setCurrentCategory={setCurrentCategory}
+      />
+    );
   };
   const renderPosts = ({ item, index }: { item: any; index: number }) => {
-    return <PostsElement {...item} key={index} />;
+    return (
+      <PostsElement
+        {...item}
+        key={index}
+        isSmall={PostIsSmall ? true : false}
+      />
+    );
   };
   if (!fontsLoaded) {
     return null;
   }
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <Text style={styles.title}>{title}</Text>
 
       <FlatList
@@ -43,14 +69,11 @@ const CategorySlider = ({
         renderItem={renderCategory}
         horizontal={true}
         snapToAlignment={"start"}
-        snapToInterval={
-          CategoryElementWidth != undefined ? CategoryElementWidth : 100
-        }
-        decelerationRate={0}
+        decelerationRate={"normal"}
         bounces={false}
         showsHorizontalScrollIndicator={false}
         style={styles.categoreisContainer}
-        contentContainerStyle={{ paddingLeft: 25 }}
+        ItemSeparatorComponent={() => <View style={{ width: 10 }} />}
       />
       <FlatList
         data={posts}
@@ -58,14 +81,17 @@ const CategorySlider = ({
         horizontal={true}
         snapToAlignment={"start"}
         decelerationRate={0}
-        snapToInterval={
-          PostsElementWidth != undefined ? PostsElementWidth : 100
-        }
         bounces={false}
+        snapToInterval={
+          PostsElementWidth
+            ? PostsElementWidth + width * 0.02
+            : width * 0.67 + width * 0.02
+        }
         showsHorizontalScrollIndicator={false}
         style={styles.postsContainer}
-        contentContainerStyle={{ paddingLeft: 25 }}
+        contentContainerStyle={{ paddingLeft: 25, paddingRight: 25 }}
         centerContent={true}
+        ItemSeparatorComponent={() => <View style={{ width: width * 0.02 }} />}
       />
     </View>
   );
@@ -78,6 +104,8 @@ const styles = StyleSheet.create({
   },
   categoreisContainer: {
     marginTop: 15,
+    marginLeft: 25,
+    paddingRight: 25,
   },
   postsContainer: {
     marginTop: 50,

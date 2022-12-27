@@ -1,4 +1,11 @@
-import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  StyleSheet,
+  TextInput,
+} from "react-native";
 import React from "react";
 import { AlmostDark, AlmostWhite } from "../../constants/globalStyles";
 import Feather from "@expo/vector-icons/Feather";
@@ -8,9 +15,9 @@ import {
   Montserrat_600SemiBold,
 } from "@expo-google-fonts/montserrat";
 import CategorySlider from "../../components/Reusable/CategorySlider";
-import CocktailCardLarge from "../../components/Main/CocktailCardLarge";
-import CocktailCardSmall from "../../components/Main/CocktailCardSmall";
 import CocktailCard from "../../components/Main/CocktailCard";
+import Category from "../../components/Reusable/Category";
+import InsightCard from "../../components/Main/InsightCard";
 const SearchScreen = () => {
   const [fontsLoaded] = useFonts({
     Montserrat_400Regular,
@@ -25,6 +32,12 @@ const SearchScreen = () => {
     },
     {
       title: "Recipes",
+    },
+    {
+      title: "Inspiration",
+    },
+    {
+      title: "History",
     },
   ];
   const cocktailData = [
@@ -49,31 +62,68 @@ const SearchScreen = () => {
       image: require("../../assets/cocktail-image-4.png"),
     },
   ];
+  const insightCategories = [
+    {
+      title: "History",
+    },
+    {
+      title: "Access",
+    },
+    {
+      title: "Inspiration",
+    },
+  ];
+  const insightData = [
+    {
+      id: "1",
+      title: "The History of the Negroni",
+      image: require("../../assets/insight-card-image.jpg"),
+      author: "John Doe",
+      authorImage: require("../../assets/author-image.jpg"),
+    },
+    {
+      id: "2",
+      title: "Cocktail Mastery 101",
+      image: require("../../assets/insight-card-image.jpg"),
+      author: "John Doe",
+      authorImage: require("../../assets/author-image.jpg"),
+    },
+    {
+      id: "3",
+      title: "Behind the Bar",
+      image: require("../../assets/insight-card-image.jpg"),
+      author: "John Doe",
+      authorImage: require("../../assets/author-image.jpg"),
+    },
+  ];
   return (
     <ScrollView style={styles.container}>
       <Pressable style={styles.searchBox}>
         <Feather name="search" size={24} color={AlmostDark} />
-        <Text style={styles.searchBoxText}>
-          Search for cocktails, insights...
-        </Text>
+        <TextInput
+          style={styles.searchBoxText}
+          placeholder="Search for cocktails, insights..."
+        ></TextInput>
       </Pressable>
       <Text style={styles.quickAccess}> Quick Access </Text>
       <CategorySlider
-        CategoryElement={Category}
         PostsElement={CocktailCard}
         categories={categories}
         posts={cocktailData}
         title="Cocktails"
+        PostIsSmall={true}
+        PostsElementWidth={156}
+      />
+      <CategorySlider
+        PostsElement={InsightCard}
+        categories={insightCategories}
+        posts={insightData}
+        title="Insights"
+        PostIsSmall={true}
+        PostsElementWidth={190}
+        style={[{ marginTop: 50, marginBottom: 80 }]}
       />
     </ScrollView>
-  );
-};
-
-const Category = ({ title }: { title: string }) => {
-  return (
-    <Pressable>
-      <Text>{title}</Text>
-    </Pressable>
   );
 };
 

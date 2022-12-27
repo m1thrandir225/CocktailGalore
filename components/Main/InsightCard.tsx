@@ -23,15 +23,13 @@ const InsightCard = ({
   title,
   author,
   authorImage,
-  width,
-  height,
+  isSmall,
 }: {
   image: ImageSourcePropType;
   title: string;
   author: string;
   authorImage: ImageSourcePropType;
-  width?: number;
-  height?: number;
+  isSmall?: boolean;
 }) => {
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
@@ -40,10 +38,25 @@ const InsightCard = ({
   if (!fontsLoaded) {
     return null;
   }
+  if (isSmall) {
+    return (
+      <View style={[styles.containerSmall]}>
+        <Image source={image} style={styles.cardImageSmall} />
+        <Text style={styles.titleSmall}>{title}</Text>
+        <View style={styles.bottomContainer}>
+          <View style={styles.authorInfoBox}>
+            <Image source={authorImage} style={styles.authorImageSmall} />
+            <Text style={styles.authorNameSmall}>{author}</Text>
+          </View>
+          <Pressable style={styles.continueButtonSmall}>
+            <Feather name="chevron-right" size={14.5} color={AlmostWhite} />
+          </Pressable>
+        </View>
+      </View>
+    );
+  }
   return (
-    <View
-      style={[styles.container, { width: width || 315, height: height || 389 }]}
-    >
+    <View style={[styles.container]}>
       <Image source={image} style={styles.cardImage} />
       <Text style={styles.title}>{title}</Text>
       <View style={styles.bottomContainer}>
@@ -69,14 +82,34 @@ const styles = StyleSheet.create({
     borderColor: AlmostDark,
     alignSelf: "center",
     marginBottom: 35,
-    alignContent: "center",
+    alignItems: "center",
     justifyContent: "flex-start",
+    width: 315,
+    height: 389,
+  },
+  containerSmall: {
+    flex: 1,
+    padding: 15.01,
+    backgroundColor: AlmostWhite,
+    borderRadius: 4.22,
+    borderWidth: 2,
+    borderColor: AlmostDark,
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    width: 190,
+    height: 235.62,
   },
   cardImage: {
     width: 265,
     height: 161,
     resizeMode: "cover",
     borderRadius: 10,
+  },
+  cardImageSmall: {
+    width: "100%",
+    height: 97,
+    borderRadius: 6.03,
   },
   title: {
     fontSize: 28,
@@ -86,6 +119,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     marginBottom: 10,
     textAlign: "center",
+  },
+  titleSmall: {
+    fontSize: 16,
+    color: AlmostDark,
+    fontFamily: "Montserrat_600SemiBold",
+    paddingVertical: 6,
+    paddingHorizontal: 15,
+    marginBottom: 10,
+    textAlign: "center",
+    textAlignVertical: "center",
   },
   bottomContainer: {
     flex: 1,
@@ -107,15 +150,37 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: RedLight,
   },
+  authorImageSmall: {
+    width: 22,
+    height: 22,
+    borderRadius: 22 / 2,
+    resizeMode: "contain",
+    borderWidth: 1,
+    borderColor: RedLight,
+  },
   authorName: {
     fontSize: 20,
     fontFamily: "Montserrat_600SemiBold",
     color: AlmostDark,
     marginLeft: 5,
   },
+  authorNameSmall: {
+    fontSize: 12,
+    fontFamily: "Montserrat_600SemiBold",
+    color: AlmostDark,
+    marginLeft: 3,
+  },
   continueButton: {
     padding: 13,
     borderRadius: 50 / 2,
+    backgroundColor: RedLight,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: RedLight,
+  },
+  continueButtonSmall: {
+    padding: 7.84,
+    borderRadius: 30 / 2,
     backgroundColor: RedLight,
     elevation: 5,
     borderWidth: 1,
