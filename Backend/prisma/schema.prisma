@@ -28,16 +28,17 @@ enum UserType {
 
 //user model that has email/name and flavours, favorite cocktails
 model User {
-  id                     Int        @id @default(autoincrement())
-  createdAt              DateTime   @default(now())
-  updatedAt              DateTime   @updatedAt
-  email                  String     @unique
-  name                   String
-  password               String
-  userType               UserType   @default(USER)
-  favouriteCocktails     Cocktail[]
-  flavourRecommendations Flavour[]
-  readInsights           Insight[]
+  id                 Int        @id @default(autoincrement())
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  email              String     @unique
+  firstName          String
+  lastName           String
+  password           String
+  userType           UserType   @default(USER)
+  favouriteCocktails Cocktail[]
+  likedFlavours      Flavour[]
+  readInsights       Insight[]
 }
 
 //cocktail model that has name, ingredients, instructions, flavours, favorite by users
