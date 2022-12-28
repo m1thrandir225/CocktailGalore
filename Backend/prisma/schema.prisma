@@ -6,19 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-enum Flavour {
-  SWEET
-  SOUR
-  BITTER
-  SPICY
-  SMOKEY
-  SAVORY
-  HERBAL
-  FRUITY
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 enum UserType {
@@ -49,7 +39,7 @@ model Cocktail {
   name         String
   flavours     Flavour[]
   timeToMake   Int
-  ingredients  String[]
+  ingredients  String
   instructions String
   favouriteBy  User[]
 }
@@ -70,11 +60,22 @@ model Insight {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   author      Author   @relation(fields: [authorId], references: [id])
+  authorId    Int
   date        DateTime
   image       String
   title       String
   description Json
-  authorId    Int
   readTime    Int
   readBy      User[]
+}
+
+//flavour model that has a name
+
+model Flavour {
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  name      String
+  cocktails Cocktail[]
+  likedBy   User[]
 }

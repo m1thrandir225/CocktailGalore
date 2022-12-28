@@ -5,49 +5,60 @@ import { body, validationResult } from "express-validator";
 
 export const usersRouter = express.Router();
 
-//getUser
-usersRouter.get("/user/:id", async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id, 10);
-  try {
-    const user = await UserService.getUser(id);
-    if (user) {
-      return res.status(200).json(user);
+//getUser -- ~()~/api/users/user?id=...
+usersRouter.get("/user", async (req: Request, res: Response) => {
+  const id = parseInt(req.query.id as string, 10);
+  if (id) {
+    try {
+      const user = await UserService.getUser(id);
+      if (user) {
+        return res.status(200).json(user);
+      }
+      return res.status(404).json("User not found");
+    } catch (error: any) {
+      return res.status(500).json(error.message);
     }
-    return res.status(404).json("User not found");
-  } catch (error: any) {
-    return res.status(500).json(error.message);
   }
+  return res.status(400).json("Bad request");
 });
 
-//getAllUsers
-usersRouter.get("/all", async (req: Request, res: Response) => {
-  try {
-    const users = await UserService.getAllUsers();
-    if (users) {
-      return res.status(200).json(users);
+//deleteUser -- ~()~/api/users/user?id=...
+usersRouter.delete("/user", async (req: Request, res: Response) => {
+  const id = parseInt(req.query.id as string, 10);
+  if (id) {
+    try {
+      await UserService.deleteUser(id);
+      return res.status(200).json("User deleted");
+    } catch (error: any) {
+      return res.status(500).json(error.message);
     }
-    return res.status(404).json("No users found");
-  } catch (error: any) {
-    return res.status(500).json(error.message);
   }
+  return res.status(400).json("Bad request");
 });
 
-//deleteUser
-usersRouter.delete("/user/:id", async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id, 10);
-  try {
-    await UserService.deleteUser(id);
-    return res.status(200).json("User deleted");
-  } catch (error: any) {
-    return res.status(500).json(error.message);
+//getAllUsers -- ~()~/api/users?allUsers=true
+usersRouter.get("/", async (req: Request, res: Response) => {
+  const query = req.query.allUsers;
+  if (query) {
+    try {
+      const users = await UserService.getAllUsers();
+      if (users) {
+        return res.status(200).json(users);
+      }
+      return res.status(404).json("No users found");
+    } catch (error: any) {
+      return res.status(500).json(error.message);
+    }
   }
+  return res.status(400).json("Bad request");
 });
 
-//getUserFavoriteCocktails
-usersRouter.get(
-  "/user/:email/favorites",
-  async (req: Request, res: Response) => {
-    const email = req.params.email;
+//getUserFavoriteCocktails -- ~()~/api/users/user?email=...?cocktails=true
+
+usersRouter.get("/user", async (req: Request, res: Response) => {
+  const email = req.query.email as string;
+  const query = req.query.cocktails;
+  if (email && query) {
     try {
       const favorites = await UserService.getUserFavoriteCocktails(email);
       if (favorites) {
@@ -57,5 +68,6 @@ usersRouter.get(
     } catch (error: any) {
       return res.status(500).json(error.message);
     }
-  },
-);
+  }
+  return res.status(400).json("Bad request");
+});
