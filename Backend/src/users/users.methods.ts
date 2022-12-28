@@ -1,6 +1,6 @@
 import { db } from "../utils/db.server";
 import type { Request, Response } from "express";
-import type { User, Cocktail, Flavour, UserType } from ".prisma/client";
+import type { User, Cocktail, UserType, Flavour } from ".prisma/client";
 //get current user
 
 export const getUser = async (id: number): Promise<User | null> => {
@@ -112,10 +112,24 @@ export const addInsightToRead = async (
     },
   });
 };
+//get liked flavours
+export const getLikedFlavours = async (
+  emai: string,
+): Promise<{ likedFlavours: Flavour[] } | null> => {
+  return await db.user.findUnique({
+    where: {
+      email: emai,
+    },
+    select: {
+      likedFlavours: true,
+    },
+  });
+};
+
 //add liked flavours
 export const addLikedFlavour = async (
   email: string,
-  flavour: Flavour[],
+  flavours: { name: string }[],
 ): Promise<void> => {
   await db.user.update({
     where: {
@@ -123,7 +137,7 @@ export const addLikedFlavour = async (
     },
     data: {
       likedFlavours: {
-        set: flavour,
+        connect: flavours,
       },
     },
   });
@@ -131,7 +145,7 @@ export const addLikedFlavour = async (
 //remove liked flavours
 export const removeLikedFlavour = async (
   email: string,
-  flavour: Flavour[],
+  flavours: { name: string }[],
 ): Promise<void> => {
   await db.user.update({
     where: {
@@ -139,7 +153,7 @@ export const removeLikedFlavour = async (
     },
     data: {
       likedFlavours: {
-        set: flavour,
+        disconnect: flavours,
       },
     },
   });
