@@ -41,6 +41,7 @@ model Cocktail {
   timeToMake   Int
   ingredients  String
   instructions String
+  image        String
   favouriteBy  User[]
 }
 

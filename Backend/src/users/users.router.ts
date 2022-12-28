@@ -3,7 +3,6 @@ import * as UserService from "./users.methods";
 import express from "express";
 import type { Request, Response } from "express";
 import { body, validationResult } from "express-validator";
-import { json } from "stream/consumers";
 
 export const usersRouter = express.Router();
 
