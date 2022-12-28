@@ -3,10 +3,35 @@ import type { Request, Response } from "express";
 import type { User, Cocktail, UserType, Flavour } from ".prisma/client";
 //get current user
 
-export const getUser = async (id: number): Promise<User | null> => {
+export const getUser = async (id: number): Promise<object | null> => {
   return await db.user.findUnique({
     where: {
       id: id,
+    },
+    select: {
+      id: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      userType: true,
+      favouriteCocktails: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      likedFlavours: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      readInsights: {
+        select: {
+          id: true,
+          title: true,
+        },
+      },
     },
   });
 };

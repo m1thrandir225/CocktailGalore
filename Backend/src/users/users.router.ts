@@ -1,9 +1,10 @@
+import * as jwt from "jsonwebtoken";
 import { UserType } from ".prisma/client";
 import * as UserService from "./users.methods";
 import express from "express";
 import type { Request, Response } from "express";
 import { body, validationResult } from "express-validator";
-
+import { verifyToken } from "../auth/auth.middleware";
 export const usersRouter = express.Router();
 
 //getUser -- ~()~/api/users/user?id=...
@@ -14,9 +15,16 @@ export const usersRouter = express.Router();
 //getLikedFlavours -- ~()~/api/users/user?email=...&allLikedFlavours=true
 //addLikedFlavour -- ~()~/api/users/user?email=...&likedFlavours=[...]
 
-usersRouter.get("/user", async (req: Request, res: Response) => {
+usersRouter.get("/user", verifyToken, async (req: Request, res: Response) => {
   const id = parseInt(req.query.id as string, 10);
   const email = req.query.email as string;
+  jwt.verify(
+    req.body.token,
+    process.env.JWT_SECRET as string,
+    async (err: any, authData: any) => {
+      if (err) return res.status(403).json(err.message);
+    },
+  );
   if (id) {
     const userType = req.query.userType as string;
     if (userType) {
