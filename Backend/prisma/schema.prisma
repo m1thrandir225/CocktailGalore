@@ -29,6 +29,7 @@ model User {
   favouriteCocktails Cocktail[]
   likedFlavours      Flavour[]
   readInsights       Insight[]
+  requestToken       String?    @unique
 }
 
 //cocktail model that has name, ingredients, instructions, flavours, favorite by users
