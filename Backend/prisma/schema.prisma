@@ -29,7 +29,7 @@ model User {
   favouriteCocktails Cocktail[]
   likedFlavours      Flavour[]
   readInsights       Insight[]
-  requestToken       String?    @unique
+  requestToken       String?    @db.LongText
 }
 
 //cocktail model that has name, ingredients, instructions, flavours, favorite by users
