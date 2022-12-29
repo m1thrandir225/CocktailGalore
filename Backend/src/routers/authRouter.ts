@@ -18,6 +18,7 @@ const authRouter = express.Router();
 
 authRouter.post("/login", async (req: Request, res: Response) => {
   const { email, password } = req.body;
+  console.log(req);
   if (email && password) {
     try {
       const user = await getUserByEmail({ email });
@@ -26,7 +27,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
         const refreshToken = generateRefreshToken(user);
         await setUserRequestToken(user.id, refreshToken);
         return res.status(200).json({
-          "access-token": accessToken,
+          jwt: accessToken,
           user: user,
         });
       }
@@ -46,7 +47,7 @@ authRouter.post("/register", async (req: Request, res: Response) => {
       const refreshToken = generateRefreshToken(newUser);
       await setUserRequestToken(newUser.id, refreshToken);
       return res.status(200).json({
-        "access-token": accessToken,
+        jwt: accessToken,
         user: newUser,
       });
     }
@@ -88,7 +89,7 @@ authRouter.post("/refresh_token", async (req: Request, res: Response) => {
           );
           const accessToken = generateAccessToken({ id: user.id });
           return res.status(200).json({
-            "access-token": accessToken,
+            jwt: accessToken,
           });
         } catch (error: any) {
           return res.status(400).json({ message: error.message });

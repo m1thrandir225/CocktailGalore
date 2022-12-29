@@ -1,14 +1,20 @@
 import { View, Text } from "react-native";
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import WelcomeNavigation from "./Welcome/WelcomeNavigation";
 import RootNavigation from "./App/RootNavigation";
+import { AuthContext } from "../context/AuthContext";
 
 const Navigation = () => {
-  const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const state = useContext(AuthContext);
+  console.log(state);
   return (
     <NavigationContainer>
-      {loggedIn == true ? <WelcomeNavigation /> : <RootNavigation />}
+      {state?.jwt == null && state?.user == null ? (
+        <WelcomeNavigation />
+      ) : (
+        <RootNavigation />
+      )}
     </NavigationContainer>
   );
 };

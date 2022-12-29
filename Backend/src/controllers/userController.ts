@@ -31,6 +31,11 @@ export const getUser = async ({ id }: { id: number }): Promise<User | null> => {
       where: {
         id,
       },
+      include: {
+        favouriteCocktails: true,
+        readInsights: true,
+        likedFlavours: true,
+      },
     });
   }
   return null;
@@ -44,6 +49,11 @@ export const getUserByEmail = async ({
   return await db.user.findUnique({
     where: {
       email,
+    },
+    include: {
+      favouriteCocktails: true,
+      readInsights: true,
+      likedFlavours: true,
     },
   });
 };
