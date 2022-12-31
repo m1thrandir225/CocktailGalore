@@ -10,7 +10,7 @@ const Navigation = () => {
   console.log(state);
   return (
     <NavigationContainer>
-      {state?.jwt == null && state?.user == null ? (
+      {state?.jwt == null && state?.user == null && state?.newUser == true ? (
         <WelcomeNavigation />
       ) : (
         <RootNavigation />

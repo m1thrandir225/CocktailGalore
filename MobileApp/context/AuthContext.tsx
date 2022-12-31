@@ -2,8 +2,10 @@ import * as React from "react";
 import * as SecureStore from "expo-secure-store";
 
 export interface IAuthContext {
+  newUser: boolean;
   jwt: string | null;
   user: any | null;
+  error: string;
   setUser: (user: any) => void;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -21,6 +23,7 @@ export interface IAuthContext {
 export const AuthContext = React.createContext<IAuthContext | null>(null);
 
 export const AuthProvider = ({ children }: { children: any }) => {
+  const [newUser, setNewUser] = React.useState<boolean>(true);
   const [user, setUser] = React.useState<any>(null);
   const [jwt, setJwt] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string>("");
@@ -35,10 +38,11 @@ export const AuthProvider = ({ children }: { children: any }) => {
       body: JSON.stringify({ email, password }),
     })
       .then((res) => res.json())
-      .catch((err) => console.log(err));
+      .catch((err) => setError(err));
     await SecureStore.setItemAsync("jwt", response.jwt);
     setJwt(response.jwt);
     setUser(response.user);
+    setNewUser(false);
   };
   const logout = async () => {
     try {
@@ -83,10 +87,11 @@ export const AuthProvider = ({ children }: { children: any }) => {
   const resetPassword = async (email: string) => {};
   const updateEmail = async (email: string) => {};
   const updatePassword = async (password: string) => {};
-
   return (
     <AuthContext.Provider
       value={{
+        newUser,
+        error,
         login,
         logout,
         jwt,

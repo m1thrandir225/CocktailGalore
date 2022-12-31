@@ -1,6 +1,9 @@
 import { View, Text } from "react-native";
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from "@react-navigation/stack";
 import { WelcomeParamList } from "../navigationTypes";
 import AuthNavigation from "../Auth/AuthNavigation";
 import WelcomeScreen from "../../screens/Welcome/WelcomeScreen";
@@ -13,7 +16,10 @@ const WelcomeNavigation = () => {
   return (
     <WelcomeStack.Navigator
       initialRouteName="Welcome"
-      screenOptions={{ headerShown: false }}
+      screenOptions={{
+        headerShown: false,
+        ...CardStyleInterpolators.forHorizontalIOS,
+      }}
     >
       <WelcomeStack.Screen name="Welcome" component={WelcomeScreen} />
       <WelcomeStack.Screen name="Overview" component={OverviewScreen} />
@@ -21,7 +27,11 @@ const WelcomeNavigation = () => {
         name="InitialCustomization"
         component={InitialCustomizationScreen}
       />
-      <WelcomeStack.Screen name="AuthStack" component={AuthNavigation} />
+      <WelcomeStack.Screen
+        name="AuthStack"
+        component={AuthNavigation}
+        options={{ presentation: "card" }}
+      />
     </WelcomeStack.Navigator>
   );
 };
