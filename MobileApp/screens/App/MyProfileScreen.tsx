@@ -21,10 +21,12 @@ import { useFonts } from "expo-font";
 import { Montserrat_600SemiBold } from "@expo-google-fonts/montserrat";
 import { FlatList } from "react-native-gesture-handler";
 import CocktailCard from "../../components/Main/CocktailCard";
+import { AuthContext } from "../../context/AuthContext";
 
 type NavigationProps = DrawerScreenProps<AppParamList, "MyProfile">;
 
 const MyProfileScreen = ({ navigation, route }: NavigationProps) => {
+  const state = React.useContext(AuthContext);
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
   });
@@ -84,12 +86,14 @@ const MyProfileScreen = ({ navigation, route }: NavigationProps) => {
         <>
           <View style={styles.profileSection}>
             <Image
-              source={require("../../assets/author-image.jpg")}
+              source={{ uri: state?.user?.profileImage }}
               style={styles.profileImage}
             />
             <View style={{ paddingHorizontal: 21 }}>
-              <Text style={styles.profileName}>James Gunn</Text>
-              <Text style={styles.profileEmail}>james.gunn@gmail.com</Text>
+              <Text style={styles.profileName}>
+                {state?.user?.firstName + " " + state?.user?.lastName}
+              </Text>
+              <Text style={styles.profileEmail}>{state?.user?.email}</Text>
             </View>
             <Pressable style={styles.editButton}>
               <Feather name="edit" size={16.8} color={AlmostWhite} />

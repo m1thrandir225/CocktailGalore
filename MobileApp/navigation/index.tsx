@@ -7,10 +7,14 @@ import { AuthContext } from "../context/AuthContext";
 
 const Navigation = () => {
   const state = useContext(AuthContext);
-  console.log(state);
+  console.log(state?.user);
+  console.log(state?.accessToken);
+  console.log(state?.newUser);
   return (
     <NavigationContainer>
-      {state?.jwt == null && state?.user == null && state?.newUser == true ? (
+      {state?.user == null &&
+      state?.accessToken == null &&
+      state?.newUser == true ? (
         <WelcomeNavigation />
       ) : (
         <RootNavigation />

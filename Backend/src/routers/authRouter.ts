@@ -18,6 +18,7 @@ const authRouter = express.Router();
 
 authRouter.post("/login", async (req: Request, res: Response) => {
   const { email, password } = req.body;
+  console.log(email, password);
   if (email && password) {
     const user = await getUserByEmail(email);
     if (user) {
@@ -33,6 +34,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
+            profileImage: user.profileImage,
             likedFlavours: user.likedFlavours,
             favouriteCocktails: user.favouriteCocktails,
             readInsights: user.readInsights,
@@ -57,8 +59,11 @@ authRouter.post("/logout", async (req: Request, res: Response) => {
     if (user) {
       deleteUserRequestToken(user.id);
       res.json({ message: "User logged out" });
+    } else {
+      return res.status(404).json({ message: "User not found" });
     }
-    return res.status(404).json({ message: "User not found" });
+  } else {
+    return res.status(404).json({ message: "No id provided" });
   }
 });
 
@@ -71,7 +76,7 @@ authRouter.post("/register", async (req: Request, res: Response) => {
         const accessToken = generateAccessToken({ email: newUser.email });
         const refreshToken = generateRefreshToken({ email: newUser.email });
         setUserRequestToken(newUser.id, refreshToken);
-        res.json({
+        res.status(200).json({
           accessToken,
           refreshToken,
           user: {
@@ -79,6 +84,7 @@ authRouter.post("/register", async (req: Request, res: Response) => {
             firstName: newUser.firstName,
             lastName: newUser.lastName,
             email: newUser.email,
+            profileImage: newUser.profileImage,
             likedFlavours: [],
             favouriteCocktails: [],
             readInsights: [],
@@ -87,9 +93,12 @@ authRouter.post("/register", async (req: Request, res: Response) => {
       } catch (err: any) {
         res.status(500).json({ message: err.message });
       }
+    } else {
+      return res.status(409).json({ message: "User already exists" });
     }
+  } else {
+    return res.status(404).json({ message: "Not enough information provided" });
   }
-  return res.status(404).json({ message: "Not enough information provided" });
 });
 
 authRouter.post("/refresh_token", async (req: Request, res: Response) => {
@@ -100,11 +109,12 @@ authRouter.post("/refresh_token", async (req: Request, res: Response) => {
       if (refreshToken == user.requestToken && refreshToken != null) {
         const accessToken = generateAccessToken({ email: user.email });
         res.status(200).json({ accessToken });
+      } else {
+        return res.status(403).json({ message: "Invalid refresh token" });
       }
-      return res.status(403).json({ message: "Invalid refresh token" });
     }
+  } else {
+    return res.status(404).json({ message: "User not found" });
   }
-  return res.status(404).json({ message: "User not found" });
 });
-
 export default authRouter;

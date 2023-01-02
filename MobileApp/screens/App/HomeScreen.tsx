@@ -21,11 +21,11 @@ import {
 } from "@expo-google-fonts/raleway";
 import { useFonts } from "expo-font";
 import { Montserrat_600SemiBold } from "@expo-google-fonts/montserrat";
-import CocktailCardLarge from "../../components/Main/CocktailCardLarge";
 import HomeTitle from "../../components/Main/HomeTitle";
 import Slider from "../../components/Main/Slider";
 import InsightCard from "../../components/Main/InsightCard";
 import CocktailCard from "../../components/Main/CocktailCard";
+import { AuthContext } from "../../context/AuthContext";
 
 type NavigationProps = DrawerScreenProps<AppParamList, "Home">;
 

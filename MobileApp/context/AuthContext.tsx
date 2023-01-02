@@ -1,106 +1,131 @@
-import * as React from "react";
+import React from "react";
 import * as SecureStore from "expo-secure-store";
+import { User } from "../constants/globalTypes";
 
-export interface IAuthContext {
-  newUser: boolean;
-  jwt: string | null;
-  user: any | null;
-  error: string;
-  setUser: (user: any) => void;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-  register: (
-    email: string,
-    password: string,
+export const AuthContext = React.createContext<any | null>(null);
+
+export const AuthProvider = ({ children }: any) => {
+  const [newUser, setNewUser] = React.useState<boolean>(false); //global newUser state
+  const [user, setUser] = React.useState<User | null>(null); //global user state
+  const [accessToken, setAccessToken] = React.useState<string | null>(null); //global accessToken for requests
+  const [loading, setLoading] = React.useState<boolean>(false); //global loading state
+  const [error, setError] = React.useState<string | null>(null); //global error state
+  const register = async (
     firstName: string,
     lastName: string,
-  ) => Promise<void>;
-  resetPassword: (email: string) => Promise<void>;
-  updateEmail: (email: string) => Promise<void>;
-  updatePassword: (password: string) => Promise<void>;
-}
-
-export const AuthContext = React.createContext<IAuthContext | null>(null);
-
-export const AuthProvider = ({ children }: { children: any }) => {
-  const [newUser, setNewUser] = React.useState<boolean>(true);
-  const [user, setUser] = React.useState<any>(null);
-  const [jwt, setJwt] = React.useState<string | null>(null);
-  const [error, setError] = React.useState<string>("");
-  const [refreshToken, setRefreshToken] = React.useState<string>("");
-
-  const login = async (email: string, password: string) => {
-    const response = await fetch("http://192.168.100.20:4000/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    })
-      .then((res) => res.json())
-      .catch((err) => setError(err));
-    await SecureStore.setItemAsync("jwt", response.jwt);
-    setJwt(response.jwt);
-    setUser(response.user);
-    setNewUser(false);
-  };
-  const logout = async () => {
+    email: string,
+    password: string,
+  ) => {
     try {
-      const response = await fetch("http://localhost:4000/logout", {
+      setLoading(true);
+      const response = await fetch("http://192.168.100.20:4000/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id: user.id }),
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          password,
+        }),
       });
       const data = await response.json();
-
-      if (data.message === "success") {
-        setJwt("");
-        setUser(null);
+      setUser(data.user);
+      setAccessToken(data.accessToken);
+      await SecureStore.setItemAsync("user", JSON.stringify(data.user));
+      await SecureStore.setItemAsync("accessToken", data.accessToken);
+      await SecureStore.setItemAsync("refreshToken", data.refreshToken);
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const login = async (email: string, password: string) => {
+    //login user and set theaccessToken and user in the global state
+    try {
+      setLoading(true);
+      const response = await fetch("http://192.168.100.20:4000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+      const data = await response.json();
+      setUser(data.user);
+      setAccessToken(data.accessToken);
+      await SecureStore.setItemAsync("user", JSON.stringify(data.user));
+      await SecureStore.setItemAsync("accessToken", data.accessToken);
+      await SecureStore.setItemAsync("refreshToken", data.refreshToken);
+      console.log(data);
+    } catch (error: any) {
+      setError(error.message);
+      console.log(error);
+    } finally {
+      setLoading(false);
+      setNewUser(false);
+    }
+  };
+  const refreshAccessToken = async () => {
+    //refresh the accessToken using the refreshToken
+    try {
+      setLoading(true);
+      const refreshToken = await SecureStore.getItemAsync("refreshToken");
+      const response = await fetch("http://192.168.100.20:4000/refresh_token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: user?.email,
+          refreshToken,
+        }),
+      });
+      const data = await response.json();
+      if (data.accessToken) {
+        await SecureStore.setItemAsync("accessToken", data.accessToken);
+        setAccessToken(data.accessToken);
       }
     } catch (error: any) {
       setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
-  const register = async (
-    email: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-  ) => {
-    try {
-      const response = await fetch("http://localhost:4000/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password, firstName, lastName }),
-      });
-      const data = await response.json();
-      setJwt(data.jwt);
-      setUser(data.user);
-    } catch (error: any) {
-      setError(error.message);
+  React.useEffect(() => {
+    const initialUserData = async () => {
+      const user = await SecureStore.getItemAsync("user");
+      const accessToken = await SecureStore.getItemAsync("accessToken");
+      if (user && accessToken !== null) {
+        setUser(JSON.parse(user));
+        setAccessToken(accessToken);
+      } else {
+        setNewUser(true);
+      }
+    };
+    initialUserData();
+  }, []);
+  React.useEffect(() => {
+    if (error == "jwt expired") {
+      refreshAccessToken();
     }
-  };
-  const resetPassword = async (email: string) => {};
-  const updateEmail = async (email: string) => {};
-  const updatePassword = async (password: string) => {};
+  }, [error]);
   return (
     <AuthContext.Provider
       value={{
         newUser,
+        user,
+        accessToken,
+        loading,
         error,
         login,
-        logout,
-        jwt,
-        user,
-        setUser,
         register,
-        resetPassword,
-        updateEmail,
-        updatePassword,
+        setNewUser,
       }}
     >
       {children}
