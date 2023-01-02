@@ -8,7 +8,7 @@ export const generateAccessToken = (data: any) => {
     expiresIn: "30s",
   });
 };
-export const generateRefreshToken = (data: User) => {
+export const generateRefreshToken = (data: any) => {
   return jwt.sign(data, process.env.JWT_REFRESH_SECRET as string, {
     expiresIn: "60d",
   });

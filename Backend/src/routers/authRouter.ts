@@ -1,4 +1,3 @@
-import { User } from "@prisma/client";
 import type { Request, Response } from "express";
 import express from "express";
 import {
@@ -13,90 +12,99 @@ import {
   generateRefreshToken,
 } from "../controllers/authController";
 import * as jwt from "jsonwebtoken";
+import verifyToken from "../middleware/verifyToken";
 
 const authRouter = express.Router();
 
 authRouter.post("/login", async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  console.log(req);
   if (email && password) {
-    try {
-      const user = await getUserByEmail({ email });
-      if (user) {
-        const accessToken = generateAccessToken({ id: user.id });
-        const refreshToken = generateRefreshToken(user);
-        await setUserRequestToken(user.id, refreshToken);
-        return res.status(200).json({
-          jwt: accessToken,
-          user: user,
+    const user = await getUserByEmail(email);
+    if (user) {
+      if (user.password == password) {
+        const accessToken = generateAccessToken({ email: user.email });
+        const refreshToken = generateRefreshToken({ email: user.email });
+        setUserRequestToken(user.id, refreshToken);
+        res.json({
+          accessToken,
+          refreshToken,
+          user: {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            likedFlavours: user.likedFlavours,
+            favouriteCocktails: user.favouriteCocktails,
+            readInsights: user.readInsights,
+          },
         });
+      } else {
+        return res.status(404).json({ message: "Invalid password" });
       }
-    } catch (error: any) {
-      res.status(500).json({ message: error.message });
+    } else {
+      return res.status(404).json({ message: "User not found, invalid email" });
     }
+  } else {
+    return res.status(404).json({ message: "No email or password provided" });
   }
-  return res.status(400).json({ message: "Invalid user data" });
+});
+
+authRouter.post("/logout", async (req: Request, res: Response) => {
+  //users has to have an access token to logout as well as their id in the body
+  const id = parseInt(req.body.id as string, 10);
+  if (id) {
+    const user = await getUser(id);
+    if (user) {
+      deleteUserRequestToken(user.id);
+      res.json({ message: "User logged out" });
+    }
+    return res.status(404).json({ message: "User not found" });
+  }
 });
 
 authRouter.post("/register", async (req: Request, res: Response) => {
   const { firstName, lastName, email, password } = req.body;
-  try {
+  if (firstName && lastName && email && password) {
     const newUser = await createUser({ firstName, lastName, email, password });
     if (newUser) {
-      const accessToken = generateAccessToken({ id: newUser.id });
-      const refreshToken = generateRefreshToken(newUser);
-      await setUserRequestToken(newUser.id, refreshToken);
-      return res.status(200).json({
-        jwt: accessToken,
-        user: newUser,
-      });
-    }
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
-  return res.status(400).json({ message: "Invalid user data" });
-});
-
-authRouter.post("/logout", async (req: Request, res: Response) => {
-  const id = parseInt(req.body.id, 10);
-  if (id) {
-    const user = await getUser({ id });
-    if (user) {
-      if (user.requestToken) {
-        await deleteUserRequestToken(id);
-        return res.status(200).json({ message: "User logged out" });
+      try {
+        const accessToken = generateAccessToken({ email: newUser.email });
+        const refreshToken = generateRefreshToken({ email: newUser.email });
+        setUserRequestToken(newUser.id, refreshToken);
+        res.json({
+          accessToken,
+          refreshToken,
+          user: {
+            id: newUser.id,
+            firstName: newUser.firstName,
+            lastName: newUser.lastName,
+            email: newUser.email,
+            likedFlavours: [],
+            favouriteCocktails: [],
+            readInsights: [],
+          },
+        });
+      } catch (err: any) {
+        res.status(500).json({ message: err.message });
       }
-      return res.status(400).json({ message: "User not logged in" });
     }
   }
-  return res.status(400).json({ message: "Invalid user id" });
+  return res.status(404).json({ message: "Not enough information provided" });
 });
-
-//if access token is expired, use refresh token to generate new access token using jwt.verify
 
 authRouter.post("/refresh_token", async (req: Request, res: Response) => {
-  const id = parseInt(req.body.id, 10);
-  const tokenFromClient = req.body.token as string;
-  if (id) {
-    const user = await getUser({ id });
+  const { email, refreshToken } = req.body;
+  if (email) {
+    const user = await getUserByEmail(email);
     if (user) {
-      const token = user.requestToken;
-      if (token == tokenFromClient) {
-        try {
-          const decoded = jwt.verify(
-            token,
-            process.env.JWT_REFRESH_SECRET as string,
-          );
-          const accessToken = generateAccessToken({ id: user.id });
-          return res.status(200).json({
-            jwt: accessToken,
-          });
-        } catch (error: any) {
-          return res.status(400).json({ message: error.message });
-        }
+      if (refreshToken == user.requestToken && refreshToken != null) {
+        const accessToken = generateAccessToken({ email: user.email });
+        res.status(200).json({ accessToken });
       }
+      return res.status(403).json({ message: "Invalid refresh token" });
     }
   }
-  return res.status(400).json({ message: "Invalid user id" });
+  return res.status(404).json({ message: "User not found" });
 });
+
 export default authRouter;

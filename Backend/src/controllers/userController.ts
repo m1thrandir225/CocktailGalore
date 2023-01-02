@@ -1,4 +1,3 @@
-import { User } from "@prisma/client";
 import { db } from "../utils/db.server";
 import express from "express";
 import * as jwt from "jsonwebtoken";
@@ -13,7 +12,7 @@ export const createUser = async ({
   lastName: string;
   email: string;
   password: string;
-}): Promise<User | null> => {
+}) => {
   return await db.user.create({
     data: {
       firstName,
@@ -25,7 +24,7 @@ export const createUser = async ({
 };
 //get user -- get the user either through id, email or requestToken which are all unique and
 // have different type of return results
-export const getUser = async ({ id }: { id: number }): Promise<User | null> => {
+export const getUser = async (id: number) => {
   if (id) {
     return await db.user.findUnique({
       where: {
@@ -41,11 +40,7 @@ export const getUser = async ({ id }: { id: number }): Promise<User | null> => {
   return null;
 };
 
-export const getUserByEmail = async ({
-  email,
-}: {
-  email: string;
-}): Promise<User | null> => {
+export const getUserByEmail = async (email: string) => {
   return await db.user.findUnique({
     where: {
       email,
