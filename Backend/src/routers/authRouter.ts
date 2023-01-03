@@ -69,6 +69,7 @@ authRouter.post("/logout", async (req: Request, res: Response) => {
 
 authRouter.post("/register", async (req: Request, res: Response) => {
   const { firstName, lastName, email, password } = req.body;
+  console.log(req.body);
   if (firstName && lastName && email && password) {
     const newUser = await createUser({ firstName, lastName, email, password });
     if (newUser) {

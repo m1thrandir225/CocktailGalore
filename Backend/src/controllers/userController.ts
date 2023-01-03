@@ -58,7 +58,6 @@ export const updateUserBasicInfo = async (
   firstName: string | undefined,
   lastName: string | undefined,
   email: string | undefined,
-  profileImage: string | undefined,
   password: string | undefined,
 ) => {
   return await db.user.update({
@@ -74,8 +73,25 @@ export const updateUserBasicInfo = async (
       firstName,
       lastName,
       email,
-      profileImage,
       password,
+    },
+  });
+};
+export const updateUserProfileImage = async (
+  id: number,
+  profileImage: string | undefined,
+) => {
+  return await db.user.update({
+    where: {
+      id,
+    },
+    include: {
+      favouriteCocktails: true,
+      readInsights: true,
+      likedFlavours: true,
+    },
+    data: {
+      profileImage,
     },
   });
 };

@@ -1,7 +1,18 @@
-import express from "express";
 import type { Request, Response } from "express";
+import express from "express";
+import multer from "multer";
 import * as UserController from "../controllers/userController";
 export const userRouter = express.Router();
+
+const storage = multer.diskStorage({
+  destination: function (req, res, cb) {
+    cb(null, `./public/`);
+  },
+  filename: function (req, res, cb) {
+    cb(null, Date.now() + res.originalname);
+  },
+});
+const upload = multer({ storage: storage });
 
 userRouter.get("/user", async (req: Request, res: Response) => {
   const { id, email } = req.body;
@@ -54,7 +65,6 @@ userRouter.post("/user", async (req: Request, res: Response) => {
     firstName,
     lastName,
     email,
-    profileImage,
     oldPassword,
     newPassword,
     id,
@@ -65,7 +75,6 @@ userRouter.post("/user", async (req: Request, res: Response) => {
     firstName: string | undefined;
     lastName: string | undefined;
     email: string | undefined;
-    profileImage: string | undefined;
     oldPassword: string | undefined;
     newPassword: string | undefined;
     id: string | undefined;
@@ -163,7 +172,6 @@ userRouter.post("/user", async (req: Request, res: Response) => {
               firstName,
               lastName,
               email,
-              profileImage,
               newPassword,
             );
             if (updatedUser) {
@@ -199,7 +207,6 @@ userRouter.post("/user", async (req: Request, res: Response) => {
           firstName,
           lastName,
           email,
-          profileImage,
           undefined,
         );
         if (user) {
@@ -227,6 +234,38 @@ userRouter.post("/user", async (req: Request, res: Response) => {
     }
   }
 });
+
+userRouter.post(
+  "/user/profileImage",
+  upload.single("profileImage"),
+  async (req: Request, res: Response) => {
+    const { id, profileImage } = req.body;
+    if (!id) {
+      return res.status(400).json({ message: "Bad Request" });
+    }
+    const newProfileImage = req.file?.filename;
+    try {
+      const updatedUser = await UserController.updateUserProfileImage(
+        parseInt(id as string, 10),
+        newProfileImage,
+      );
+      return res.status(200).json({
+        user: {
+          id: updatedUser.id,
+          firstName: updatedUser.firstName,
+          lastName: updatedUser.lastName,
+          email: updatedUser.email,
+          profileImage: updatedUser.profileImage,
+          likedFlavours: updatedUser.likedFlavours,
+          favouriteCocktails: updatedUser.favouriteCocktails,
+          readInsights: updatedUser.readInsights,
+        },
+      });
+    } catch (error: any) {
+      return res.status(400).json({ message: error.message });
+    }
+  },
+);
 
 userRouter.delete("/user", async (req: Request, res: Response) => {
   const { deleteProfile } = req.query;
