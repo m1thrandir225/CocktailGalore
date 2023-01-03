@@ -1,3 +1,4 @@
+import { userRouter } from "./routers/userRouter";
 import * as dotenv from "dotenv";
 dotenv.config();
 import express from "express";
@@ -13,6 +14,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/", authRouter);
+app.use(verifyToken);
+app.use("/users", userRouter);
 
 const router = express.Router();
 

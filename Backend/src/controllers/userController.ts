@@ -53,8 +53,134 @@ export const getUserByEmail = async (email: string) => {
   });
 };
 //update user info
+export const updateUserBasicInfo = async (
+  id: number,
+  firstName: string | undefined,
+  lastName: string | undefined,
+  email: string | undefined,
+  profileImage: string | undefined,
+  password: string | undefined,
+) => {
+  return await db.user.update({
+    where: {
+      id,
+    },
+    include: {
+      favouriteCocktails: true,
+      readInsights: true,
+      likedFlavours: true,
+    },
+    data: {
+      firstName,
+      lastName,
+      email,
+      profileImage,
+      password,
+    },
+  });
+};
+//add user favourite cocktail
+export const addUserFavouriteCocktail = async (
+  id: number,
+  cocktailId: number,
+) => {
+  return await db.user.update({
+    where: {
+      id,
+    },
+    include: {
+      favouriteCocktails: true,
+      readInsights: true,
+      likedFlavours: true,
+    },
+    data: {
+      favouriteCocktails: {
+        connect: {
+          id: cocktailId,
+        },
+      },
+    },
+  });
+};
+export const deleteUserFavouriteCocktail = async (
+  id: number,
+  cocktailId: number,
+) => {
+  return await db.user.update({
+    where: {
+      id,
+    },
+    include: {
+      favouriteCocktails: true,
+      readInsights: true,
+      likedFlavours: true,
+    },
+    data: {
+      favouriteCocktails: {
+        disconnect: {
+          id: cocktailId,
+        },
+      },
+    },
+  });
+};
 
-//update user passwword
+export const addUserLikedFlavour = async (id: number, flavourIds: number[]) => {
+  return await db.user.update({
+    where: {
+      id,
+    },
+    include: {
+      favouriteCocktails: true,
+      readInsights: true,
+      likedFlavours: true,
+    },
+    data: {
+      likedFlavours: {
+        connect: flavourIds.map((flavourId) => ({ id: flavourId })) || [],
+      },
+    },
+  });
+};
+export const deleteUserLikedFlavour = async (
+  id: number,
+  flavourIds: number[],
+) => {
+  return await db.user.update({
+    where: {
+      id,
+    },
+    include: {
+      favouriteCocktails: true,
+      readInsights: true,
+      likedFlavours: true,
+    },
+    data: {
+      likedFlavours: {
+        disconnect: flavourIds.map((flavourId) => ({ id: flavourId })) || [],
+      },
+    },
+  });
+};
+export const addUserReadInsight = async (id: number, insightId: number) => {
+  return await db.user.update({
+    where: {
+      id,
+    },
+    include: {
+      favouriteCocktails: true,
+      readInsights: true,
+      likedFlavours: true,
+    },
+    data: {
+      readInsights: {
+        connect: {
+          id: insightId,
+        },
+      },
+    },
+  });
+};
 
 //update user request token
 export const setUserRequestToken = async (id: number, requestToken: string) => {
@@ -79,3 +205,10 @@ export const deleteUserRequestToken = async (id: number) => {
   });
 };
 //delete user
+export const deleteUser = async (id: number) => {
+  return await db.user.delete({
+    where: {
+      id,
+    },
+  });
+};
