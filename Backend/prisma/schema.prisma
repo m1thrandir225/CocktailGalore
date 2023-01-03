@@ -16,35 +16,58 @@ enum UserType {
   USER
 }
 
+model Post {
+  id         Int                 @id @default(autoincrement())
+  title      String
+  categories CategoriesOnPosts[]
+}
+
+model Category {
+  id    Int                 @id @default(autoincrement())
+  name  String
+  posts CategoriesOnPosts[]
+}
+
+model CategoriesOnPosts {
+  post       Post     @relation(fields: [postId], references: [id])
+  postId     Int // relation scalar field (used in the `@relation` attribute above)
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int // relation scalar field (used in the `@relation` attribute above)
+  assignedAt DateTime @default(now())
+  assignedBy String
+
+  @@id([postId, categoryId])
+}
+
 //user model that has email/name and flavours, favorite cocktails
 model User {
-  id                 Int        @id @default(autoincrement())
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
-  email              String     @unique
+  id                 Int                      @id @default(autoincrement())
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+  email              String                   @unique
   firstName          String
-  profileImage       String     @default("https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80")
+  profileImage       String                   @default("https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80")
   lastName           String
   password           String
-  userType           UserType   @default(USER)
-  favouriteCocktails Cocktail[]
-  likedFlavours      Flavour[]
-  readInsights       Insight[]
-  requestToken       String?    @db.LongText
+  userType           UserType                 @default(USER)
+  favouriteCocktails UsersFavouriteCocktail[]
+  likedFlavours      UserLikedFlavour[]
+  readInsights       UserReadInsight[]
+  requestToken       String?                  @db.LongText
 }
 
 //cocktail model that has name, ingredients, instructions, flavours, favorite by users
 model Cocktail {
-  id           Int       @id @default(autoincrement())
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id           Int                      @id @default(autoincrement())
+  createdAt    DateTime                 @default(now())
+  updatedAt    DateTime                 @updatedAt
   name         String
-  flavours     Flavour[]
+  flavours     CocktailFlavour[]
   timeToMake   Int
   ingredients  String
   instructions String
   image        String
-  favouriteBy  User[]
+  favouriteBy  UsersFavouriteCocktail[]
 }
 
 //author model that has name, image
@@ -59,26 +82,76 @@ model Author {
 
 //insights that have an author, date, image, title, description
 model Insight {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  author      Author   @relation(fields: [authorId], references: [id])
+  id          Int               @id @default(autoincrement())
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  author      Author            @relation(fields: [authorId], references: [id])
   authorId    Int
   date        DateTime
   image       String
   title       String
   description Json
   readTime    Int
-  readBy      User[]
+  readBy      UserReadInsight[]
+
+  @@index([authorId])
 }
 
 //flavour model that has a name
 
 model Flavour {
-  id        Int        @id @default(autoincrement())
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  name      String     @unique
-  cocktails Cocktail[]
-  likedBy   User[]
+  id        Int                @id @default(autoincrement())
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  name      String             @unique
+  cocktails CocktailFlavour[]
+  likedBy   UserLikedFlavour[]
+}
+
+//many to many relationship between cocktails and flavours
+model CocktailFlavour {
+  cocktail   Cocktail @relation(fields: [cocktailId], references: [id])
+  cocktailId Int // relation scalar field (used in the `@relation` attribute above)
+  flavour    Flavour  @relation(fields: [flavourId], references: [id])
+  flavourId  Int // relation scalar field (used in the `@relation` attribute above)
+  assignedAt DateTime @default(now())
+  assignedBy String
+
+  @@id([cocktailId, flavourId])
+}
+
+//many to many user cocktail relationship table
+model UsersFavouriteCocktail {
+  user       User     @relation(fields: [cocktailId], references: [id])
+  userId     Int // relation scalar field (used in the `@relation` attribute above)
+  cocktail   Cocktail @relation(fields: [userId], references: [id])
+  cocktailId Int // relation scalar field (used in the `@relation` attribute above)
+  assignedAt DateTime @default(now())
+  assignedBy String
+
+  @@id([userId, cocktailId])
+}
+
+//many to many user and flavour relationship table
+model UserLikedFlavour {
+  user       User     @relation(fields: [flavourId], references: [id])
+  userId     Int // relation scalar field (used in the `@relation` attribute above)
+  flavour    Flavour  @relation(fields: [userId], references: [id])
+  flavourId  Int // relation scalar field (used in the `@relation` attribute above)
+  assignedAt DateTime @default(now())
+  assignedBy String
+
+  @@id([userId, flavourId])
+}
+
+//many to many relationship between users and insights
+model UserReadInsight {
+  user       User     @relation(fields: [insightId], references: [id])
+  userId     Int // relation scalar field (used in the `@relation` attribute above)
+  insight    Insight  @relation(fields: [userId], references: [id])
+  insightId  Int // relation scalar field (used in the `@relation` attribute above)
+  assignedAt DateTime @default(now())
+  assignedBy String
+
+  @@id([userId, insightId])
 }

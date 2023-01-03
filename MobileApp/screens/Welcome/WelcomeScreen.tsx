@@ -58,7 +58,7 @@ const WelcomeScreen = ({ navigation, route }: NavigationProps) => {
           <Pressable
             style={style.loginButton}
             onPress={() =>
-              navigation.navigate("AuthStack", { screen: "Login" })
+              navigation.navigate("AuthStack", { screen: "Overview" })
             }
           >
             <Text style={style.loginText}>Already have an account?</Text>

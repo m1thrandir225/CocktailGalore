@@ -81,11 +81,17 @@ const LoginScreen = ({ navigation, route }: NavigationProps) => {
         />
         <Pressable
           style={styles.continueButton}
-          onPress={() => state?.login(email, password)}
+          onPress={() => {
+            state?.register(firstName, lastName, email, password);
+            navigation.navigate("Overview");
+          }}
         >
           <Text style={styles.continueButtonText}> Continue </Text>
         </Pressable>
-        <Pressable style={styles.outlineButton}>
+        <Pressable
+          style={styles.outlineButton}
+          onPress={() => navigation.navigate("Login")}
+        >
           <Text style={styles.outlineButtonText}> Don't have an account ?</Text>
         </Pressable>
         <View style={styles.orContainer}>

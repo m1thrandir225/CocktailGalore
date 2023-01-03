@@ -3,13 +3,13 @@ export type AuthParamList = {
   //stack navigation
   Login: undefined;
   Signup: undefined;
+  Overview: undefined;
+  InitialCustomization: undefined;
 };
 
 export type WelcomeParamList = {
   // stack navigation
   Welcome: undefined;
-  Overview: undefined;
-  InitialCustomization: undefined;
   AuthStack: NavigatorScreenParams<AuthParamList>;
 };
 

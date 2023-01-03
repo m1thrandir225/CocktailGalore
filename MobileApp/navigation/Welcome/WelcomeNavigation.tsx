@@ -22,11 +22,6 @@ const WelcomeNavigation = () => {
       }}
     >
       <WelcomeStack.Screen name="Welcome" component={WelcomeScreen} />
-      <WelcomeStack.Screen name="Overview" component={OverviewScreen} />
-      <WelcomeStack.Screen
-        name="InitialCustomization"
-        component={InitialCustomizationScreen}
-      />
       <WelcomeStack.Screen
         name="AuthStack"
         component={AuthNavigation}
