@@ -8,6 +8,7 @@ import cors from "cors";
 import multer from "multer";
 import authRouter from "./routers/authRouter";
 import verifyToken from "./middleware/verifyToken";
+import { flavourRouter } from "./routers/flavourRouter";
 
 const PORT: number = parseInt(process.env.PORT as string, 10);
 
@@ -20,6 +21,7 @@ app.use(express.static("public"));
 app.use("/", authRouter);
 //app.use(verifyToken);
 app.use("/users", userRouter);
+app.use("/flavours", flavourRouter);
 
 const router = express.Router();
 

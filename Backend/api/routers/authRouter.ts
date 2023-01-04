@@ -98,7 +98,7 @@ authRouter.post("/register", async (req: Request, res: Response) => {
       return res.status(409).json({ message: "User already exists" });
     }
   } else {
-    return res.status(404).json({ message: "Not enough information provided" });
+    return res.status(500).json({ message: "Not enough information provided" });
   }
 });
 

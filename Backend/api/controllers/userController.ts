@@ -112,10 +112,7 @@ export const addUserFavouriteCocktail = async (
     data: {
       favouriteCocktails: {
         connect: {
-          userId_cocktailId: {
-            userId: id,
-            cocktailId,
-          },
+          id: cocktailId,
         },
       },
     },
@@ -137,10 +134,7 @@ export const deleteUserFavouriteCocktail = async (
     data: {
       favouriteCocktails: {
         disconnect: {
-          userId_cocktailId: {
-            userId: id,
-            cocktailId,
-          },
+          id: cocktailId,
         },
       },
     },
@@ -160,7 +154,7 @@ export const addUserLikedFlavour = async (id: number, flavourIds: number[]) => {
     data: {
       likedFlavours: {
         connect: flavourIds.map((flavourId) => ({
-          userId_flavourId: { userId: id, flavourId },
+          id: flavourId,
         })),
       },
     },
@@ -182,7 +176,7 @@ export const deleteUserLikedFlavour = async (
     data: {
       likedFlavours: {
         disconnect: flavourIds.map((flavourId) => ({
-          userId_flavourId: { userId: id, flavourId },
+          id: flavourId,
         })),
       },
     },
@@ -201,10 +195,7 @@ export const addUserReadInsight = async (id: number, insightId: number) => {
     data: {
       readInsights: {
         connect: {
-          userId_insightId: {
-            userId: id,
-            insightId,
-          },
+          id: insightId,
         },
       },
     },
@@ -235,6 +226,22 @@ export const deleteUserRequestToken = async (id: number) => {
 };
 //delete user
 export const deleteUser = async (id: number) => {
+  await db.user.update({
+    where: {
+      id,
+    },
+    data: {
+      favouriteCocktails: {
+        set: [],
+      },
+      readInsights: {
+        set: [],
+      },
+      likedFlavours: {
+        set: [],
+      },
+    },
+  });
   return await db.user.delete({
     where: {
       id,

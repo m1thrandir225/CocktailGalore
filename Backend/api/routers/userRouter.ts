@@ -77,9 +77,9 @@ userRouter.post("/user", async (req: Request, res: Response) => {
     email: string | undefined;
     oldPassword: string | undefined;
     newPassword: string | undefined;
-    id: string | undefined;
+    id: number | undefined;
     cocktailId: string | undefined;
-    flavourIds: string[] | undefined;
+    flavourIds: number[] | undefined;
     insightId: string | undefined;
   } = req.body;
   if (id) {
@@ -87,7 +87,7 @@ userRouter.post("/user", async (req: Request, res: Response) => {
       //add cocktail to favouriteCocktails
       try {
         const user = await UserController.addUserFavouriteCocktail(
-          parseInt(id as string, 10),
+          id,
           parseInt(cocktailId as string, 10),
         );
         if (user) {
@@ -112,10 +112,9 @@ userRouter.post("/user", async (req: Request, res: Response) => {
     } else if (flavourIds) {
       //add flavour to likedFlavours
       try {
-        const user = await UserController.addUserLikedFlavour(
-          parseInt(id as string, 10),
-          flavourIds.map((id) => parseInt(id as string, 10)),
-        );
+        console.log(req.body);
+        console.log(flavourIds);
+        const user = await UserController.addUserLikedFlavour(id, flavourIds);
         if (user) {
           return res.status(200).json({
             user: {
@@ -139,7 +138,7 @@ userRouter.post("/user", async (req: Request, res: Response) => {
       //add insight to readInsights
       try {
         const user = await UserController.addUserReadInsight(
-          parseInt(id as string, 10),
+          id,
           parseInt(insightId as string, 10),
         );
         if (user) {
@@ -164,11 +163,11 @@ userRouter.post("/user", async (req: Request, res: Response) => {
     } else if (oldPassword && newPassword) {
       //update the password of the user
       try {
-        const user = await UserController.getUser(parseInt(id as string, 10));
+        const user = await UserController.getUser(id);
         if (user) {
           if (user.password == oldPassword) {
             const updatedUser = await UserController.updateUserBasicInfo(
-              parseInt(id as string, 10),
+              id,
               firstName,
               lastName,
               email,
@@ -203,7 +202,7 @@ userRouter.post("/user", async (req: Request, res: Response) => {
       //if no password change, no flavourIds, no cocktailId, no InsightId, then update basic info
       try {
         const user = await UserController.updateUserBasicInfo(
-          parseInt(id as string, 10),
+          id,
           firstName,
           lastName,
           email,
@@ -244,9 +243,10 @@ userRouter.post(
       return res.status(400).json({ message: "Bad Request" });
     }
     const newProfileImage = req.file?.filename;
+    console.log(req.file);
     try {
       const updatedUser = await UserController.updateUserProfileImage(
-        parseInt(id as string, 10),
+        id,
         newProfileImage,
       );
       return res.status(200).json({
@@ -268,7 +268,7 @@ userRouter.post(
 );
 
 userRouter.delete("/user", async (req: Request, res: Response) => {
-  const { deleteProfile } = req.query;
+  const { deleteUser } = req.query;
   const {
     id,
     likedFlavours,
@@ -278,7 +278,7 @@ userRouter.delete("/user", async (req: Request, res: Response) => {
   } = req.body;
   if (id) {
     //delete the user
-    if (deleteProfile == "true") {
+    if (deleteUser == "true") {
       const user = await UserController.deleteUser(parseInt(id as string, 10));
       if (user) {
         return res.status(200).json({ message: "User deleted" });
