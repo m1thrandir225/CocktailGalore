@@ -112,7 +112,10 @@ export const addUserFavouriteCocktail = async (
     data: {
       favouriteCocktails: {
         connect: {
-          id: cocktailId,
+          userId_cocktailId: {
+            userId: id,
+            cocktailId,
+          },
         },
       },
     },
@@ -134,7 +137,10 @@ export const deleteUserFavouriteCocktail = async (
     data: {
       favouriteCocktails: {
         disconnect: {
-          id: cocktailId,
+          userId_cocktailId: {
+            userId: id,
+            cocktailId,
+          },
         },
       },
     },
@@ -153,7 +159,9 @@ export const addUserLikedFlavour = async (id: number, flavourIds: number[]) => {
     },
     data: {
       likedFlavours: {
-        connect: flavourIds.map((flavourId) => ({ id: flavourId })) || [],
+        connect: flavourIds.map((flavourId) => ({
+          userId_flavourId: { userId: id, flavourId },
+        })),
       },
     },
   });
@@ -173,7 +181,9 @@ export const deleteUserLikedFlavour = async (
     },
     data: {
       likedFlavours: {
-        disconnect: flavourIds.map((flavourId) => ({ id: flavourId })) || [],
+        disconnect: flavourIds.map((flavourId) => ({
+          userId_flavourId: { userId: id, flavourId },
+        })),
       },
     },
   });
@@ -191,7 +201,10 @@ export const addUserReadInsight = async (id: number, insightId: number) => {
     data: {
       readInsights: {
         connect: {
-          id: insightId,
+          userId_insightId: {
+            userId: id,
+            insightId,
+          },
         },
       },
     },
