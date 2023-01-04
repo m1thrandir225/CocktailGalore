@@ -87,7 +87,10 @@ const LoginScreen = ({ navigation, route }: NavigationProps) => {
             <AntDesign name="facebook-square" size={40} color={AlmostDark} />
           </Pressable>
         </View>
-        <Pressable style={styles.outlineButton}>
+        <Pressable
+          style={styles.outlineButton}
+          onPress={() => navigation.navigate("Signup")}
+        >
           <Text style={styles.outlineButtonText}> Don't have an account ?</Text>
         </Pressable>
       </ScrollView>

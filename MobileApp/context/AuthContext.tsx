@@ -17,6 +17,9 @@ interface IAuthContext {
   ) => Promise<void>;
   logout: () => Promise<void>;
   setNewUser: React.Dispatch<React.SetStateAction<boolean>>;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  updateUserData: (user: User) => Promise<void>;
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 export const AuthContext = React.createContext<IAuthContext | null>(null);
@@ -55,8 +58,14 @@ export const AuthProvider = ({ children }: any) => {
       setUser(data.user);
       setAccessToken(data.accessToken);
       await SecureStore.setItemAsync("user", JSON.stringify(data.user));
-      await SecureStore.setItemAsync("accessToken", data.accessToken);
-      await SecureStore.setItemAsync("refreshToken", data.refreshToken);
+      await SecureStore.setItemAsync(
+        "accessToken",
+        JSON.stringify(data.accessToken),
+      );
+      await SecureStore.setItemAsync(
+        "refreshToken",
+        JSON.stringify(data.refreshToken),
+      );
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -81,8 +90,14 @@ export const AuthProvider = ({ children }: any) => {
       setUser(data.user);
       setAccessToken(data.accessToken);
       await SecureStore.setItemAsync("user", JSON.stringify(data.user));
-      await SecureStore.setItemAsync("accessToken", data.accessToken);
-      await SecureStore.setItemAsync("refreshToken", data.refreshToken);
+      await SecureStore.setItemAsync(
+        "accessToken",
+        JSON.stringify(data.accessToken),
+      );
+      await SecureStore.setItemAsync(
+        "refreshToken",
+        JSON.stringify(data.refreshToken),
+      );
       console.log(data);
     } catch (error: any) {
       setError(error.message);
@@ -105,16 +120,18 @@ export const AuthProvider = ({ children }: any) => {
         }),
       });
       const data = await response.json();
-      await SecureStore.deleteItemAsync("user");
-      await SecureStore.deleteItemAsync("accessToken");
-      await SecureStore.deleteItemAsync("refreshToken");
-      setUser(null);
-      setAccessToken(null);
+      if (data.message == "User logged out") {
+        setUser(null);
+        setAccessToken(null);
+        await SecureStore.deleteItemAsync("user");
+        await SecureStore.deleteItemAsync("accessToken");
+        await SecureStore.deleteItemAsync("refreshToken");
+        setNewUser(true);
+      }
     } catch (error: any) {
       setError(error.message);
     } finally {
       setLoading(false);
-      setNewUser(true);
     }
   };
   const refreshAccessToken = async () => {
@@ -134,9 +151,23 @@ export const AuthProvider = ({ children }: any) => {
       });
       const data = await response.json();
       if (data.accessToken) {
-        await SecureStore.setItemAsync("accessToken", data.accessToken);
+        await SecureStore.setItemAsync(
+          "accessToken",
+          JSON.stringify(data.accessToken),
+        );
         setAccessToken(data.accessToken);
       }
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const updateUserData = async (updatedUser: User) => {
+    setLoading(true);
+    try {
+      await SecureStore.setItemAsync("user", JSON.stringify(updatedUser));
+      setUser(updatedUser);
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -160,6 +191,7 @@ export const AuthProvider = ({ children }: any) => {
     if (error == "jwt expired") {
       refreshAccessToken();
     }
+    console.log(error);
   }, [error]);
   return (
     <AuthContext.Provider
@@ -173,6 +205,9 @@ export const AuthProvider = ({ children }: any) => {
         logout,
         register,
         setNewUser,
+        setLoading,
+        updateUserData,
+        setError,
       }}
     >
       {children}

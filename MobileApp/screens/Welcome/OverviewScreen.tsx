@@ -17,7 +17,10 @@ import {
   RedLight,
 } from "../../constants/globalStyles";
 import Feather from "@expo/vector-icons/Feather";
-const OverviewScreen = () => {
+import { StackScreenProps } from "@react-navigation/stack";
+import { AuthParamList } from "../../navigation/navigationTypes";
+type NavigationProps = StackScreenProps<AuthParamList, "Overview">;
+const OverviewScreen = ({ navigation, route }: NavigationProps) => {
   const [fontsLoaded] = useFonts({
     Montserrat_700Bold,
     Raleway_400Regular,
@@ -102,7 +105,10 @@ const OverviewScreen = () => {
             enjoyed with the one’s {"\n"} you love.
           </Text>
         </View>
-        <Pressable style={styles.button}>
+        <Pressable
+          style={styles.button}
+          onPress={() => navigation.navigate("InitialCustomization")}
+        >
           <Text style={styles.buttonText}> Flavour Profile </Text>
           <Feather name="chevron-right" size={24} color={AlmostWhite} />
         </Pressable>
