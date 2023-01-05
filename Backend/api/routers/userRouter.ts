@@ -1,3 +1,4 @@
+import path from "path";
 import type { Request, Response } from "express";
 import express from "express";
 import multer from "multer";
@@ -6,7 +7,7 @@ export const userRouter = express.Router();
 
 const storage = multer.diskStorage({
   destination: function (req, res, cb) {
-    cb(null, `../../public/`);
+    cb(null, "./public");
   },
   filename: function (req, res, cb) {
     cb(null, Date.now() + res.originalname);
@@ -238,12 +239,13 @@ userRouter.post(
   "/user/profileImage",
   upload.single("profileImage"),
   async (req: Request, res: Response) => {
-    const { id, profileImage } = req.body;
+    const { id, profileImage }: { id: string | number; profileImage: any } =
+      req.body;
     if (!id) {
       return res.status(400).json({ message: "Bad Request" });
     }
     const newProfileImage = req.file?.filename;
-    console.log(req.file);
+    console.log(res);
     try {
       const updatedUser = await UserController.updateUserProfileImage(
         parseInt(id as string, 10),
