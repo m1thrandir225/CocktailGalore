@@ -113,8 +113,6 @@ userRouter.post("/user", async (req: Request, res: Response) => {
     } else if (flavourIds) {
       //add flavour to likedFlavours
       try {
-        console.log(req.body);
-        console.log(flavourIds);
         const user = await UserController.addUserLikedFlavour(id, flavourIds);
         if (user) {
           return res.status(200).json({
@@ -245,7 +243,6 @@ userRouter.post(
       return res.status(400).json({ message: "Bad Request" });
     }
     const newProfileImage = req.file?.filename;
-    console.log(res);
     try {
       const updatedUser = await UserController.updateUserProfileImage(
         parseInt(id as string, 10),
