@@ -6,7 +6,7 @@ export const userRouter = express.Router();
 
 const storage = multer.diskStorage({
   destination: function (req, res, cb) {
-    cb(null, `./public/`);
+    cb(null, `../../public/`);
   },
   filename: function (req, res, cb) {
     cb(null, Date.now() + res.originalname);
@@ -246,7 +246,7 @@ userRouter.post(
     console.log(req.file);
     try {
       const updatedUser = await UserController.updateUserProfileImage(
-        id,
+        parseInt(id as string, 10),
         newProfileImage,
       );
       return res.status(200).json({
