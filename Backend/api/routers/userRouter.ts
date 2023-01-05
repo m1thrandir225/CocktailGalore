@@ -235,7 +235,7 @@ userRouter.post("/updateUser", async (req: Request, res: Response) => {
 });
 
 userRouter.post(
-  "/user/profileImage",
+  "/updateUser/profileImage",
   upload.single("profileImage"),
   async (req: Request, res: Response) => {
     const { id, profileImage }: { id: string | number; profileImage: any } =

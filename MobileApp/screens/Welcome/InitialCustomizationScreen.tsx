@@ -59,7 +59,7 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
     state?.setLoading(true);
     try {
       const myFlavoursUpdateRes = await fetch(
-        "https://galore-cocktails-more-production.up.railway.app/users/user",
+        "https://galore-cocktails-more-production.up.railway.app/users/updateUser",
         {
           method: "POST",
           headers: {
@@ -83,7 +83,7 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
     try {
       state?.setLoading(true);
       const response = await FileSystem.uploadAsync(
-        "https://galore-cocktails-more-production.up.railway.app/users/user/profileImage",
+        "https://galore-cocktails-more-production.up.railway.app/users/updateUser/profileImage",
         profilePictureUri,
         {
           httpMethod: "POST",
