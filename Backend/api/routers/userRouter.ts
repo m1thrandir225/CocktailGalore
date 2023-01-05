@@ -15,7 +15,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-userRouter.get("/user", async (req: Request, res: Response) => {
+//get user data
+userRouter.post("/user", async (req: Request, res: Response) => {
   const { id, email } = req.body;
   if (id) {
     //get user by id
@@ -61,7 +62,7 @@ userRouter.get("/user", async (req: Request, res: Response) => {
 });
 
 //update user info
-userRouter.post("/user", async (req: Request, res: Response) => {
+userRouter.post("/updateUser", async (req: Request, res: Response) => {
   const {
     firstName,
     lastName,

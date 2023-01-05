@@ -37,7 +37,6 @@ export const AuthProvider = ({ children }: any) => {
     email: string,
     password: string,
   ) => {
-    console.log(firstName, lastName, email, password);
     try {
       setLoading(true);
       const response = await fetch(
@@ -102,10 +101,8 @@ export const AuthProvider = ({ children }: any) => {
         "refreshToken",
         JSON.stringify(data.refreshToken),
       );
-      console.log(data);
     } catch (error: any) {
       setError(error.message);
-      console.log(error);
     } finally {
       setLoading(false);
       setNewUser(false);
@@ -184,6 +181,25 @@ export const AuthProvider = ({ children }: any) => {
       setLoading(false);
     }
   };
+  const updateUserFromServer = async () => {
+    try {
+      const response = await fetch(
+        "https://galore-cocktails-more-production.up.railway.app/user",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: user?.id }),
+        },
+      );
+      const data = await response.json();
+      await SecureStore.setItemAsync("user", JSON.stringify(data.user));
+      setUser(data.user);
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
   React.useEffect(() => {
     const initialUserData = async () => {
       const user = await SecureStore.getItemAsync("user");
@@ -201,8 +217,11 @@ export const AuthProvider = ({ children }: any) => {
     if (error == "jwt expired") {
       refreshAccessToken();
     }
+    if (user != null) {
+      updateUserFromServer();
+    }
     console.log(error);
-  }, [error]);
+  }, [error, user]);
   return (
     <AuthContext.Provider
       value={{

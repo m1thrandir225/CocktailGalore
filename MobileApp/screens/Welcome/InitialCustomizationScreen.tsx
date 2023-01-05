@@ -21,6 +21,7 @@ import type { Flavour } from "../../constants/globalTypes";
 import FlavourButton from "../../components/Reusable/FlavourButton";
 import { StackScreenProps } from "@react-navigation/stack";
 import { AuthParamList } from "../../navigation/navigationTypes";
+import * as FileSystem from "expo-file-system";
 
 type NavigationProps = StackScreenProps<AuthParamList, "InitialCustomization">;
 
@@ -44,6 +45,7 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
     });
     if (!result.canceled) {
       setProfilePictureUri(result.assets[0].uri);
+      setProfilePicture(result.assets[0]);
     }
   };
   const handleMyFlavour = (flavour: Flavour) => {
@@ -80,31 +82,26 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
   const sendProfilePictureData = async () => {
     try {
       state?.setLoading(true);
-      const data = new FormData();
-      let filename = profilePicture?.uri.split("/").pop();
-      let match = /\.(\w+)$/.exec(filename);
-      let type = match ? `image/${match[1]}` : `image`;
-
-      data.append("id", state?.user ? JSON.stringify(state?.user?.id) : "");
-      data.append("profileImage", {
-        uri: profilePictureUri,
-        name: filename,
-        type: type,
-      });
-      const profilePictureUpdateRes = await fetch(
+      const response = await FileSystem.uploadAsync(
         "https://galore-cocktails-more-production.up.railway.app/users/user/profileImage",
+        profilePictureUri,
         {
-          method: "POST",
+          httpMethod: "POST",
+          uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+          fieldName: "profileImage",
           headers: {
             "Content-Type": "multipart/form-data",
           },
-          body: data,
+          parameters: {
+            id: JSON.stringify(state?.user?.id),
+          },
         },
       );
-      const profilePictureUpdateData = await profilePictureUpdateRes.json();
-      state?.updateUserData(profilePictureUpdateData.user);
+      const json = await JSON.stringify(response.body, null, 4);
+      const data = await JSON.parse(json);
+      state?.updateUserData(data.user);
     } catch (error: any) {
-      console.log(error);
+      state?.setError(error.message);
     } finally {
       state?.setLoading(false);
       state?.setNewUser(false);
