@@ -24,8 +24,6 @@ interface IAuthContext {
 
 export const AuthContext = React.createContext<IAuthContext | null>(null);
 
-const ip = "192.168.0.108";
-
 export const AuthProvider = ({ children }: any) => {
   const [newUser, setNewUser] = React.useState<boolean>(false); //global newUser state
   const [user, setUser] = React.useState<User | null>(null); //global user state
@@ -42,18 +40,21 @@ export const AuthProvider = ({ children }: any) => {
     console.log(firstName, lastName, email, password);
     try {
       setLoading(true);
-      const response = await fetch(`http://${ip}:4000/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `https://galore-cocktails-more-production.up.railway.app/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            email,
+            password,
+          }),
         },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          password,
-        }),
-      });
+      );
       const data = await response.json();
       setUser(data.user);
       setAccessToken(data.accessToken);
@@ -76,16 +77,19 @@ export const AuthProvider = ({ children }: any) => {
     //login user and set theaccessToken and user in the global state
     try {
       setLoading(true);
-      const response = await fetch(`http://${ip}:4000/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `https://galore-cocktails-more-production.up.railway.app/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
         },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      );
       const data = await response.json();
       setUser(data.user);
       setAccessToken(data.accessToken);
@@ -110,15 +114,18 @@ export const AuthProvider = ({ children }: any) => {
   const logout = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`http://${ip}:4000/logout`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `https://galore-cocktails-more-production.up.railway.app/logout`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: user?.id,
+          }),
         },
-        body: JSON.stringify({
-          id: user?.id,
-        }),
-      });
+      );
       const data = await response.json();
       if (data.message == "User logged out") {
         setUser(null);
@@ -139,16 +146,19 @@ export const AuthProvider = ({ children }: any) => {
     try {
       setLoading(true);
       const refreshToken = await SecureStore.getItemAsync("refreshToken");
-      const response = await fetch(`http://${ip}:4000/refresh_token`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `https://galore-cocktails-more-production.up.railway.app/refresh_token`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: user?.email,
+            refreshToken,
+          }),
         },
-        body: JSON.stringify({
-          email: user?.email,
-          refreshToken,
-        }),
-      });
+      );
       const data = await response.json();
       if (data.accessToken) {
         await SecureStore.setItemAsync(

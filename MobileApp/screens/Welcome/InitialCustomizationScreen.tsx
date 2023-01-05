@@ -1,12 +1,4 @@
-import {
-  View,
-  Text,
-  Image,
-  Pressable,
-  StyleSheet,
-  ImageBackground,
-  ImageSourcePropType,
-} from "react-native";
+import { View, Text, Image, Pressable, StyleSheet } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native-gesture-handler";
@@ -51,7 +43,6 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
       quality: 1,
     });
     if (!result.canceled) {
-      setProfilePicture(result.assets[0]);
       setProfilePictureUri(result.assets[0].uri);
     }
   };
@@ -62,23 +53,11 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
       setMyFlavours([...(myFlavours ?? []), flavour]);
     }
   };
-
-  const sendData = async () => {
+  const sendFlavourData = async () => {
     state?.setLoading(true);
-    const data = new FormData();
-    let filename = profilePicture?.uri.split("/").pop();
-    let match = /\.(\w+)$/.exec(filename);
-    let type = match ? `image/${match[1]}` : `image`;
-
-    data.append("id", state?.user ? JSON.stringify(state?.user?.id) : "");
-    data.append("profileImage", {
-      uri: profilePictureUri,
-      name: filename,
-      type: type,
-    });
     try {
       const myFlavoursUpdateRes = await fetch(
-        "http://192.168.0.108:4000/users/user",
+        "https://galore-cocktails-more-production.up.railway.app/users/user",
         {
           method: "POST",
           headers: {
@@ -92,8 +71,28 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
       );
       const myFlavoursUpdateData = await myFlavoursUpdateRes.json();
       state?.updateUserData(myFlavoursUpdateData.user);
+    } catch (error: any) {
+      console.log(error);
+    } finally {
+      state?.setLoading(false);
+    }
+  };
+  const sendProfilePictureData = async () => {
+    try {
+      state?.setLoading(true);
+      const data = new FormData();
+      let filename = profilePicture?.uri.split("/").pop();
+      let match = /\.(\w+)$/.exec(filename);
+      let type = match ? `image/${match[1]}` : `image`;
+
+      data.append("id", state?.user ? JSON.stringify(state?.user?.id) : "");
+      data.append("profileImage", {
+        uri: profilePictureUri,
+        name: filename,
+        type: type,
+      });
       const profilePictureUpdateRes = await fetch(
-        "http://192.168.0.108:4000/users/user/profileImage",
+        "https://galore-cocktails-more-production.up.railway.app/users/user/profileImage",
         {
           method: "POST",
           headers: {
@@ -105,18 +104,19 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
       const profilePictureUpdateData = await profilePictureUpdateRes.json();
       state?.updateUserData(profilePictureUpdateData.user);
     } catch (error: any) {
-      state?.setError(error.message);
+      console.log(error);
     } finally {
       state?.setLoading(false);
       state?.setNewUser(false);
     }
   };
-
   React.useEffect(() => {
     const getFlavours = async () => {
       state?.setLoading(true);
       try {
-        const response = await fetch("http://192.168.0.108:4000/flavours");
+        const response = await fetch(
+          "https://galore-cocktails-more-production.up.railway.app/flavours",
+        );
         const data = await response.json();
         setFlavours(data.flavours);
       } catch (error) {
@@ -183,8 +183,9 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
         </View>
         <Pressable
           style={[styles.discoverButton, { marginTop: 50, marginBottom: 80 }]}
-          onPress={async () => {
-            await sendData();
+          onPress={() => {
+            sendFlavourData();
+            sendProfilePictureData();
           }}
         >
           <Text style={[styles.discoverButtonText]}> Discover </Text>

@@ -60,6 +60,7 @@ const HomeScreen = ({ navigation, route }: NavigationProps) => {
       image: require("../../assets/cocktail-image-4.png"),
     },
   ];
+
   return (
     <ScrollView style={styles.container}>
       <HomeTitle

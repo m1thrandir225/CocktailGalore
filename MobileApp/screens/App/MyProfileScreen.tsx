@@ -86,7 +86,11 @@ const MyProfileScreen = ({ navigation, route }: NavigationProps) => {
         <>
           <View style={styles.profileSection}>
             <Image
-              source={{ uri: state?.user?.profileImage }}
+              source={{
+                uri:
+                  "https://galore-cocktails-more-production.up.railway.app/" +
+                  state?.user?.profileImage,
+              }}
               style={styles.profileImage}
             />
             <View style={{ paddingHorizontal: 21 }}>
