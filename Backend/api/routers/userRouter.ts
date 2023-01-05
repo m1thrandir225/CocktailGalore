@@ -3,6 +3,8 @@ import type { Request, Response } from "express";
 import express from "express";
 import multer from "multer";
 import * as UserController from "../controllers/userController";
+import { body, validationResult } from "express-validator";
+
 export const userRouter = express.Router();
 
 const storage = multer.diskStorage({
@@ -16,9 +18,15 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 //get user data
-userRouter.post("/user", async (req: Request, res: Response) => {
-  const { id, email } = req.body;
-  if (id) {
+userRouter.post(
+  "/user",
+  body("id").isNumeric().notEmpty(),
+  async (req: Request, res: Response) => {
+    const { id } = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     //get user by id
     const user = await UserController.getUser(parseInt(id as string, 10));
     if (user) {
@@ -37,54 +45,31 @@ userRouter.post("/user", async (req: Request, res: Response) => {
     } else {
       res.status(404).json({ message: "User not found" });
     }
-  } else if (email) {
-    //get user by email
-    const user = await UserController.getUserByEmail(email);
-    if (user) {
-      res.status(200).json({
-        user: {
-          id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          profileImage: user.profileImage,
-          likedFlavours: user.likedFlavours,
-          favouriteCocktails: user.favouriteCocktails,
-          readInsights: user.readInsights,
-        },
-      });
-    } else {
-      res.status(404).json({ message: "User not found" });
-    }
-  } else {
-    res.status(400).json({ message: "Bad Request" });
-  }
-});
+  },
+);
 
 //update user info
-userRouter.post("/updateUser", async (req: Request, res: Response) => {
-  const {
-    firstName,
-    lastName,
-    email,
-    oldPassword,
-    newPassword,
-    id,
-    cocktailId,
-    flavourIds,
-    insightId,
-  }: {
-    firstName: string | undefined;
-    lastName: string | undefined;
-    email: string | undefined;
-    oldPassword: string | undefined;
-    newPassword: string | undefined;
-    id: number | undefined;
-    cocktailId: string | undefined;
-    flavourIds: number[] | undefined;
-    insightId: string | undefined;
-  } = req.body;
-  if (id) {
+userRouter.post(
+  "/updateUser",
+  body("id").notEmpty().isNumeric(),
+  body("email").isEmail(),
+  body(["cocktailId", "insightId"]).isNumeric(),
+  async (req: Request, res: Response) => {
+    const {
+      firstName,
+      lastName,
+      email,
+      oldPassword,
+      newPassword,
+      id,
+      cocktailId,
+      flavourIds,
+      insightId,
+    } = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     if (cocktailId) {
       //add cocktail to favouriteCocktails
       try {
@@ -227,16 +212,14 @@ userRouter.post("/updateUser", async (req: Request, res: Response) => {
       } catch (error: any) {
         return res.status(400).json({ message: error.message });
       }
-    } else {
-      //if no id is provided
-      return res.status(400).json({ message: "Bad Request" });
     }
-  }
-});
+  },
+);
 
 userRouter.post(
   "/updateUser/profileImage",
   upload.single("profileImage"),
+
   async (req: Request, res: Response) => {
     const { id, profileImage }: { id: string | number; profileImage: any } =
       req.body;
@@ -267,19 +250,19 @@ userRouter.post(
   },
 );
 
-userRouter.delete("/user", async (req: Request, res: Response) => {
-  const { deleteUser } = req.query;
-  const {
-    id,
-    likedFlavours,
-  }: {
-    id: string;
-    likedFlavours: string[] | undefined;
-  } = req.body;
-  if (id) {
+userRouter.delete(
+  "/user",
+  body("id").notEmpty().isNumeric(),
+  async (req: Request, res: Response) => {
+    const { deleteUser } = req.query;
+    const { id, likedFlavours } = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     //delete the user
     if (deleteUser == "true") {
-      const user = await UserController.deleteUser(parseInt(id as string, 10));
+      const user = await UserController.deleteUser(id);
       if (user) {
         return res.status(200).json({ message: "User deleted" });
       } else {
@@ -289,7 +272,7 @@ userRouter.delete("/user", async (req: Request, res: Response) => {
       //remove liked flavour from liked flavours
       const user = await UserController.deleteUserLikedFlavour(
         parseInt(id as string, 10),
-        likedFlavours.map((id) => parseInt(id as string, 10)),
+        likedFlavours,
       );
       if (user) {
         return res.status(200).json({
@@ -308,7 +291,5 @@ userRouter.delete("/user", async (req: Request, res: Response) => {
         return res.status(404).json({ message: "User not found" });
       }
     }
-  } else {
-    return res.status(400).json({ message: "Bad Request" });
-  }
-});
+  },
+);

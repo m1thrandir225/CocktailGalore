@@ -11,67 +11,96 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../controllers/authController";
-import * as jwt from "jsonwebtoken";
-import verifyToken from "../middleware/verifyToken";
+import { body, validationResult } from "express-validator";
 
 const authRouter = express.Router();
 
-authRouter.post("/login", async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  console.log(email, password);
-  if (email && password) {
-    const user = await getUserByEmail(email);
-    if (user) {
-      if (user.password == password) {
-        const accessToken = generateAccessToken({ email: user.email });
-        const refreshToken = generateRefreshToken({ email: user.email });
-        setUserRequestToken(user.id, refreshToken);
-        res.json({
-          accessToken,
-          refreshToken,
-          user: {
-            id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            profileImage: user.profileImage,
-            likedFlavours: user.likedFlavours,
-            favouriteCocktails: user.favouriteCocktails,
-            readInsights: user.readInsights,
-          },
-        });
+authRouter.post(
+  "/login",
+  body("email").isEmail().normalizeEmail(),
+  body("password").isLength({ min: 5 }),
+  async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    if (email && password) {
+      const user = await getUserByEmail(email);
+      if (user) {
+        if (user.password == password) {
+          const accessToken = generateAccessToken({ email: user.email });
+          const refreshToken = generateRefreshToken({ email: user.email });
+          setUserRequestToken(user.id, refreshToken);
+          res.json({
+            accessToken,
+            refreshToken,
+            user: {
+              id: user.id,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              email: user.email,
+              profileImage: user.profileImage,
+              likedFlavours: user.likedFlavours,
+              favouriteCocktails: user.favouriteCocktails,
+              readInsights: user.readInsights,
+            },
+          });
+        } else {
+          return res.status(404).json({ message: "Invalid password" });
+        }
       } else {
-        return res.status(404).json({ message: "Invalid password" });
+        return res
+          .status(404)
+          .json({ message: "User not found, invalid email" });
       }
     } else {
-      return res.status(404).json({ message: "User not found, invalid email" });
+      return res.status(404).json({ message: "No email or password provided" });
     }
-  } else {
-    return res.status(404).json({ message: "No email or password provided" });
-  }
-});
+  },
+);
 
-authRouter.post("/logout", async (req: Request, res: Response) => {
-  //users has to have an access token to logout as well as their id in the body
-  const id = parseInt(req.body.id as string, 10);
-  if (id) {
-    const user = await getUser(id);
-    if (user) {
-      deleteUserRequestToken(user.id);
-      res.json({ message: "User logged out" });
+authRouter.post(
+  "/logout",
+  body("id").notEmpty().isNumeric(),
+  async (req: Request, res: Response) => {
+    //users has to have an access token to logout as well as their id in the body
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { id } = req.body;
+    if (id) {
+      const user = await getUser(id);
+      if (user) {
+        deleteUserRequestToken(user.id);
+        res.json({ message: "User logged out" });
+      } else {
+        return res.status(404).json({ message: "User not found" });
+      }
     } else {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "No id provided" });
     }
-  } else {
-    return res.status(404).json({ message: "No id provided" });
-  }
-});
+  },
+);
 
-authRouter.post("/register", async (req: Request, res: Response) => {
-  const { firstName, lastName, email, password } = req.body;
-  console.log(req.body);
-  if (firstName && lastName && email && password) {
-    const newUser = await createUser({ firstName, lastName, email, password });
+authRouter.post(
+  "/register",
+  body(["firstName", "lastName", "email", "password"]).notEmpty(),
+  body("email").isEmail(),
+  body("password").isLength({ min: 5 }),
+  async (req: Request, res: Response) => {
+    const { firstName, lastName, email, password } = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const newUser = await createUser({
+      firstName,
+      lastName,
+      email,
+      password,
+    });
     if (newUser) {
       try {
         const accessToken = generateAccessToken({ email: newUser.email });
@@ -97,10 +126,8 @@ authRouter.post("/register", async (req: Request, res: Response) => {
     } else {
       return res.status(409).json({ message: "User already exists" });
     }
-  } else {
-    return res.status(500).json({ message: "Not enough information provided" });
-  }
-});
+  },
+);
 
 authRouter.post("/refresh_token", async (req: Request, res: Response) => {
   const { email, refreshToken } = req.body;
