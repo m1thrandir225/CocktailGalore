@@ -52,8 +52,8 @@ userRouter.post(
 userRouter.post(
   "/updateUser",
   body("id").notEmpty().isNumeric(),
-  body("email").isEmail(),
-  body(["cocktailId", "insightId"]).isNumeric(),
+  body("email").isEmail().optional(),
+  body(["cocktailId", "insightId"]).isNumeric().optional(),
   async (req: Request, res: Response) => {
     const {
       firstName,
@@ -99,7 +99,10 @@ userRouter.post(
     } else if (flavourIds) {
       //add flavour to likedFlavours
       try {
-        const user = await UserController.addUserLikedFlavour(id, flavourIds);
+        const user = await UserController.addUserLikedFlavour(
+          id,
+          flavourIds.map((id: string) => parseInt(id as string, 10)),
+        );
         if (user) {
           return res.status(200).json({
             user: {
@@ -219,7 +222,6 @@ userRouter.post(
 userRouter.post(
   "/updateUser/profileImage",
   upload.single("profileImage"),
-
   async (req: Request, res: Response) => {
     const { id, profileImage }: { id: string | number; profileImage: any } =
       req.body;
