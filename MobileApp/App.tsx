@@ -2,9 +2,10 @@ import { StyleSheet, Text, View, Image } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Navigation from "./navigation";
 import { Asset } from "expo-asset";
-import { AuthProvider } from "./context/AuthContext";
 import React from "react";
 import * as SplashScreen from "expo-splash-screen";
+import * as SecureStore from "expo-secure-store";
+
 function cacheImages(images: any) {
   return images.map((image: any) => {
     if (typeof image == "string") {
@@ -34,7 +35,7 @@ export default function App() {
         console.warn(error);
       } finally {
         setAppReady(true);
-        SplashScreen.hideAsync();
+        await SplashScreen.hideAsync();
       }
     }
     loadAssetsAsync();
@@ -44,10 +45,8 @@ export default function App() {
     return null;
   }
   return (
-    <AuthProvider>
-      <SafeAreaProvider>
-        <Navigation />
-      </SafeAreaProvider>
-    </AuthProvider>
+    <SafeAreaProvider>
+      <Navigation />
+    </SafeAreaProvider>
   );
 }

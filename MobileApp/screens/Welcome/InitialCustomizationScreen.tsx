@@ -97,9 +97,9 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
           },
         },
       );
-      const json = await JSON.stringify(response.body, null, 4);
-      const data = await JSON.parse(json);
-      state?.updateUserData(data.user);
+      console.log(JSON.parse(response.body));
+      console.log(state?.user?.id);
+      //state?.updateUserData(data.user);
     } catch (error: any) {
       state?.setError(error.message);
     } finally {
@@ -180,9 +180,9 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
         </View>
         <Pressable
           style={[styles.discoverButton, { marginTop: 50, marginBottom: 80 }]}
-          onPress={() => {
-            sendFlavourData();
-            sendProfilePictureData();
+          onPress={async () => {
+            await sendFlavourData();
+            await sendProfilePictureData();
           }}
         >
           <Text style={[styles.discoverButtonText]}> Discover </Text>
