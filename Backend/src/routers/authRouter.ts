@@ -86,11 +86,12 @@ authRouter.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
+    const hashedPassword = await AuthController.hashPassword(password);
     const newUser = await UserController.createUser({
       firstName,
       lastName,
       email,
-      password,
+      password: hashedPassword,
     });
     if (!newUser) {
       return res.status(500).json({ message: "User already exists" });
