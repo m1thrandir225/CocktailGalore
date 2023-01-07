@@ -1,32 +1,23 @@
 import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  TextInput,
-  Image,
-  NativeSyntheticEvent,
-  TextInputChangeEventData,
-} from "react-native";
-import React from "react";
+  Montserrat_400Regular,
+  Montserrat_600SemiBold,
+} from "@expo-google-fonts/montserrat";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { StackScreenProps } from "@react-navigation/stack";
-import { AuthParamList } from "../../navigation/navigationTypes";
+import { useFonts } from "expo-font";
+import React from "react";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch } from "react-redux";
+import InputBox from "../../components/Reusable/InputBox";
 import {
   AlmostDark,
   AlmostWhite,
   RedLight,
 } from "../../constants/globalStyles";
-import { useFonts } from "expo-font";
-import {
-  Montserrat_600SemiBold,
-  Montserrat_400Regular,
-} from "@expo-google-fonts/montserrat";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import { ScrollView } from "react-native-gesture-handler";
-import InputBox from "../../components/Reusable/InputBox";
+import { AuthParamList } from "../../navigation/navigationTypes";
 import { useLoginMutation } from "../../redux/api/authApiSlice";
-import { useDispatch } from "react-redux";
 import { setCredentials } from "../../redux/slices/authSlice";
 
 type NavigationProps = StackScreenProps<AuthParamList, "Login">;

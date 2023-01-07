@@ -1,30 +1,28 @@
 import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  TextInput,
-  Image,
-  NativeSyntheticEvent,
-  TextInputChangeEventData,
-} from "react-native";
-import React from "react";
+  Montserrat_400Regular,
+  Montserrat_600SemiBold,
+} from "@expo-google-fonts/montserrat";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { StackScreenProps } from "@react-navigation/stack";
-import { AuthParamList } from "../../navigation/navigationTypes";
+import { useFonts } from "expo-font";
+import React from "react";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch, useSelector } from "react-redux";
+import InputBox from "../../components/Reusable/InputBox";
 import {
   AlmostDark,
   AlmostWhite,
   RedLight,
 } from "../../constants/globalStyles";
-import { useFonts } from "expo-font";
+import { AuthParamList } from "../../navigation/navigationTypes";
 import {
-  Montserrat_600SemiBold,
-  Montserrat_400Regular,
-} from "@expo-google-fonts/montserrat";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import { ScrollView } from "react-native-gesture-handler";
-import InputBox from "../../components/Reusable/InputBox";
+  selectCurrentUser,
+  setCredentials,
+} from "../../redux/slices/authSlice";
+import { useRegisterMutation } from "../../redux/api/authApiSlice";
+import store from "../../redux/store/store";
 
 type NavigationProps = StackScreenProps<AuthParamList, "Signup">;
 
@@ -33,6 +31,24 @@ const LoginScreen = ({ navigation, route }: NavigationProps) => {
   const [lastName, setLsatName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [register, { isLoading, error }] = useRegisterMutation();
+
+  const dispatch = useDispatch();
+
+  const handleRegister = async () => {
+    try {
+      const result = await register({
+        firstName,
+        lastName,
+        email,
+        password,
+      }).unwrap();
+      dispatch(setCredentials({ ...result }));
+      navigation.navigate("Overview");
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
 
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
@@ -80,9 +96,7 @@ const LoginScreen = ({ navigation, route }: NavigationProps) => {
         />
         <Pressable
           style={styles.continueButton}
-          onPress={() => {
-            navigation.navigate("Overview");
-          }}
+          onPress={() => handleRegister()}
         >
           <Text style={styles.continueButtonText}> Continue </Text>
         </Pressable>

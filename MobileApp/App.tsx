@@ -7,8 +7,9 @@ import * as SplashScreen from "expo-splash-screen";
 
 import * as SecureStore from "expo-secure-store";
 
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import { store } from "./redux/store/store";
+import { setCredentials } from "./redux/slices/authSlice";
 
 function cacheImages(images: any) {
   return images.map((image: any) => {
@@ -22,6 +23,7 @@ function cacheImages(images: any) {
 
 export default function App() {
   const [appReady, setAppReady] = React.useState(false);
+
   React.useEffect(() => {
     async function loadAssetsAsync() {
       try {
