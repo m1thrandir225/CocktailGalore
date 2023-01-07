@@ -1,21 +1,31 @@
-import path from "path";
 import type { Request, Response } from "express";
 import express from "express";
-import multer from "multer";
-import * as UserController from "../controllers/userController";
 import { body, validationResult } from "express-validator";
-
+import multer from "multer";
+import { v4 as uuid } from "uuid";
+import * as UserController from "../controllers/userController";
+import { s3Delete, s3Uplaod } from "./../utils/s3Service";
 export const userRouter = express.Router();
 
-const storage = multer.diskStorage({
-  destination: function (req, res, cb) {
-    cb(null, "./public");
-  },
-  filename: function (req, res, cb) {
-    cb(null, Date.now() + res.originalname);
-  },
-});
-const upload = multer({ storage: storage });
+// const storage = multer.diskStorage({
+//   destination: function (req, res, cb) {
+//     cb(null, "./public");
+//   },
+//   filename: function (req, res, cb) {
+//     cb(null, Date.now() + res.originalname);
+//   },
+// });
+
+const storage = multer.memoryStorage();
+
+const fileFilter = (req: any, file: any, cb: any) => {
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+const upload = multer({ storage: storage, fileFilter: fileFilter });
 
 //get user data
 userRouter.post(
@@ -222,14 +232,24 @@ userRouter.post(
 userRouter.post(
   "/updateUser/profileImage",
   upload.single("profileImage"),
+  body("id").notEmpty().isNumeric(),
+  body("profileImage").notEmpty(),
   async (req: Request, res: Response) => {
     const { id, profileImage }: { id: string | number; profileImage: any } =
       req.body;
-    if (!id) {
-      return res.status(400).json({ message: "Bad Request" });
-    }
-    const newProfileImage = req.file?.filename;
     try {
+      //first check if user has a profile image, if it has delete it on s3 then update the user profile image and upload the new image to s3
+      const user = await UserController.getUser(parseInt(id as string, 10));
+      if (user?.profileImage !== null && user?.profileImage !== undefined) {
+        const deletedImage = await s3Delete(
+          user?.profileImage,
+          "userProfileImages",
+        );
+      }
+      const imageFile = req.file;
+      const newProfileImage = uuid() + imageFile?.originalname;
+      const imgResult = await s3Uplaod(req.file, "userProfileImages");
+
       const updatedUser = await UserController.updateUserProfileImage(
         parseInt(id as string, 10),
         newProfileImage,

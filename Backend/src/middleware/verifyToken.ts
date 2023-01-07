@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as jwt from "jsonwebtoken";
+
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers["authorization"]?.split(" ");
   if (typeof authHeader !== "undefined") {
