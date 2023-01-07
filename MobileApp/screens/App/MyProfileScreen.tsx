@@ -21,15 +21,16 @@ import { useFonts } from "expo-font";
 import { Montserrat_600SemiBold } from "@expo-google-fonts/montserrat";
 import { FlatList } from "react-native-gesture-handler";
 import CocktailCard from "../../components/Main/CocktailCard";
-import { AuthContext } from "../../context/AuthContext";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../redux/slices/authSlice";
 
 type NavigationProps = DrawerScreenProps<AppParamList, "MyProfile">;
 
 const MyProfileScreen = ({ navigation, route }: NavigationProps) => {
-  const state = React.useContext(AuthContext);
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
   });
+  const currentUser = useSelector(selectCurrentUser);
   if (!fontsLoaded) {
     return null;
   }
@@ -89,15 +90,15 @@ const MyProfileScreen = ({ navigation, route }: NavigationProps) => {
               source={{
                 uri:
                   "https://galore-cocktails-more-production.up.railway.app/" +
-                  state?.user?.profileImage,
+                  currentUser?.profileImage,
               }}
               style={styles.profileImage}
             />
             <View style={{ paddingHorizontal: 21 }}>
               <Text style={styles.profileName}>
-                {state?.user?.firstName + " " + state?.user?.lastName}
+                {currentUser?.firstName + " " + currentUser?.lastName}
               </Text>
-              <Text style={styles.profileEmail}>{state?.user?.email}</Text>
+              <Text style={styles.profileEmail}>{currentUser?.email}</Text>
             </View>
             <Pressable style={styles.editButton}>
               <Feather name="edit" size={16.8} color={AlmostWhite} />

@@ -17,7 +17,6 @@ import {
   AlmostWhite,
   RedLight,
 } from "../../constants/globalStyles";
-import { AuthContext } from "../../context/AuthContext";
 import { useFonts } from "expo-font";
 import {
   Montserrat_600SemiBold,
@@ -34,7 +33,7 @@ const LoginScreen = ({ navigation, route }: NavigationProps) => {
   const [lastName, setLsatName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const state = React.useContext(AuthContext);
+
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
     Montserrat_400Regular,
@@ -82,7 +81,6 @@ const LoginScreen = ({ navigation, route }: NavigationProps) => {
         <Pressable
           style={styles.continueButton}
           onPress={() => {
-            state?.register(firstName, lastName, email, password);
             navigation.navigate("Overview");
           }}
         >

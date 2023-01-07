@@ -1,14 +1,25 @@
 import { View, Text, Pressable } from "react-native";
 import React from "react";
-import { AuthContext } from "../../context/AuthContext";
-
+import { useDispatch, useSelector } from "react-redux";
+import { useLogoutMutation } from "../../redux/api/authApiSlice";
+import { logout, selectCurrentUser } from "../../redux/slices/authSlice";
 const SettingsScreen = () => {
-  const state = React.useContext(AuthContext);
+  const [logoutMutation, { isLoading }] = useLogoutMutation();
+  const user = useSelector(selectCurrentUser);
+  const dispatch = useDispatch();
+  const handleLogout = async () => {
+    try {
+      const result = await logoutMutation({ id: user?.id }).unwrap();
+      dispatch(logout());
+    } catch (erorr: any) {
+      console.log(erorr);
+    }
+  };
   return (
     <View>
       <Text>SettingsScreen</Text>
       <Pressable
-        onPress={() => state?.logout()}
+        onPress={() => handleLogout()}
         style={{
           borderWidth: 2,
           borderColor: "black",

@@ -4,7 +4,11 @@ import Navigation from "./navigation";
 import { Asset } from "expo-asset";
 import React from "react";
 import * as SplashScreen from "expo-splash-screen";
+
 import * as SecureStore from "expo-secure-store";
+
+import { Provider } from "react-redux";
+import { store } from "./redux/store/store";
 
 function cacheImages(images: any) {
   return images.map((image: any) => {
@@ -45,8 +49,10 @@ export default function App() {
     return null;
   }
   return (
-    <SafeAreaProvider>
-      <Navigation />
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <SafeAreaProvider>
+        <Navigation />
+      </SafeAreaProvider>
+    </Provider>
   );
 }

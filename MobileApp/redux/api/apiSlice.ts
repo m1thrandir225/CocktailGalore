@@ -9,7 +9,7 @@ import {
 import { setCredentials, logout, selectAccessToken } from "../slices/authSlice";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:4000/",
+  baseUrl: "http://192.168.100.20:4000/",
   prepareHeaders: (headers, { getState }) => {
     const accessToken = (getState() as RootState).auth.accessToken;
     if (accessToken) {

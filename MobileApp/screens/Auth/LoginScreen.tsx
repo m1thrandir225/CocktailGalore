@@ -17,7 +17,6 @@ import {
   AlmostWhite,
   RedLight,
 } from "../../constants/globalStyles";
-import { AuthContext } from "../../context/AuthContext";
 import { useFonts } from "expo-font";
 import {
   Montserrat_600SemiBold,
@@ -26,17 +25,31 @@ import {
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { ScrollView } from "react-native-gesture-handler";
 import InputBox from "../../components/Reusable/InputBox";
+import { useLoginMutation } from "../../redux/api/authApiSlice";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../../redux/slices/authSlice";
 
 type NavigationProps = StackScreenProps<AuthParamList, "Login">;
 
 const LoginScreen = ({ navigation, route }: NavigationProps) => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const state = React.useContext(AuthContext);
+  const [login, { isLoading }] = useLoginMutation();
+  const dispatch = useDispatch();
+
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
     Montserrat_400Regular,
   });
+  const handleLogin = async () => {
+    try {
+      const result = await login({ email, password }).unwrap();
+      dispatch(setCredentials({ ...result }));
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
+
   if (!fontsLoaded) return null;
   return (
     <SafeAreaView style={styles.container}>
@@ -65,10 +78,7 @@ const LoginScreen = ({ navigation, route }: NavigationProps) => {
           iconColor={AlmostDark}
           isPassword
         />
-        <Pressable
-          style={styles.continueButton}
-          onPress={() => state?.login(email, password)}
-        >
+        <Pressable style={styles.continueButton} onPress={() => handleLogin()}>
           <Text style={styles.continueButtonText}> Continue </Text>
         </Pressable>
         <View style={styles.orContainer}>
