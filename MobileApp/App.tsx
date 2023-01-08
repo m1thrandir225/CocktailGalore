@@ -1,15 +1,23 @@
-import { StyleSheet, Text, View, Image } from "react-native";
+import {
+  Montserrat_400Regular,
+  Montserrat_600SemiBold,
+  Montserrat_700Bold,
+} from "@expo-google-fonts/montserrat";
+import {
+  Raleway_400Regular,
+  Raleway_600SemiBold,
+  Raleway_700Bold,
+} from "@expo-google-fonts/raleway";
+import { Asset } from "expo-asset";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import React from "react";
+import { Image, Text } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Navigation from "./navigation";
-import { Asset } from "expo-asset";
-import React from "react";
-import * as SplashScreen from "expo-splash-screen";
-
-import * as SecureStore from "expo-secure-store";
-
-import { Provider, useDispatch } from "react-redux";
-import { store } from "./redux/store/store";
-import { setCredentials } from "./redux/slices/authSlice";
+import { Provider } from "react-redux";
+import { persistor, store } from "./redux/store/store";
+import { PersistGate } from "redux-persist/integration/react";
 
 function cacheImages(images: any) {
   return images.map((image: any) => {
@@ -24,14 +32,20 @@ function cacheImages(images: any) {
 export default function App() {
   const [appReady, setAppReady] = React.useState(false);
 
+  //load fonts
+  const [fontsLoaded] = useFonts({
+    Montserrat_400Regular,
+    Montserrat_600SemiBold,
+    Montserrat_700Bold,
+    Raleway_400Regular,
+    Raleway_600SemiBold,
+    Raleway_700Bold,
+  });
+
   React.useEffect(() => {
     async function loadAssetsAsync() {
       try {
         const imageAssets = cacheImages([
-          require("./assets/cocktail-image-1.png"),
-          require("./assets/cocktail-image-2.png"),
-          require("./assets/cocktail-image-3.png"),
-          require("./assets/cocktail-image-4.png"),
           require("./assets/welcomeVideo.mp4"),
           require("./assets/logo-dark.png"),
           require("./assets/logo-light.png"),
@@ -47,14 +61,16 @@ export default function App() {
     loadAssetsAsync();
   }, []);
 
-  if (!appReady) {
+  if (!appReady || !fontsLoaded) {
     return null;
   }
   return (
     <Provider store={store}>
-      <SafeAreaProvider>
-        <Navigation />
-      </SafeAreaProvider>
+      <PersistGate loading={<Text> Loading ... </Text>} persistor={persistor}>
+        <SafeAreaProvider>
+          <Navigation />
+        </SafeAreaProvider>
+      </PersistGate>
     </Provider>
   );
 }

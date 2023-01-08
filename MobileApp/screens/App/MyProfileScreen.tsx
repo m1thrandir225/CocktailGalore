@@ -9,7 +9,6 @@ import {
 import React from "react";
 import { AppParamList } from "../../navigation/navigationTypes";
 import { DrawerScreenProps } from "@react-navigation/drawer";
-import { SafeAreaView } from "react-native-safe-area-context";
 import {
   AlmostDark,
   AlmostWhite,
@@ -17,8 +16,6 @@ import {
   RedLight,
 } from "../../constants/globalStyles";
 import Feather from "@expo/vector-icons/Feather";
-import { useFonts } from "expo-font";
-import { Montserrat_600SemiBold } from "@expo-google-fonts/montserrat";
 import { FlatList } from "react-native-gesture-handler";
 import CocktailCard from "../../components/Main/CocktailCard";
 import { useSelector } from "react-redux";
@@ -27,13 +24,7 @@ import { selectCurrentUser } from "../../redux/slices/authSlice";
 type NavigationProps = DrawerScreenProps<AppParamList, "MyProfile">;
 
 const MyProfileScreen = ({ navigation, route }: NavigationProps) => {
-  const [fontsLoaded] = useFonts({
-    Montserrat_600SemiBold,
-  });
   const currentUser = useSelector(selectCurrentUser);
-  if (!fontsLoaded) {
-    return null;
-  }
   const cocktailData = [
     {
       id: "1",

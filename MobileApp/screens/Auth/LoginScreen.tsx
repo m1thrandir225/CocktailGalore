@@ -1,10 +1,5 @@
-import {
-  Montserrat_400Regular,
-  Montserrat_600SemiBold,
-} from "@expo-google-fonts/montserrat";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { StackScreenProps } from "@react-navigation/stack";
-import { useFonts } from "expo-font";
 import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -27,11 +22,6 @@ const LoginScreen = ({ navigation, route }: NavigationProps) => {
   const [password, setPassword] = React.useState("");
   const [login, { isLoading }] = useLoginMutation();
   const dispatch = useDispatch();
-
-  const [fontsLoaded] = useFonts({
-    Montserrat_600SemiBold,
-    Montserrat_400Regular,
-  });
   const handleLogin = async () => {
     try {
       const result = await login({ email, password }).unwrap();
@@ -41,7 +31,6 @@ const LoginScreen = ({ navigation, route }: NavigationProps) => {
     }
   };
 
-  if (!fontsLoaded) return null;
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView

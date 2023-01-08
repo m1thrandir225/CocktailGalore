@@ -1,23 +1,18 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ImageSourcePropType,
-  Image,
-} from "react-native";
+import Feather from "@expo/vector-icons/Feather";
 import React from "react";
+import {
+  Image,
+  ImageSourcePropType,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import {
   AlmostDark,
   AlmostWhite,
   RedLight,
 } from "../../constants/globalStyles";
-import { useFonts } from "expo-font";
-import {
-  Montserrat_600SemiBold,
-  Montserrat_700Bold,
-} from "@expo-google-fonts/montserrat";
-import Feather from "@expo/vector-icons/Feather";
 const InsightCard = ({
   image,
   title,
@@ -31,13 +26,6 @@ const InsightCard = ({
   authorImage: ImageSourcePropType;
   isSmall?: boolean;
 }) => {
-  const [fontsLoaded] = useFonts({
-    Montserrat_600SemiBold,
-    Montserrat_700Bold,
-  });
-  if (!fontsLoaded) {
-    return null;
-  }
   if (isSmall) {
     return (
       <View style={[styles.containerSmall]}>

@@ -1,15 +1,13 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import Feather from "@expo/vector-icons/Feather";
 import React from "react";
-import { Flavour } from "../../constants/globalTypes";
+import { Pressable, StyleSheet, Text } from "react-native";
 import {
   AlmostDark,
   AlmostWhite,
   RedDark,
   RedLight,
 } from "../../constants/globalStyles";
-import Feather from "@expo/vector-icons/Feather";
-import { useFonts } from "expo-font";
-import { Raleway_700Bold } from "@expo-google-fonts/raleway";
+import { Flavour } from "../../constants/globalTypes";
 const FlavourButton = ({
   flavour,
   handleMyFlavour,
@@ -18,10 +16,6 @@ const FlavourButton = ({
   handleMyFlavour: (flavour: Flavour) => void;
 }) => {
   const [selected, setSelected] = React.useState(false);
-  const [fontsLoaded] = useFonts({
-    Raleway_700Bold,
-  });
-  if (!fontsLoaded) return null;
   return (
     <Pressable
       key={flavour.id}

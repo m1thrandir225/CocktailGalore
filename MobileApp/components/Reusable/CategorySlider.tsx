@@ -7,8 +7,6 @@ import {
 } from "react-native";
 import React from "react";
 import { AlmostDark, AlmostWhite } from "../../constants/globalStyles";
-import { useFonts } from "expo-font";
-import { Montserrat_600SemiBold } from "@expo-google-fonts/montserrat";
 import Category from "./Category";
 
 const CategorySlider = ({
@@ -30,9 +28,6 @@ const CategorySlider = ({
   PostIsSmall?: boolean;
   style?: any;
 }) => {
-  const [fontsLoaded] = useFonts({
-    Montserrat_600SemiBold,
-  });
   const { width } = useWindowDimensions();
 
   const [currentCategory, setCurrentCategory] = React.useState<string>(
@@ -57,9 +52,6 @@ const CategorySlider = ({
       />
     );
   };
-  if (!fontsLoaded) {
-    return null;
-  }
   return (
     <View style={[styles.container, style]}>
       <Text style={styles.title}>{title}</Text>

@@ -1,7 +1,5 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import React, { SetStateAction } from "react";
-import { useFonts } from "expo-font";
-import { Montserrat_400Regular } from "@expo-google-fonts/montserrat";
 import {
   AlmostWhite,
   AlmostDark,

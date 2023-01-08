@@ -28,21 +28,19 @@ const auhtSlice = createSlice({
   reducers: {
     setCredentials(state, action) {
       const { user, accessToken, refreshToken, firstTime } = action.payload;
-      state.user = user;
-      state.accessToken = accessToken;
-      state.refreshToken = refreshToken;
-      state.firstTime = firstTime;
       if (user) {
-        storeToSecureStore("user", JSON.stringify(user));
+        state.user = user;
       }
       if (accessToken) {
-        storeToSecureStore("accessToken", accessToken);
+        state.accessToken = accessToken;
       }
       if (refreshToken) {
-        storeToSecureStore("refreshToken", refreshToken);
+        state.refreshToken = refreshToken;
       }
+
       if (firstTime) {
-        storeToSecureStore("firstTime", JSON.stringify(firstTime));
+        state.firstTime = firstTime;
+        console.log(firstTime);
       }
     },
     logout(state) {
@@ -50,9 +48,10 @@ const auhtSlice = createSlice({
       state.accessToken = null;
       state.refreshToken = null;
       state.firstTime = true;
-      deleteFromSecureStore("user");
-      deleteFromSecureStore("accessToken");
-      deleteFromSecureStore("refreshToken");
+      async () => {
+        await SecureStore.deleteItemAsync("refreshToken");
+        await SecureStore.deleteItemAsync("newUser");
+      };
     },
   },
 });

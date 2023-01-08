@@ -1,43 +1,16 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  FlatList,
-  Dimensions,
-  Pressable,
-} from "react-native";
-import React from "react";
 import { DrawerScreenProps } from "@react-navigation/drawer";
-import { AppParamList } from "../../navigation/navigationTypes";
-import {
-  AlmostDark,
-  AlmostWhite,
-  RedLight,
-} from "../../constants/globalStyles";
-import {
-  Raleway_700Bold,
-  Raleway_600SemiBold,
-} from "@expo-google-fonts/raleway";
-import { useFonts } from "expo-font";
-import { Montserrat_600SemiBold } from "@expo-google-fonts/montserrat";
-import HomeTitle from "../../components/Main/HomeTitle";
-import Slider from "../../components/Main/Slider";
-import InsightCard from "../../components/Main/InsightCard";
+import React from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import CocktailCard from "../../components/Main/CocktailCard";
-import { AuthContext } from "../../context/AuthContext";
+import HomeTitle from "../../components/Main/HomeTitle";
+import InsightCard from "../../components/Main/InsightCard";
+import Slider from "../../components/Main/Slider";
+import { AlmostDark, AlmostWhite } from "../../constants/globalStyles";
+import { AppParamList } from "../../navigation/navigationTypes";
 
 type NavigationProps = DrawerScreenProps<AppParamList, "Home">;
 
 const HomeScreen = ({ navigation, route }: NavigationProps) => {
-  const [fontsLoaded] = useFonts({
-    Raleway_700Bold,
-    Raleway_600SemiBold,
-    Montserrat_600SemiBold,
-  });
-  if (!fontsLoaded) {
-    return null;
-  }
   const cocktailData = [
     {
       id: "1",

@@ -9,18 +9,19 @@ import {
   RedDark,
   RedLight,
 } from "../../constants/globalStyles";
-import { useFonts } from "expo-font";
-import { Raleway_600SemiBold } from "@expo-google-fonts/raleway";
-import {
-  Montserrat_700Bold,
-  Montserrat_600SemiBold,
-} from "@expo-google-fonts/montserrat";
 import * as ImagePicker from "expo-image-picker";
 import type { Flavour } from "../../constants/globalTypes";
 import FlavourButton from "../../components/Reusable/FlavourButton";
 import { StackScreenProps } from "@react-navigation/stack";
 import { AuthParamList } from "../../navigation/navigationTypes";
 import * as FileSystem from "expo-file-system";
+import { useUpdateUserMutation } from "../../redux/api/userApiSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectCurrentUser,
+  setCredentials,
+  setFirstTime,
+} from "../../redux/slices/authSlice";
 
 type NavigationProps = StackScreenProps<AuthParamList, "InitialCustomization">;
 
@@ -29,11 +30,10 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
   const [myFlavours, setMyFlavours] = React.useState<Flavour[] | null>(null);
   const [profilePicture, setProfilePicture] = React.useState<any>(null);
   const [profilePictureUri, setProfilePictureUri] = React.useState<any>(null);
-  const [fontsLoaded] = useFonts({
-    Raleway_600SemiBold,
-    Montserrat_700Bold,
-    Montserrat_600SemiBold,
-  });
+  const [error, setError] = React.useState(null);
+  const [updateUser, { isError }] = useUpdateUserMutation();
+  const user = useSelector(selectCurrentUser);
+  const dispatch = useDispatch();
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -53,77 +53,60 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
       setMyFlavours([...(myFlavours ?? []), flavour]);
     }
   };
-  // const sendFlavourData = async () => {
-  //   try {
-  //     const myFlavoursUpdateRes = await fetch(
-  //       "https://galore-cocktails-more-production.up.railway.app/users/updateUser",
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           id: state?.user?.id,
-  //           flavourIds: myFlavours?.map((f) => f.id),
-  //         }),
-  //       },
-  //     );
-  //     const myFlavoursUpdateData = await myFlavoursUpdateRes.json();
-  //     state?.updateUserData(myFlavoursUpdateData.user);
-  //   } catch (error: any) {
-  //     console.log(error);
-  //   } finally {
-  //     state?.setLoading(false);
-  //   }
-  // };
-  // const sendProfilePictureData = async () => {
-  //   try {
-  //     state?.setLoading(true);
-  //     const response = await FileSystem.uploadAsync(
-  //       "https://galore-cocktails-more-production.up.railway.app/users/updateUser/profileImage",
-  //       profilePictureUri,
-  //       {
-  //         httpMethod: "POST",
-  //         uploadType: FileSystem.FileSystemUploadType.MULTIPART,
-  //         fieldName: "profileImage",
-  //         headers: {
-  //           "Content-Type": "multipart/form-data",
-  //         },
-  //         parameters: {
-  //           id: JSON.stringify(state?.user?.id),
-  //         },
-  //       },
-  //     );
-  //     console.log(JSON.parse(response.body));
-  //     console.log(state?.user?.id);
-  //     //state?.updateUserData(data.user);
-  //   } catch (error: any) {
-  //     state?.setError(error.message);
-  //   } finally {
-  //     state?.setLoading(false);
-  //     state?.setNewUser(false);
-  //   }
-  // };
-  // React.useEffect(() => {
-  //   const getFlavours = async () => {
-  //     state?.setLoading(true);
-  //     try {
-  //       const response = await fetch(
-  //         "https://galore-cocktails-more-production.up.railway.app/flavours",
-  //       );
-  //       const data = await response.json();
-  //       setFlavours(data.flavours);
-  //     } catch (error) {
-  //       console.log(error);
-  //     } finally {
-  //       state?.setLoading(false);
-  //     }
-  //   };
-  //   if (flavours == null) {
-  //     getFlavours();
-  //   }
-  // }, [flavours]);
-  if (!fontsLoaded) return null;
+  const handleContinue = async () => {
+    if (myFlavours?.length !== 0) {
+      try {
+        const myFlavoursUpdateResult = await updateUser({
+          id: user?.id,
+          flavourIds: myFlavours?.map((f) => f.id),
+        }).unwrap();
+        dispatch(setCredentials(myFlavoursUpdateResult));
+      } catch (error: any) {
+        setError(error);
+      }
+    }
+    if (profilePictureUri) {
+      try {
+        const response = await FileSystem.uploadAsync(
+          "http://192.168.100.20:4000/users/updateUser/profileImage",
+          profilePictureUri,
+          {
+            httpMethod: "POST",
+            uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+            fieldName: "profileImage",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "multipart/form-data",
+            },
+            parameters: {
+              id: JSON.stringify(user?.id),
+            },
+          },
+        );
+        const data = await JSON.parse(response.body);
+        dispatch(setCredentials({ ...data }));
+      } catch (error: any) {
+        setError(error);
+      } finally {
+        console.log("finally");
+        dispatch(setFirstTime(false));
+      }
+    }
+  };
+  React.useEffect(() => {
+    const getFlavours = async () => {
+      try {
+        const response = await fetch("http://192.168.100.20:4000/flavours");
+        const data = await response.json();
+        setFlavours(data.flavours);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (flavours == null) {
+      getFlavours();
+    }
+  }, [flavours]);
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -176,7 +159,7 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
         </View>
         <Pressable
           style={[styles.discoverButton, { marginTop: 50, marginBottom: 80 }]}
-          onPress={async () => {}}
+          onPress={() => handleContinue()}
         >
           <Text style={[styles.discoverButtonText]}> Discover </Text>
           <Feather name="chevron-right" size={24} color={AlmostWhite} />

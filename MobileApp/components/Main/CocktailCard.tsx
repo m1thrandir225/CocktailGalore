@@ -7,8 +7,6 @@ import {
   StyleSheet,
 } from "react-native";
 import React from "react";
-import { useFonts } from "expo-font";
-import { Montserrat_600SemiBold } from "@expo-google-fonts/montserrat";
 import {
   AlmostDark,
   AlmostWhite,

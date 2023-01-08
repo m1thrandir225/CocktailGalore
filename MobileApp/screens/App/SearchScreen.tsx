@@ -1,28 +1,17 @@
+import Feather from "@expo/vector-icons/Feather";
+import React from "react";
 import {
-  View,
-  Text,
-  ScrollView,
   Pressable,
+  ScrollView,
   StyleSheet,
+  Text,
   TextInput,
 } from "react-native";
-import React from "react";
-import { AlmostDark, AlmostWhite } from "../../constants/globalStyles";
-import Feather from "@expo/vector-icons/Feather";
-import { useFonts } from "expo-font";
-import {
-  Montserrat_400Regular,
-  Montserrat_600SemiBold,
-} from "@expo-google-fonts/montserrat";
-import CategorySlider from "../../components/Reusable/CategorySlider";
 import CocktailCard from "../../components/Main/CocktailCard";
-import Category from "../../components/Reusable/Category";
 import InsightCard from "../../components/Main/InsightCard";
+import CategorySlider from "../../components/Reusable/CategorySlider";
+import { AlmostDark, AlmostWhite } from "../../constants/globalStyles";
 const SearchScreen = () => {
-  const [fontsLoaded] = useFonts({
-    Montserrat_400Regular,
-  });
-  if (!fontsLoaded) return null;
   const categories = [
     {
       title: "Cocktails",

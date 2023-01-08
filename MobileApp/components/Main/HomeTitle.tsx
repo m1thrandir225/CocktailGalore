@@ -1,9 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import { AlmostDark, RedLight } from "../../constants/globalStyles";
-import { useFonts } from "expo-font";
-import { Montserrat_600SemiBold } from "@expo-google-fonts/montserrat";
-import { Raleway_600SemiBold } from "@expo-google-fonts/raleway";
 
 const HomeTitle = ({
   title,
@@ -12,13 +9,6 @@ const HomeTitle = ({
   title: string;
   subtitle: string;
 }) => {
-  const [loaded] = useFonts({
-    Montserrat_600SemiBold,
-    Raleway_600SemiBold,
-  });
-  if (!loaded) {
-    return null;
-  }
   return (
     <View style={{ marginTop: 25 }}>
       <View style={styles.container}>

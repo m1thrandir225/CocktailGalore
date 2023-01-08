@@ -10,13 +10,7 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StackScreenProps } from "@react-navigation/stack";
 import { WelcomeParamList } from "../../navigation/navigationTypes";
-import { Video, AVPlaybackStatus, ResizeMode } from "expo-av";
-import { useFonts } from "expo-font";
-import { Raleway_700Bold } from "@expo-google-fonts/raleway";
-import {
-  Montserrat_700Bold,
-  Montserrat_600SemiBold,
-} from "@expo-google-fonts/montserrat";
+import { Video, ResizeMode } from "expo-av";
 import { AlmostWhite, RedLight } from "../../constants/globalStyles";
 import { useSelector } from "react-redux";
 import {
@@ -28,16 +22,11 @@ import {
 type NavigationProps = StackScreenProps<WelcomeParamList, "Welcome">;
 
 const WelcomeScreen = ({ navigation, route }: NavigationProps) => {
-  const [isLoaded, SetIsLoaded] = React.useState(false);
+  const [isLoaded, SetIsLoaded] = React.useState<boolean | null>(null);
   const user = useSelector(selectCurrentUser);
   const accessToken = useSelector(selectAccessToken);
   const refreshToken = useSelector(selectRefreshToken);
   const firstTime = useSelector(selectFirstTime);
-  const [fontsLoaded] = useFonts({
-    Raleway_700Bold,
-    Montserrat_700Bold,
-    Montserrat_600SemiBold,
-  });
 
   const video = React.useRef(null);
   React.useEffect(() => {
@@ -50,21 +39,20 @@ const WelcomeScreen = ({ navigation, route }: NavigationProps) => {
       navigation.navigate("AuthStack", { screen: "Overview" });
     }
   }, []);
-  if (!fontsLoaded) return null;
-  if (!isLoaded) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignContent: "center",
-          backgroundColor: AlmostWhite,
-        }}
-      >
-        <ActivityIndicator size="large" color={RedLight} />
-      </View>
-    );
-  }
+  // if (!isLoaded) {
+  //   return (
+  //     <View
+  //       style={{
+  //         flex: 1,
+  //         justifyContent: "center",
+  //         alignContent: "center",
+  //         backgroundColor: AlmostWhite,
+  //       }}
+  //     >
+  //       <ActivityIndicator size="large" color={RedLight} />
+  //     </View>
+  //   );
+  // }
   return (
     <SafeAreaView style={style.container}>
       <Video

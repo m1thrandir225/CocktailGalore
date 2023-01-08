@@ -1,15 +1,10 @@
-import {
-  Montserrat_400Regular,
-  Montserrat_600SemiBold,
-} from "@expo-google-fonts/montserrat";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { StackScreenProps } from "@react-navigation/stack";
-import { useFonts } from "expo-font";
 import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import InputBox from "../../components/Reusable/InputBox";
 import {
   AlmostDark,
@@ -17,12 +12,8 @@ import {
   RedLight,
 } from "../../constants/globalStyles";
 import { AuthParamList } from "../../navigation/navigationTypes";
-import {
-  selectCurrentUser,
-  setCredentials,
-} from "../../redux/slices/authSlice";
 import { useRegisterMutation } from "../../redux/api/authApiSlice";
-import store from "../../redux/store/store";
+import { setCredentials } from "../../redux/slices/authSlice";
 
 type NavigationProps = StackScreenProps<AuthParamList, "Signup">;
 
@@ -50,11 +41,6 @@ const LoginScreen = ({ navigation, route }: NavigationProps) => {
     }
   };
 
-  const [fontsLoaded] = useFonts({
-    Montserrat_600SemiBold,
-    Montserrat_400Regular,
-  });
-  if (!fontsLoaded) return null;
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView

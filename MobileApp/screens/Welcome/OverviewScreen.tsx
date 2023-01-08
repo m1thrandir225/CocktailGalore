@@ -8,9 +8,6 @@ import {
 } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useFonts } from "expo-font";
-import { Montserrat_700Bold } from "@expo-google-fonts/montserrat";
-import { Raleway_400Regular } from "@expo-google-fonts/raleway";
 import {
   AlmostDark,
   AlmostWhite,
@@ -21,13 +18,6 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { AuthParamList } from "../../navigation/navigationTypes";
 type NavigationProps = StackScreenProps<AuthParamList, "Overview">;
 const OverviewScreen = ({ navigation, route }: NavigationProps) => {
-  const [fontsLoaded] = useFonts({
-    Montserrat_700Bold,
-    Raleway_400Regular,
-  });
-  if (!fontsLoaded) {
-    return null;
-  }
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.container}>

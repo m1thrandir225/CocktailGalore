@@ -1,18 +1,20 @@
-import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
-import React, { useContext } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import WelcomeNavigation from "./Welcome/WelcomeNavigation";
-import RootNavigation from "./App/RootNavigation";
+
+import * as SecureStore from "expo-secure-store";
+import React from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import { AlmostWhite, RedLight } from "../constants/globalStyles";
 import {
-  selectCurrentUser,
   selectAccessToken,
+  selectCurrentUser,
+  selectFirstTime,
   selectRefreshToken,
   setCredentials,
-  selectFirstTime,
 } from "../redux/slices/authSlice";
-import { useDispatch, useSelector } from "react-redux";
-import * as SecureStore from "expo-secure-store";
+import RootNavigation from "./App/RootNavigation";
+import WelcomeNavigation from "./Welcome/WelcomeNavigation";
+
 const Navigation = () => {
   const user = useSelector(selectCurrentUser);
   const accessToken = useSelector(selectAccessToken);
@@ -20,34 +22,28 @@ const Navigation = () => {
   const firstTime = useSelector(selectFirstTime);
   const dispatch = useDispatch();
   const [loading, setLoading] = React.useState(false);
-  React.useEffect(() => {
-    const setInitialData = async () => {
-      setLoading(true);
-      try {
-        const user = await SecureStore.getItemAsync("user");
-        const accessToken = await SecureStore.getItemAsync("accessToken");
-        const refreshToken = await SecureStore.getItemAsync("refreshToken");
-        const firstTime = await SecureStore.getItemAsync("firstTime");
-        if (user && accessToken && refreshToken && firstTime) {
-          const parsedUser = JSON.parse(user);
-          const parsedFirstTime = JSON.parse(firstTime);
-          dispatch(
-            setCredentials({
-              user: parsedUser,
-              accessToken: accessToken,
-              refreshToken: refreshToken,
-              firstTime: parsedFirstTime,
-            }),
-          );
-        }
-      } catch (error: any) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    setInitialData();
-  }, []);
+
+  //fonts loading
+
+  //initial data loading
+  // React.useEffect(() => {
+  //   const setInitialData = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const refreshToken = await SecureStore.getItemAsync("refreshToken");
+  //       const firstTime = await SecureStore.getItemAsync("firstTime");
+  //       if (refreshToken && firstTime) {
+  //         const parsedFirstTime = JSON.parse(firstTime);
+  //         // dispatch(setCredentials({}));
+  //       }
+  //     } catch (error: any) {
+  //       console.log(error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   setInitialData();
+  // }, []);
   if (loading) {
     return (
       <View style={styles.container}>
