@@ -43,7 +43,7 @@ const LoginScreen = ({ navigation, route }: NavigationProps) => {
         email,
         password,
       }).unwrap();
-      dispatch(setCredentials({ ...result }));
+      dispatch(setCredentials({ ...result, firstTime: true }));
       navigation.navigate("Overview");
     } catch (error: any) {
       console.log(error);

@@ -1,4 +1,11 @@
-import { View, Text, Pressable, StyleSheet, Image } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  Image,
+  ActivityIndicator,
+} from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StackScreenProps } from "@react-navigation/stack";
@@ -11,17 +18,53 @@ import {
   Montserrat_600SemiBold,
 } from "@expo-google-fonts/montserrat";
 import { AlmostWhite, RedLight } from "../../constants/globalStyles";
+import { useSelector } from "react-redux";
+import {
+  selectAccessToken,
+  selectCurrentUser,
+  selectFirstTime,
+  selectRefreshToken,
+} from "../../redux/slices/authSlice";
 type NavigationProps = StackScreenProps<WelcomeParamList, "Welcome">;
 
 const WelcomeScreen = ({ navigation, route }: NavigationProps) => {
   const [isLoaded, SetIsLoaded] = React.useState(false);
+  const user = useSelector(selectCurrentUser);
+  const accessToken = useSelector(selectAccessToken);
+  const refreshToken = useSelector(selectRefreshToken);
+  const firstTime = useSelector(selectFirstTime);
   const [fontsLoaded] = useFonts({
     Raleway_700Bold,
     Montserrat_700Bold,
     Montserrat_600SemiBold,
   });
+
   const video = React.useRef(null);
+  React.useEffect(() => {
+    if (
+      user != null &&
+      accessToken != null &&
+      refreshToken != null &&
+      firstTime == true
+    ) {
+      navigation.navigate("AuthStack", { screen: "Overview" });
+    }
+  }, []);
   if (!fontsLoaded) return null;
+  if (!isLoaded) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignContent: "center",
+          backgroundColor: AlmostWhite,
+        }}
+      >
+        <ActivityIndicator size="large" color={RedLight} />
+      </View>
+    );
+  }
   return (
     <SafeAreaView style={style.container}>
       <Video

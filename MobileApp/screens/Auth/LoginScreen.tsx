@@ -35,7 +35,7 @@ const LoginScreen = ({ navigation, route }: NavigationProps) => {
   const handleLogin = async () => {
     try {
       const result = await login({ email, password }).unwrap();
-      dispatch(setCredentials({ ...result }));
+      dispatch(setCredentials({ ...result, firstTime: false }));
     } catch (error: any) {
       console.log(error);
     }

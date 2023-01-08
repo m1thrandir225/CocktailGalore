@@ -9,6 +9,7 @@ import {
   selectAccessToken,
   selectRefreshToken,
   setCredentials,
+  selectFirstTime,
 } from "../redux/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import * as SecureStore from "expo-secure-store";
@@ -16,6 +17,7 @@ const Navigation = () => {
   const user = useSelector(selectCurrentUser);
   const accessToken = useSelector(selectAccessToken);
   const refreshToken = useSelector(selectRefreshToken);
+  const firstTime = useSelector(selectFirstTime);
   const dispatch = useDispatch();
   const [loading, setLoading] = React.useState(false);
   React.useEffect(() => {
@@ -25,14 +27,16 @@ const Navigation = () => {
         const user = await SecureStore.getItemAsync("user");
         const accessToken = await SecureStore.getItemAsync("accessToken");
         const refreshToken = await SecureStore.getItemAsync("refreshToken");
-        if (user && accessToken && refreshToken) {
+        const firstTime = await SecureStore.getItemAsync("firstTime");
+        if (user && accessToken && refreshToken && firstTime) {
           const parsedUser = JSON.parse(user);
-
+          const parsedFirstTime = JSON.parse(firstTime);
           dispatch(
             setCredentials({
               user: parsedUser,
               accessToken: accessToken,
               refreshToken: refreshToken,
+              firstTime: parsedFirstTime,
             }),
           );
         }
@@ -51,12 +55,16 @@ const Navigation = () => {
       </View>
     );
   }
+  console.log(user, accessToken, refreshToken, firstTime);
   return (
     <NavigationContainer>
-      {user == null && accessToken == null && refreshToken == null ? (
-        <WelcomeNavigation />
-      ) : (
+      {user != null &&
+      accessToken != null &&
+      refreshToken != null &&
+      firstTime == false ? (
         <RootNavigation />
+      ) : (
+        <WelcomeNavigation />
       )}
     </NavigationContainer>
   );

@@ -13,13 +13,13 @@ interface initialState {
   user: User | null;
   accessToken: string | null;
   refreshToken: string | null;
-  newUser: boolean;
+  firstTime: boolean;
 }
-const initialState: initialState = {
+export const initialState: initialState = {
   user: null,
   accessToken: null,
   refreshToken: null,
-  newUser: true,
+  firstTime: true,
 };
 
 const auhtSlice = createSlice({
@@ -27,10 +27,11 @@ const auhtSlice = createSlice({
   initialState,
   reducers: {
     setCredentials(state, action) {
-      const { user, accessToken, refreshToken } = action.payload;
+      const { user, accessToken, refreshToken, firstTime } = action.payload;
       state.user = user;
       state.accessToken = accessToken;
       state.refreshToken = refreshToken;
+      state.firstTime = firstTime;
       if (user) {
         storeToSecureStore("user", JSON.stringify(user));
       }
@@ -40,12 +41,15 @@ const auhtSlice = createSlice({
       if (refreshToken) {
         storeToSecureStore("refreshToken", refreshToken);
       }
+      if (firstTime) {
+        storeToSecureStore("firstTime", JSON.stringify(firstTime));
+      }
     },
     logout(state) {
       state.user = null;
       state.accessToken = null;
       state.refreshToken = null;
-      state.newUser = true;
+      state.firstTime = true;
       deleteFromSecureStore("user");
       deleteFromSecureStore("accessToken");
       deleteFromSecureStore("refreshToken");
@@ -67,3 +71,6 @@ export const selectAccessToken = (state: {
 export const selectRefreshToken = (state: {
   auth: { refreshToken: string | null };
 }) => state.auth.refreshToken;
+
+export const selectFirstTime = (state: { auth: { firstTime: boolean } }) =>
+  state.auth.firstTime;
