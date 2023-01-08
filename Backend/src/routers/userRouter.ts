@@ -28,35 +28,27 @@ const fileFilter = (req: any, file: any, cb: any) => {
 const upload = multer({ storage: storage, fileFilter: fileFilter });
 
 //get user data
-userRouter.post(
-  "/user",
-  body("id").isNumeric().notEmpty(),
-  async (req: Request, res: Response) => {
-    const { id } = req.body;
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    //get user by id
-    const user = await UserController.getUser(parseInt(id as string, 10));
-    if (user) {
-      res.status(200).json({
-        user: {
-          id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          profileImage: user.profileImage,
-          likedFlavours: user.likedFlavours,
-          favouriteCocktails: user.favouriteCocktails,
-          readInsights: user.readInsights,
-        },
-      });
-    } else {
-      res.status(404).json({ message: "User not found" });
-    }
-  },
-);
+userRouter.get("/user/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+  //get user by id
+  const user = await UserController.getUser(parseInt(id as string, 10));
+  if (user) {
+    res.status(200).json({
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        profileImage: user.profileImage,
+        likedFlavours: user.likedFlavours,
+        favouriteCocktails: user.favouriteCocktails,
+        readInsights: user.readInsights,
+      },
+    });
+  } else {
+    res.status(404).json({ message: "User not found" });
+  }
+});
 
 //update user info
 userRouter.post(
@@ -64,7 +56,9 @@ userRouter.post(
   body("id").notEmpty().isNumeric(),
   body("email").isEmail().optional(),
   body(["cocktailId", "insightId"]).isNumeric().optional(),
+  body("flavourIds").isArray().isNumeric().optional(),
   async (req: Request, res: Response) => {
+    console.log(req.body);
     const {
       firstName,
       lastName,
