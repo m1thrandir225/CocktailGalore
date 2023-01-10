@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 
 export const generateAccessToken = (data: any) => {
   return jwt.sign(data, process.env.JWT_ACCESS_SECRET as string, {
-    expiresIn: "30s",
+    expiresIn: "90s",
   });
 };
 export const generateRefreshToken = (data: any) => {

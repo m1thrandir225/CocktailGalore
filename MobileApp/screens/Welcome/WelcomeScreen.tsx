@@ -1,58 +1,54 @@
+import { StackScreenProps } from "@react-navigation/stack";
+import { ResizeMode, Video } from "expo-av";
+import React from "react";
 import {
-  View,
-  Text,
+  ActivityIndicator,
+  Image,
   Pressable,
   StyleSheet,
-  Image,
-  ActivityIndicator,
+  Text,
+  View,
 } from "react-native";
-import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StackScreenProps } from "@react-navigation/stack";
-import { WelcomeParamList } from "../../navigation/navigationTypes";
-import { Video, ResizeMode } from "expo-av";
-import { AlmostWhite, RedLight } from "../../constants/globalStyles";
 import { useSelector } from "react-redux";
+import { AlmostWhite, RedLight } from "../../constants/globalStyles";
+import { WelcomeParamList } from "../../navigation/navigationTypes";
 import {
   selectAccessToken,
-  selectCurrentUser,
-  selectFirstTime,
   selectRefreshToken,
 } from "../../redux/slices/authSlice";
+import { selectUser } from "../../redux/slices/userSlice";
+
 type NavigationProps = StackScreenProps<WelcomeParamList, "Welcome">;
 
 const WelcomeScreen = ({ navigation, route }: NavigationProps) => {
   const [isLoaded, SetIsLoaded] = React.useState<boolean | null>(null);
-  const user = useSelector(selectCurrentUser);
+  const user = useSelector(selectUser);
   const accessToken = useSelector(selectAccessToken);
   const refreshToken = useSelector(selectRefreshToken);
-  const firstTime = useSelector(selectFirstTime);
 
   const video = React.useRef(null);
   React.useEffect(() => {
-    if (
-      user != null &&
-      accessToken != null &&
-      refreshToken != null &&
-      firstTime == true
-    ) {
-      navigation.navigate("AuthStack", { screen: "Overview" });
+    if (accessToken != null && refreshToken != null) {
+      if (user != null && user.likedFlavours.length == 0) {
+        navigation.navigate("AuthStack", { screen: "Overview" });
+      }
     }
   }, []);
-  // if (!isLoaded) {
-  //   return (
-  //     <View
-  //       style={{
-  //         flex: 1,
-  //         justifyContent: "center",
-  //         alignContent: "center",
-  //         backgroundColor: AlmostWhite,
-  //       }}
-  //     >
-  //       <ActivityIndicator size="large" color={RedLight} />
-  //     </View>
-  //   );
-  // }
+  if (isLoaded != null && isLoaded == false) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignContent: "center",
+          backgroundColor: AlmostWhite,
+        }}
+      >
+        <ActivityIndicator size="large" color={RedLight} />
+      </View>
+    );
+  }
   return (
     <SafeAreaView style={style.container}>
       <Video

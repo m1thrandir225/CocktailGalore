@@ -127,8 +127,10 @@ authRouter.post(
 authRouter.post(
   "/refresh_token",
   body("id").notEmpty().isNumeric(),
+  body("refreshToken").notEmpty(),
   async (req: Request, res: Response) => {
     const errors = validationResult(req);
+    console.log(req.body);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
@@ -137,16 +139,13 @@ authRouter.post(
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    if (refreshToken == user.requestToken && refreshToken != null) {
-      const accessToken = AuthController.generateAccessToken({
-        email: user.email,
-      });
-      res.status(200).json({ accessToken });
-    } else {
-      return res
-        .status(403)
-        .json({ message: "Invalid refresh token, please login again!" });
+    if (refreshToken != user.requestToken) {
+      return res.status(404).json({ message: "Invalid token" });
     }
+    const accessToken = AuthController.generateAccessToken({
+      email: user.email,
+    });
+    res.status(200).json({ accessToken });
   },
 );
 export default authRouter;

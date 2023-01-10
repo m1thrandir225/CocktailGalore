@@ -19,12 +19,12 @@ import Feather from "@expo/vector-icons/Feather";
 import { FlatList } from "react-native-gesture-handler";
 import CocktailCard from "../../components/Main/CocktailCard";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../redux/slices/authSlice";
+import { selectUser } from "../../redux/slices/userSlice";
 
 type NavigationProps = DrawerScreenProps<AppParamList, "MyProfile">;
 
 const MyProfileScreen = ({ navigation, route }: NavigationProps) => {
-  const currentUser = useSelector(selectCurrentUser);
+  const currentUser = useSelector(selectUser);
   const cocktailData = [
     {
       id: "1",
@@ -72,19 +72,36 @@ const MyProfileScreen = ({ navigation, route }: NavigationProps) => {
       image: require("../../assets/cocktail-image-4.png"),
     },
   ];
+  console.log(currentUser?.profileImage);
   return (
     <FlatList
       ListHeaderComponent={() => (
         <>
           <View style={styles.profileSection}>
-            <Image
-              source={{
-                uri:
-                  "https://galore-cocktails-more-production.up.railway.app/" +
-                  currentUser?.profileImage,
-              }}
-              style={styles.profileImage}
-            />
+            {currentUser?.profileImage === "" ? (
+              <View
+                style={[
+                  styles.profileImage,
+                  {
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: AlmostDark,
+                  },
+                ]}
+              >
+                <Feather name="user" size={35} color={RedLight} />
+              </View>
+            ) : (
+              <Image
+                source={{
+                  uri:
+                    "https://galore-mobile-bucket.s3.eu-central-1.amazonaws.com/userProfileImages/" +
+                    currentUser?.profileImage,
+                }}
+                style={styles.profileImage}
+              />
+            )}
+
             <View style={{ paddingHorizontal: 21 }}>
               <Text style={styles.profileName}>
                 {currentUser?.firstName + " " + currentUser?.lastName}

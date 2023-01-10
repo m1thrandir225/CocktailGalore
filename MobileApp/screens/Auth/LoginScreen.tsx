@@ -14,20 +14,33 @@ import {
 import { AuthParamList } from "../../navigation/navigationTypes";
 import { useLoginMutation } from "../../redux/api/authApiSlice";
 import { setCredentials } from "../../redux/slices/authSlice";
-
+import { setUser } from "../../redux/slices/userSlice";
+import * as SecureStore from "expo-secure-store";
 type NavigationProps = StackScreenProps<AuthParamList, "Login">;
 
 const LoginScreen = ({ navigation, route }: NavigationProps) => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [login, { isLoading }] = useLoginMutation();
+  const [login, { isLoading, isError, error }] = useLoginMutation();
+  const [loginError, setLoginError] = React.useState<any>("");
   const dispatch = useDispatch();
   const handleLogin = async () => {
     try {
       const result = await login({ email, password }).unwrap();
-      dispatch(setCredentials({ ...result, firstTime: false }));
+      dispatch(
+        setCredentials({
+          accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
+        }),
+      );
+      await SecureStore.setItemAsync("accessToken", result.accessToken);
+      await SecureStore.setItemAsync("refreshToken", result.refreshToken);
+      dispatch(setUser({ user: result.user }));
     } catch (error: any) {
-      console.log(error);
+      setLoginError(
+        error.data.errors[0].msg + " for " + error.data.errors[0].param,
+      );
+      console.log(error.data.errors[0].msg);
     }
   };
 
@@ -45,6 +58,7 @@ const LoginScreen = ({ navigation, route }: NavigationProps) => {
           style={styles.logo}
         />
         <Text style={styles.title}>Login</Text>
+        {isError && <Text>{loginError}</Text>}
         <InputBox
           text="Enter your email"
           iconName="mail"

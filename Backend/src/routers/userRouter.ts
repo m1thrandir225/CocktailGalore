@@ -242,8 +242,12 @@ userRouter.post(
       }
       const imageFile = req.file;
       const newProfileImage = uuid() + imageFile?.originalname;
-      const imgResult = await s3Uplaod(req.file, "userProfileImages");
-
+      const imgResult = await s3Uplaod(
+        req.file,
+        "userProfileImages",
+        newProfileImage,
+      );
+      console.log(imgResult);
       const updatedUser = await UserController.updateUserProfileImage(
         parseInt(id as string, 10),
         newProfileImage,

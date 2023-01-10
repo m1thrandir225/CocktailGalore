@@ -1,4 +1,11 @@
-import { View, Text, Image, Pressable, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native-gesture-handler";
@@ -17,12 +24,9 @@ import { AuthParamList } from "../../navigation/navigationTypes";
 import * as FileSystem from "expo-file-system";
 import { useUpdateUserMutation } from "../../redux/api/userApiSlice";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  selectCurrentUser,
-  setCredentials,
-  setFirstTime,
-} from "../../redux/slices/authSlice";
-
+import { setCredentials } from "../../redux/slices/authSlice";
+import { selectUser, setUser } from "../../redux/slices/userSlice";
+import { useGetFlavoursQuery } from "../../redux/api/apiSlice";
 type NavigationProps = StackScreenProps<AuthParamList, "InitialCustomization">;
 
 const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
@@ -32,7 +36,11 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
   const [profilePictureUri, setProfilePictureUri] = React.useState<any>(null);
   const [error, setError] = React.useState(null);
   const [updateUser, { isError }] = useUpdateUserMutation();
-  const user = useSelector(selectCurrentUser);
+  const [loading, setLoading] = React.useState(false);
+
+  const { data, isFetching, error: errorFlavours } = useGetFlavoursQuery();
+  console.log(errorFlavours);
+  const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -56,17 +64,21 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
   const handleContinue = async () => {
     if (myFlavours?.length !== 0) {
       try {
+        setLoading(true);
         const myFlavoursUpdateResult = await updateUser({
           id: user?.id,
           flavourIds: myFlavours?.map((f) => f.id),
         }).unwrap();
-        dispatch(setCredentials(myFlavoursUpdateResult));
+        dispatch(setUser({ user: myFlavoursUpdateResult.user }));
       } catch (error: any) {
         setError(error);
+      } finally {
+        setLoading(false);
       }
     }
     if (profilePictureUri) {
       try {
+        setLoading(true);
         const response = await FileSystem.uploadAsync(
           "http://192.168.100.20:4000/users/updateUser/profileImage",
           profilePictureUri,
@@ -84,29 +96,42 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
           },
         );
         const data = await JSON.parse(response.body);
-        dispatch(setCredentials({ ...data }));
+        dispatch(setUser({ user: data.user }));
       } catch (error: any) {
         setError(error);
       } finally {
-        console.log("finally");
-        dispatch(setFirstTime(false));
+        setLoading(false);
       }
     }
   };
-  React.useEffect(() => {
-    const getFlavours = async () => {
-      try {
-        const response = await fetch("http://192.168.100.20:4000/flavours");
-        const data = await response.json();
-        setFlavours(data.flavours);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    if (flavours == null) {
-      getFlavours();
-    }
-  }, [flavours]);
+  // React.useEffect(() => {
+  //   const getFlavours = async () => {
+  //     try {
+  //       const response = await fetch("http://192.168.100.20:4000/flavours");
+  //       const data = await response.json();
+  //       setFlavours(data.flavours);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   if (flavours == null) {
+  //     getFlavours();
+  //   }
+  // }, [flavours]);
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: AlmostWhite,
+        }}
+      >
+        <ActivityIndicator size={"large"} color={RedLight} />
+      </View>
+    );
+  }
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -147,8 +172,8 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
           {"\n"} you the best recommendations.
         </Text>
         <View style={styles.flavourContainer}>
-          {flavours != null
-            ? flavours.map((flavour) => (
+          {data != undefined
+            ? data.map((flavour) => (
                 <FlavourButton
                   flavour={flavour}
                   handleMyFlavour={handleMyFlavour}

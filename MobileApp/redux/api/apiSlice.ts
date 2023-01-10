@@ -1,5 +1,8 @@
+import { Flavour } from "./../../constants/globalTypes";
+import { selectUser } from "./../slices/userSlice";
 import type { RootState } from "../store/store";
-import { selectCurrentUser, selectRefreshToken } from "./../slices/authSlice";
+import * as SecureStore from "expo-secure-store";
+import { selectRefreshToken } from "./../slices/authSlice";
 import {
   BaseQueryApi,
   FetchArgs,
@@ -20,24 +23,35 @@ const baseQuery = fetchBaseQuery({
 });
 
 const baseQueryWrapper = async (
-  args: string | FetchArgs,
+  args: FetchArgs,
   api: BaseQueryApi,
   extraOptions: {},
 ) => {
   let result = await baseQuery(args, api, extraOptions);
   const getState = api.getState as () => RootState;
-  if (result.error?.status === 403) {
+  if (result.error?.originalStatus === 403 || result.error?.status === 403) {
     console.log("sending refresh token request");
-    const refreshToken = await baseQuery("/refresh_token", api, {
-      method: "POST",
-      body: JSON.stringify({
-        email: selectCurrentUser(getState())?.email,
-        refreshToken: selectRefreshToken(getState()),
-      }),
-    });
-    if (refreshToken.data) {
-      const user = selectCurrentUser(getState());
-      api.dispatch(setCredentials({ ...refreshToken.data, user }));
+    const refreshToken = await SecureStore.getItemAsync("refreshToken");
+    const refreshTokenResponse = await baseQuery(
+      {
+        url: "/refresh_token",
+        method: "POST",
+        body: {
+          id: getState().user.currentUser?.id,
+          refreshToken: refreshToken,
+        },
+      },
+      api,
+      extraOptions,
+    );
+    console.log(refreshTokenResponse);
+    if (refreshTokenResponse.data) {
+      const user = selectUser(getState());
+      api.dispatch(
+        setCredentials({
+          ...refreshTokenResponse.data,
+        }),
+      );
 
       //retry the original request
       result = await baseQuery(args, api, extraOptions);
@@ -50,5 +64,14 @@ const baseQueryWrapper = async (
 
 export const apiSlice = createApi({
   baseQuery: baseQueryWrapper,
-  endpoints: (builder) => ({}),
+  endpoints: (builder) => ({
+    getFlavours: builder.query<Flavour[], void>({
+      query: () => ({
+        url: "/flavours",
+        method: "GET",
+      }),
+    }),
+  }),
 });
+
+export const { useGetFlavoursQuery } = apiSlice;

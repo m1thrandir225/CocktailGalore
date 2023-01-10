@@ -14,7 +14,8 @@ import {
 import { AuthParamList } from "../../navigation/navigationTypes";
 import { useRegisterMutation } from "../../redux/api/authApiSlice";
 import { setCredentials } from "../../redux/slices/authSlice";
-
+import { setUser } from "../../redux/slices/userSlice";
+import * as SecureStore from "expo-secure-store";
 type NavigationProps = StackScreenProps<AuthParamList, "Signup">;
 
 const LoginScreen = ({ navigation, route }: NavigationProps) => {
@@ -34,7 +35,16 @@ const LoginScreen = ({ navigation, route }: NavigationProps) => {
         email,
         password,
       }).unwrap();
-      dispatch(setCredentials({ ...result, firstTime: true }));
+      dispatch(
+        setCredentials({
+          accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
+        }),
+      );
+      await SecureStore.setItemAsync("accessToken", result.accessToken);
+      await SecureStore.setItemAsync("refreshToken", result.refreshToken);
+      dispatch(setUser({ user: result.user }));
+
       navigation.navigate("Overview");
     } catch (error: any) {
       console.log(error);
