@@ -37,10 +37,7 @@ const LoginScreen = ({ navigation, route }: NavigationProps) => {
       await SecureStore.setItemAsync("refreshToken", result.refreshToken);
       dispatch(setUser({ user: result.user }));
     } catch (error: any) {
-      setLoginError(
-        error.data.errors[0].msg + " for " + error.data.errors[0].param,
-      );
-      console.log(error.data.errors[0].msg);
+      console.log(error);
     }
   };
 
@@ -72,7 +69,10 @@ const LoginScreen = ({ navigation, route }: NavigationProps) => {
           iconColor={AlmostDark}
           isPassword
         />
-        <Pressable style={styles.continueButton} onPress={() => handleLogin()}>
+        <Pressable
+          style={[styles.continueButton, {}]}
+          onPress={() => handleLogin()}
+        >
           <Text style={styles.continueButtonText}> Continue </Text>
         </Pressable>
         <View style={styles.orContainer}>

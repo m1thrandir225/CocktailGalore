@@ -38,8 +38,14 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
   const [updateUser, { isError }] = useUpdateUserMutation();
   const [loading, setLoading] = React.useState(false);
 
-  const { data, isFetching, error: errorFlavours } = useGetFlavoursQuery();
-  console.log(errorFlavours);
+  const {
+    data,
+    isError: isErrorFlavours,
+    error: errorFlavours,
+    isLoading,
+    isFetching,
+    currentData,
+  } = useGetFlavoursQuery();
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const pickImage = async () => {
@@ -61,26 +67,13 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
       setMyFlavours([...(myFlavours ?? []), flavour]);
     }
   };
+
   const handleContinue = async () => {
-    if (myFlavours?.length !== 0) {
-      try {
-        setLoading(true);
-        const myFlavoursUpdateResult = await updateUser({
-          id: user?.id,
-          flavourIds: myFlavours?.map((f) => f.id),
-        }).unwrap();
-        dispatch(setUser({ user: myFlavoursUpdateResult.user }));
-      } catch (error: any) {
-        setError(error);
-      } finally {
-        setLoading(false);
-      }
-    }
     if (profilePictureUri) {
       try {
         setLoading(true);
         const response = await FileSystem.uploadAsync(
-          "http://192.168.100.20:4000/users/updateUser/profileImage",
+          "http://192.168.0.108:4000/users/updateUser/profileImage",
           profilePictureUri,
           {
             httpMethod: "POST",
@@ -98,26 +91,26 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
         const data = await JSON.parse(response.body);
         dispatch(setUser({ user: data.user }));
       } catch (error: any) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    if (myFlavours?.length !== 0) {
+      try {
+        setLoading(true);
+        const myFlavoursUpdateResult = await updateUser({
+          id: user?.id,
+          flavourIds: myFlavours?.map((f) => f.id),
+        }).unwrap();
+        dispatch(setUser({ user: myFlavoursUpdateResult.user }));
+      } catch (error: any) {
         setError(error);
       } finally {
         setLoading(false);
       }
     }
   };
-  // React.useEffect(() => {
-  //   const getFlavours = async () => {
-  //     try {
-  //       const response = await fetch("http://192.168.100.20:4000/flavours");
-  //       const data = await response.json();
-  //       setFlavours(data.flavours);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   if (flavours == null) {
-  //     getFlavours();
-  //   }
-  // }, [flavours]);
   if (loading) {
     return (
       <View
@@ -131,6 +124,9 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
         <ActivityIndicator size={"large"} color={RedLight} />
       </View>
     );
+  }
+  if (isLoading) {
+    return <Text> Loading ... </Text>;
   }
   return (
     <SafeAreaView style={styles.container}>
@@ -173,7 +169,7 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
         </Text>
         <View style={styles.flavourContainer}>
           {data != undefined
-            ? data.map((flavour) => (
+            ? data.flavours.map((flavour) => (
                 <FlavourButton
                   flavour={flavour}
                   handleMyFlavour={handleMyFlavour}

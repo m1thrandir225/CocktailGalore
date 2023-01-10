@@ -1,8 +1,8 @@
 import { Flavour } from "./../../constants/globalTypes";
-import { selectUser } from "./../slices/userSlice";
+import { logoutUser, selectUser } from "./../slices/userSlice";
 import type { RootState } from "../store/store";
 import * as SecureStore from "expo-secure-store";
-import { selectRefreshToken } from "./../slices/authSlice";
+import { selectRefreshToken, setAccessToken } from "./../slices/authSlice";
 import {
   BaseQueryApi,
   FetchArgs,
@@ -12,9 +12,9 @@ import {
 import { setCredentials, logout, selectAccessToken } from "../slices/authSlice";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://192.168.100.20:4000/",
+  baseUrl: "http://192.168.0.108:4000",
   prepareHeaders: (headers, { getState }) => {
-    const accessToken = (getState() as RootState).auth.accessToken;
+    const accessToken = selectAccessToken(getState() as RootState);
     if (accessToken) {
       headers.set("authorization", `Bearer ${accessToken}`);
     }
@@ -23,13 +23,13 @@ const baseQuery = fetchBaseQuery({
 });
 
 const baseQueryWrapper = async (
-  args: FetchArgs,
+  args: string | FetchArgs,
   api: BaseQueryApi,
   extraOptions: {},
 ) => {
   let result = await baseQuery(args, api, extraOptions);
   const getState = api.getState as () => RootState;
-  if (result.error?.originalStatus === 403 || result.error?.status === 403) {
+  if (result.error && result.error.status === 403) {
     console.log("sending refresh token request");
     const refreshToken = await SecureStore.getItemAsync("refreshToken");
     const refreshTokenResponse = await baseQuery(
@@ -44,19 +44,16 @@ const baseQueryWrapper = async (
       api,
       extraOptions,
     );
-    console.log(refreshTokenResponse);
     if (refreshTokenResponse.data) {
       const user = selectUser(getState());
-      api.dispatch(
-        setCredentials({
-          ...refreshTokenResponse.data,
-        }),
-      );
+      console.log(refreshTokenResponse.data);
+      api.dispatch(setAccessToken({ ...refreshTokenResponse.data }));
 
       //retry the original request
       result = await baseQuery(args, api, extraOptions);
-    } else {
+    } else if (refreshTokenResponse.error?.data == "invalid token") {
       api.dispatch(logout());
+      api.dispatch(logoutUser());
     }
   }
   return result;
@@ -65,7 +62,7 @@ const baseQueryWrapper = async (
 export const apiSlice = createApi({
   baseQuery: baseQueryWrapper,
   endpoints: (builder) => ({
-    getFlavours: builder.query<Flavour[], void>({
+    getFlavours: builder.query<{ flavours: Flavour[] }, void>({
       query: () => ({
         url: "/flavours",
         method: "GET",

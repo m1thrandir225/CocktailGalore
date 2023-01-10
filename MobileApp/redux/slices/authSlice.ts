@@ -26,6 +26,12 @@ const auhtSlice = createSlice({
         state.refreshToken = refreshToken;
       }
     },
+    setAccessToken(state, action) {
+      const { accessToken } = action.payload;
+      if (accessToken) {
+        state.accessToken = accessToken;
+      }
+    },
     logout(state) {
       state.accessToken = null;
       state.refreshToken = null;
@@ -33,7 +39,7 @@ const auhtSlice = createSlice({
   },
 });
 
-export const { setCredentials, logout } = auhtSlice.actions;
+export const { setCredentials, logout, setAccessToken } = auhtSlice.actions;
 
 export default auhtSlice.reducer;
 
