@@ -5,6 +5,7 @@ import {
   Pressable,
   StyleSheet,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -34,7 +35,7 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
   const [myFlavours, setMyFlavours] = React.useState<Flavour[] | null>(null);
   const [profilePicture, setProfilePicture] = React.useState<any>(null);
   const [profilePictureUri, setProfilePictureUri] = React.useState<any>(null);
-  const [error, setError] = React.useState(null);
+  const [error, setError] = React.useState<string | null>(null);
   const [updateUser, { isError }] = useUpdateUserMutation();
   const [loading, setLoading] = React.useState(false);
 
@@ -69,11 +70,11 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
   };
 
   const handleContinue = async () => {
-    if (profilePictureUri) {
+    if (profilePictureUri && !error && myFlavours?.length > 0) {
       try {
         setLoading(true);
         const response = await FileSystem.uploadAsync(
-          "http://192.168.0.108:4000/users/updateUser/profileImage",
+          "https://galore-cocktails-more-production.up.railway.app/users/updateUser/profileImage",
           profilePictureUri,
           {
             httpMethod: "POST",
@@ -95,8 +96,14 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
       } finally {
         setLoading(false);
       }
+    } else {
+      if (myFlavours?.length == 0) {
+        setError("Please select at least one flavour");
+      } else {
+        setError("Please select a profile picture");
+      }
     }
-    if (myFlavours?.length !== 0) {
+    if (myFlavours?.length !== 0 && !error && profilePictureUri) {
       try {
         setLoading(true);
         const myFlavoursUpdateResult = await updateUser({
@@ -109,9 +116,29 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
       } finally {
         setLoading(false);
       }
+    } else {
+      if (!profilePictureUri) {
+        setError("Please select a profile picture");
+      } else {
+        setError("Please select at least one flavour");
+      }
+    }
+    if (myFlavours?.length == 0 && profilePictureUri == null) {
+      setError(
+        "Please select at least one flavour and set a profile picture !",
+      );
     }
   };
-  if (loading) {
+  React.useEffect(() => {
+    if (
+      myFlavours != null &&
+      myFlavours?.length > 0 &&
+      profilePictureUri != null
+    ) {
+      setError(null);
+    }
+  }, [myFlavours, profilePictureUri]);
+  if (loading || isLoading || isFetching) {
     return (
       <View
         style={{
@@ -125,9 +152,7 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
       </View>
     );
   }
-  if (isLoading) {
-    return <Text> Loading ... </Text>;
-  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -141,6 +166,70 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
           source={require("../../assets/logo-dark.png")}
           style={styles.logo}
         />
+        <Modal
+          style={{
+            alignSelf: "center",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          animationType="fade"
+          transparent={true}
+          visible={error != null}
+        >
+          <View
+            style={{
+              flex: 1,
+
+              alignSelf: "center",
+              justifyContent: "center",
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: AlmostWhite,
+                width: "75%",
+                borderRadius: 20,
+                paddingHorizontal: 35,
+                paddingBottom: 35,
+                paddingTop: 15,
+                elevation: 5,
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: "Montserrat_700Bold",
+                    color: RedLight,
+                    fontSize: 20,
+                  }}
+                >
+                  {" "}
+                  Error:{" "}
+                </Text>
+                <Pressable onPress={() => setError(null)}>
+                  <Feather name="x-circle" size={24} color={RedLight} />
+                </Pressable>
+              </View>
+              <Text
+                style={{
+                  color: AlmostDark,
+                  fontFamily: "Montserrat_700Bold",
+                  fontSize: 16,
+                  textAlign: "center",
+                  marginTop: 10,
+                }}
+              >
+                {error}
+              </Text>
+            </View>
+          </View>
+        </Modal>
         <Text style={[styles.title]}> Add a profile {"\n"} picture </Text>
         <Pressable
           style={[styles.profilePictureButton, {}]}
