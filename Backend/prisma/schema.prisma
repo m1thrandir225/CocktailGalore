@@ -35,9 +35,9 @@ model User {
 
 //cocktail model that has name, ingredients, instructions, flavours, favorite by users
 model Cocktail {
-  id           Int       @id @default(autoincrement())
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id           Int                @id @default(autoincrement())
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
   name         String
   flavours     Flavour[]
   timeToMake   Int
@@ -45,6 +45,7 @@ model Cocktail {
   instructions String
   image        String
   favouriteBy  User[]
+  category     CocktailCategory[]
 }
 
 //author model that has name, image
@@ -83,4 +84,12 @@ model Flavour {
   name      String     @unique
   cocktails Cocktail[]
   likedBy   User[]
+}
+
+model CocktailCategory {
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  name      String     @unique
+  cocktails Cocktail[]
 }
