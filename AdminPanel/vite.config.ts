@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [solid()],
   resolve: {
     alias: {
-      components: "/src/components",
+      src: "/src",
     },
   },
 });
