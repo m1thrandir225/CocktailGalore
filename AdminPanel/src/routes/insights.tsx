@@ -1,5 +1,5 @@
 import { Component } from "solid-js";
-import SceneWrapper from "~/components/global/SceneWrapper";
+import SceneWrapper from "../components/global/SceneWrapper";
 
 const Insights: Component = () => {
   return (

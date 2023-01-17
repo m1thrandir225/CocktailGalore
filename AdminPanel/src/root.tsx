@@ -11,7 +11,7 @@ import {
   Scripts,
   Title,
 } from "solid-start";
-
+import Sidebar from "./components/global/Sidebar";
 import "./root.css";
 export default function Root() {
   return (
@@ -25,7 +25,10 @@ export default function Root() {
         <Suspense>
           <ErrorBoundary>
             <Routes>
-              <FileRoutes />
+              <main class="flex flex-row justify-start items-start">
+                <Sidebar />
+                <FileRoutes />
+              </main>
             </Routes>
           </ErrorBoundary>
         </Suspense>
