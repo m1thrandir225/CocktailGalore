@@ -9,7 +9,6 @@ export default defineConfig({
       routesDir: "./src/routes",
       clientEntry: "./src/entry-client.tsx",
       serverEntry: "./src/entry-server.tsx",
-      adapter: "node",
     }),
   ],
 });
