@@ -2,10 +2,9 @@ import solid from "solid-start/vite";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [solid()],
-  resolve: {
-    alias: {
-      src: "/src",
-    },
-  },
+  plugins: [
+    solid({
+      appRoot: "./src",
+    }),
+  ],
 });
