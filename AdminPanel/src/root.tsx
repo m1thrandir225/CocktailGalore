@@ -1,8 +1,6 @@
 // @refresh reload
 import { Suspense } from "solid-js";
 import {
-  useLocation,
-  A,
   Body,
   ErrorBoundary,
   FileRoutes,
@@ -13,8 +11,8 @@ import {
   Scripts,
   Title,
 } from "solid-start";
+
 import "./root.css";
-import Sidebar from "./components/global/Sidebar";
 export default function Root() {
   return (
     <Html lang="en">
@@ -27,10 +25,7 @@ export default function Root() {
         <Suspense>
           <ErrorBoundary>
             <Routes>
-              <main class="flex flex-row justify-start items-start">
-                <Sidebar />
-                <FileRoutes />
-              </main>
+              <FileRoutes />
             </Routes>
           </ErrorBoundary>
         </Suspense>
