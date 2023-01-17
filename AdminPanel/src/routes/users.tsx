@@ -1,6 +1,6 @@
 import { Component } from "solid-js";
-import SceneWrapper from "../Components/globals/SceneWrapper";
-
+import { Title } from "solid-start";
+import SceneWrapper from "~/components/global/SceneWrapper";
 const Users: Component = () => {
   return (
     <SceneWrapper title="Users" subtitle="Galore Users">

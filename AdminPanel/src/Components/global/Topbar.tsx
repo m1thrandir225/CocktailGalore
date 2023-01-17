@@ -5,9 +5,8 @@ import { BsSun } from "solid-icons/bs";
 import { BsMoonStars } from "solid-icons/bs";
 
 import { A } from "@solidjs/router";
-import { useGlobal } from "../../context/globalContext";
+
 const Topbar: Component = () => {
-  const { darkMode, actions } = useGlobal();
   return (
     <div class="flex flex-row justify-between items-center my-4 w-full">
       <div class="pt-2 relative  ">
@@ -30,11 +29,8 @@ const Topbar: Component = () => {
         </button>
       </div>
       <div class="flex flex-row justify-evenly items-center gap-2">
-        <button
-          class="text-gray-700 dark:text-gray-300"
-          onClick={() => actions.changeTheme()}
-        >
-          {darkMode() ? <BsSun size={20} /> : <BsMoonStars size={20} />}
+        <button class="text-gray-700 dark:text-gray-300">
+          {true ? <BsSun size={20} /> : <BsMoonStars size={20} />}
         </button>
         <A href="/profile" class="text-gray-700 dark:text-gray-300">
           <AiOutlineUser size={20} />

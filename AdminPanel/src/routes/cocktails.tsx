@@ -1,5 +1,5 @@
 import { Component } from "solid-js";
-import SceneWrapper from "../Components/globals/SceneWrapper";
+import SceneWrapper from "~/components/global/SceneWrapper";
 
 const Cocktails: Component = () => {
   return (
