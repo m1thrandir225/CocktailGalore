@@ -14,13 +14,8 @@ import {
   Title,
 } from "solid-start";
 import "./root.css";
-import { Sidebar } from "./components/global/Sidebar";
+import Sidebar from "./components/global/Sidebar";
 export default function Root() {
-  const location = useLocation();
-  const active = (path: string) =>
-    path == location.pathname
-      ? "border-sky-600"
-      : "border-transparent hover:border-sky-600";
   return (
     <Html lang="en">
       <Head>
@@ -31,12 +26,12 @@ export default function Root() {
       <Body>
         <Suspense>
           <ErrorBoundary>
-            <main class="flex flex-row justify-start items-start">
-              <Sidebar />
-              <Routes>
+            <Routes>
+              <main class="flex flex-row justify-start items-start">
+                <Sidebar />
                 <FileRoutes />
-              </Routes>
-            </main>
+              </main>
+            </Routes>
           </ErrorBoundary>
         </Suspense>
         <Scripts />
