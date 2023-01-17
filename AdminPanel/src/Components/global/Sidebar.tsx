@@ -11,7 +11,7 @@ import { BiRegularGroup } from "solid-icons/bi";
 import { IoSettingsOutline } from "solid-icons/io";
 import { AiOutlineLogout } from "solid-icons/ai";
 
-const Sidebar: Component = () => {
+export const Sidebar: Component = () => {
   const [collapsed, setCollapsed] = createSignal(false);
   const handleLogout = () => {
     localStorage.setItem("isAuth", "false");
@@ -111,5 +111,3 @@ const Sidebar: Component = () => {
     </div>
   );
 };
-
-export default Sidebar;

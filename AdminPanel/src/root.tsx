@@ -14,8 +14,7 @@ import {
   Title,
 } from "solid-start";
 import "./root.css";
-import Sidebar from "./components/global/Sidebar";
-
+import { Sidebar } from "./components/global/Sidebar";
 export default function Root() {
   const location = useLocation();
   const active = (path: string) =>
