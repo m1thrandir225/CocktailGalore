@@ -1,5 +1,5 @@
 import React from "react";
-import Sidebar from "../components/global/Sidebar";
+import Sidebar from "../components/global/AdminBar";
 
 function PanelLayout({ children }: { children: React.ReactNode }) {
   return (
