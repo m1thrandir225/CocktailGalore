@@ -3,7 +3,7 @@ import { BsSun, BsMoonStars } from "react-icons/bs";
 import { BiSearch } from "react-icons/bi";
 import { AiOutlineUser } from "react-icons/ai";
 import Link from "next/link";
-import { GlobalContext } from "@/context/GlobalContext";
+import { GlobalContext } from "../../context/GlobalContext";
 
 const Topbar: React.FC = () => {
   const context = useContext(GlobalContext);
