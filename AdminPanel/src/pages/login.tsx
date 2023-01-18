@@ -1,6 +1,8 @@
 import React from "react";
 import { NextPageWithLayout } from "@/layouts/layoutTypes";
 
-export const login: NextPageWithLayout = () => {
+const LoginPage: NextPageWithLayout = () => {
   return <div>login</div>;
 };
+
+export default LoginPage;
