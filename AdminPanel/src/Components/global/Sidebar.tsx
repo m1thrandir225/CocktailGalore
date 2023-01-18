@@ -9,6 +9,7 @@ import { FiUsers } from "react-icons/fi";
 import { AiOutlineLogout } from "react-icons/ai";
 import Image from "next/image";
 import NavItem from "../Sidebar/NavItem";
+
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const handleLogout = () => {
