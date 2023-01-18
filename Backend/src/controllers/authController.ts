@@ -48,6 +48,7 @@ export async function login(req: Request, res: Response) {
       likedFlavours: true,
       favouriteCocktails: true,
       readInsights: true,
+      password: user.userType === "ADMIN",
     },
   });
   res.status(200).json({
