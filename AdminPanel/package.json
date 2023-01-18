@@ -1,28 +1,29 @@
 {
-  "name": "AdminPanel_new",
+  "name": "Galore_Admin_Panel",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "dev": "solid-start dev",
-    "build": "solid-start build",
-    "start": "solid-start start"
-  },
-  "type": "module",
-  "devDependencies": {
-    "autoprefixer": "^10.4.12",
-    "postcss": "^8.4.18",
-    "solid-start-node": "^0.2.0",
-    "tailwindcss": "^3.2.0",
-    "typescript": "^4.8.4",
-    "vite": "^3.1.8"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
-    "@solidjs/meta": "^0.28.0",
-    "@solidjs/router": "^0.6.0",
-    "solid-icons": "^1.0.4",
-    "solid-js": "^1.6.2",
-    "solid-start": "^0.2.0",
-    "undici": "^5.11.0"
+    "@next/font": "13.1.2",
+    "@types/node": "18.11.18",
+    "@types/react": "18.0.26",
+    "@types/react-dom": "18.0.10",
+    "eslint": "8.32.0",
+    "eslint-config-next": "13.1.2",
+    "next": "13.1.2",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-icons": "^4.7.1",
+    "typescript": "4.9.4"
   },
-  "engines": {
-    "node": ">=16"
+  "devDependencies": {
+    "autoprefixer": "^10.4.13",
+    "postcss": "^8.4.21",
+    "tailwindcss": "^3.2.4"
   }
 }
