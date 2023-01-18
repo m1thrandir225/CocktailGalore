@@ -1,4 +1,4 @@
-import "@/styles/globals.css";
+import "../styles/globals.css";
 import type { AppPropsWithLayout } from "../layouts/layoutTypes";
 import GlobalProvider from "../context/GlobalContext";
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
