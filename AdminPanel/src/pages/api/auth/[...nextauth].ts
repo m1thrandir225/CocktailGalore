@@ -16,30 +16,26 @@ export const authConfig = {
         },
       },
       async authorize({ username, password }, _req) {
-        try {
-          const response = await fetch("http://localhost:4000/login", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: username,
-              password: password,
-            }),
-          });
-          const data = await response.json();
-          if (data.user && data.accessToken) {
-            const user = {
-              ...data.user,
-              accessToken: data.accessToken,
-              refreshToken: data.refreshToken,
-            };
-            return user;
-          } else {
-            return null;
-          }
-        } catch (error) {
-          return error;
+        const response = await fetch("http://localhost:4000/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: username,
+            password: password,
+          }),
+        });
+        const data = await response.json();
+        if (data.user && data.accessToken) {
+          const user = {
+            ...data.user,
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+          };
+          return user;
+        } else {
+          return null;
         }
       },
     }),

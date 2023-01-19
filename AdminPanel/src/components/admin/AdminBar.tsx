@@ -44,7 +44,11 @@ const Sidebar = () => {
       </div>
       <div className="flex flex-col items-start justify-between h-screen">
         <div className="w-full">
-          <div className={!sideBarCollapsed ? "p-4" : ""}>
+          <div
+            className={`flex flex-col items-stretch justify-start  ${
+              !sideBarCollapsed ? "p-4  gap-4" : ""
+            }`}
+          >
             <NavItem
               title="Dashboard"
               to="/admin"

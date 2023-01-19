@@ -6,10 +6,12 @@ export async function allFlavours(req: Request, res: Response) {
   if (!flavours) {
     return res.status(404).send({ message: "No flavours found" });
   }
-  return res.status(200).send({
+  return res.status(200).json({
     flavours: flavours.map((flavour) => {
-      id: flavour.id;
-      name: flavour.name;
+      return {
+        id: flavour.id,
+        name: flavour.name,
+      };
     }),
   });
 }

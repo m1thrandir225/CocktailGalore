@@ -14,7 +14,7 @@ const NavItem = ({ Icon, to, title, isCollapsed }: NavItemProps) => {
       href={to}
       className={`flex flex-row items-center h-12 px-4  cursor-pointer hover:bg-gray-300 transition-all ease-out duration-100 dark:hover:bg-gray-600 ${
         isCollapsed ? "justify-center rounded-none" : "rounded-lg justify-start"
-      }${router.pathname === to ? "bg-green-300 dark:bg-green-600" : ""}`}
+      } ${router.pathname === to ? "bg-green-400 dark:bg-green-600" : ""}`}
     >
       {Icon}
       <h1

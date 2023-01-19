@@ -3,6 +3,7 @@ export type User = {
   email: string;
   firstName: string;
   lastName: string;
+  profileImage: string;
   likedFlavours: Flavour[];
   likedCocktails: Cocktail[];
   readInsights: Insight[];
