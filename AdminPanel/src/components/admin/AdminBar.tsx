@@ -1,117 +1,121 @@
-import React from "react";
-import Link from "next/link";
-import { MdDashboard } from "react-icons/md";
+import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
+import { useContext } from "react";
+import { AiOutlineLogout } from "react-icons/ai";
 import { BiDrink, BiMenu } from "react-icons/bi";
 import { BsSignpost } from "react-icons/bs";
 import { FaRegLemon } from "react-icons/fa";
-import { IoSettingsOutline } from "react-icons/io5";
 import { FiUsers } from "react-icons/fi";
-import { AiOutlineLogout } from "react-icons/ai";
-import Image from "next/image";
+import { IoSettingsOutline } from "react-icons/io5";
+import { MdDashboard } from "react-icons/md";
+import { GlobalContext } from "../../context/GlobalContext";
 import NavItem from "../Sidebar/NavItem";
 
 const Sidebar = () => {
-  const [isCollapsed, setIsCollapsed] = React.useState(false);
-  const handleLogout = () => {
-    localStorage.clear();
-  };
+  const { sideBarCollapsed, setSideBarCollapsed } = useContext(GlobalContext);
+  const { data, status } = useSession();
+  if (status === "loading" || data == undefined) return null;
   return (
     <div
       className={`flex flex-col justify-start  h-screen  bg-gray-100 text-gray-700 transition-[width] ease-in-out duration-500 drop-shadow-lg 
-    dark:bg-gray-700 dark:text-gray-200 ${isCollapsed ? "w-20" : "w-64"}`}
+    dark:bg-gray-700 dark:text-gray-200 ${sideBarCollapsed ? "w-20" : "w-64"}`}
     >
       <div
         className={`flex flex-col justify-center items-center gap-4 bg-gray-200 dark:bg-gray-800 ${
-          isCollapsed ? "py-2" : "py-4"
+          sideBarCollapsed ? "py-2" : "py-4"
         }`}
       >
         <Image
-          src="https://images.unsplash.com/photo-1673581209559-fd5f75a08664?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
+          src={`https://galore-mobile-bucket.s3.eu-central-1.amazonaws.com/userProfileImages/${data.user.profileImage}`}
           alt="user_photo"
-          width={isCollapsed ? 224 : 320}
-          height={isCollapsed ? 224 : 320}
+          width={sideBarCollapsed ? 224 : 320}
+          height={sideBarCollapsed ? 224 : 320}
           className={`${
-            isCollapsed ? "w-14 h-14" : "w-20 h-20"
+            sideBarCollapsed ? "w-14 h-14" : "w-20 h-20"
           } rounded-full object-cover transition-all ease-in-out duration-500 border-2 border-gray-800 dark:border-gray-200`}
         />
         <h1
           className={`font-sans text-2xl font-bold ${
-            isCollapsed ? "hidden" : ""
+            sideBarCollapsed ? "hidden" : ""
           }`}
         >
-          Hello, Sebastijan
+          Hello, {data.user.firstName}
         </h1>
       </div>
       <div className="flex flex-col items-start justify-between h-screen">
         <div className="w-full">
-          <div className={!isCollapsed ? "p-4" : ""}>
+          <div className={!sideBarCollapsed ? "p-4" : ""}>
             <NavItem
               title="Dashboard"
-              to="/"
+              to="/admin"
               Icon={<MdDashboard />}
-              isCollapsed={isCollapsed}
+              isCollapsed={sideBarCollapsed}
             />
             <NavItem
               title="Cocktails"
-              to="/cocktails"
+              to="/admin/cocktails"
               Icon={<BiDrink />}
-              isCollapsed={isCollapsed}
+              isCollapsed={sideBarCollapsed}
             />
             <NavItem
               title="Insights"
-              to="/insights"
+              to="/admin/insights"
               Icon={<BsSignpost />}
-              isCollapsed={isCollapsed}
+              isCollapsed={sideBarCollapsed}
             />
             <NavItem
               title="Flavours"
-              to="/flavours"
+              to="/admin/flavours"
               Icon={<FaRegLemon />}
-              isCollapsed={isCollapsed}
+              isCollapsed={sideBarCollapsed}
             />
             <NavItem
               title="Users"
-              to="/users"
+              to="/admin/users"
               Icon={<FiUsers />}
-              isCollapsed={isCollapsed}
+              isCollapsed={sideBarCollapsed}
             />
             <NavItem
               title="Settings"
-              to="/settings"
+              to="/admin/settings"
               Icon={<IoSettingsOutline />}
-              isCollapsed={isCollapsed}
+              isCollapsed={sideBarCollapsed}
             />
           </div>
-          <div className={!isCollapsed ? "p-2" : ""}>
+          <div className={!sideBarCollapsed ? "p-2" : ""}>
             <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
+              onClick={() => setSideBarCollapsed(!sideBarCollapsed)}
               className={`flex w-full flex-row  items-center h-12 px-4  cursor-pointer  gap-4  hover:bg-gray-300 transition-all ease-out duration-100 dark:hover:bg-gray-600 ${
-                isCollapsed
+                sideBarCollapsed
                   ? "justify-center rounded-none"
                   : "justify-start rounded-lg"
               }`}
             >
               <BiMenu size={24} />
               <span
-                className={`text-lg font-medium ${isCollapsed ? "hidden" : ""}`}
+                className={`text-lg font-medium ${
+                  sideBarCollapsed ? "hidden" : ""
+                }`}
               >
                 Collapse
               </span>
             </button>
           </div>
         </div>
-        <div className={`w-full ${!isCollapsed ? "p-2" : ""}`}>
+        <div className={`w-full ${!sideBarCollapsed ? "p-2" : ""}`}>
           <button
-            onClick={() => handleLogout()}
             className={`flex w-full flex-row  items-center h-12 px-4  cursor-pointer  gap-4  hover:bg-gray-300 transition-all ease-out duration-100 dark:hover:bg-gray-600 ${
-              isCollapsed
+              sideBarCollapsed
                 ? "justify-center rounded-none"
                 : "justify-start rounded-lg"
             }`}
+            onClick={() => signOut()}
           >
             <AiOutlineLogout size={24} />
             <span
-              className={`text-lg font-medium ${isCollapsed ? "hidden" : ""}`}
+              className={`text-lg font-medium ${
+                sideBarCollapsed ? "hidden" : ""
+              }`}
             >
               Logout
             </span>

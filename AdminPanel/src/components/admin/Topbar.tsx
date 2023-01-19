@@ -6,7 +6,7 @@ import Link from "next/link";
 import { GlobalContext } from "../../context/GlobalContext";
 
 const Topbar: React.FC = () => {
-  const context = useContext(GlobalContext);
+  const { darkMode, toggleDarkMode } = useContext(GlobalContext);
   return (
     <div className="flex flex-row items-center justify-between w-full my-4">
       <div className="relative pt-2 ">
@@ -24,9 +24,9 @@ const Topbar: React.FC = () => {
       <div className="flex flex-row items-center gap-2 justify-evenly">
         <button
           className="text-gray-700 dark:text-gray-300"
-          onClick={() => context?.toggleTheme()}
+          onClick={() => toggleDarkMode()}
         >
-          {true ? <BsSun size={20} /> : <BsMoonStars size={20} />}
+          {darkMode ? <BsSun size={20} /> : <BsMoonStars size={20} />}
         </button>
         <Link href="/profile" className="text-gray-700 dark:text-gray-300">
           <AiOutlineUser size={20} />
