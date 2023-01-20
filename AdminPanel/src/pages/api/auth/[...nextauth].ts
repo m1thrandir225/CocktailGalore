@@ -15,15 +15,15 @@ export const authConfig = {
           placeholder: "password",
         },
       },
-      async authorize({ username, password }, _req) {
+      async authorize(credentials, _req) {
         const response = await fetch("http://localhost:4000/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            email: username,
-            password: password,
+            email: credentials?.username,
+            password: credentials?.password,
           }),
         });
         const data = await response.json();

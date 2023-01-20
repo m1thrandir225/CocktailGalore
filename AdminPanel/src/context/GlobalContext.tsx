@@ -1,13 +1,13 @@
 import { createContext, useState, useEffect } from "react";
 
 interface IGlobalContext {
-  darkMode: boolean;
+  darkMode: boolean | null;
   toggleDarkMode: () => void;
   sideBarCollapsed: boolean;
   setSideBarCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const GlobalContext = createContext<IGlobalContext | null>(null);
+const GlobalContext = createContext<IGlobalContext>(null!);
 
 export default function GlobalProvider({ children }: { children: any }) {
   const [darkMode, setDarkMode] = useState<boolean | null>(null);

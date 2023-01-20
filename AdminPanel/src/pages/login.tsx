@@ -8,10 +8,14 @@ import { GlobalContext } from "../context/GlobalContext";
 import { useRouter } from "next/router";
 import { AiOutlineHome } from "react-icons/ai";
 import Link from "next/link";
-const SignIn = ({ csrfToken }) => {
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+
+const SignIn = ({
+  csrfToken,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const { darkMode, toggleDarkMode } = useContext(GlobalContext);
+  const gContext = useContext(GlobalContext);
   const [error, setError] = React.useState<string | null>(null);
   const router = useRouter();
   const handleLogin = async () => {
@@ -20,7 +24,7 @@ const SignIn = ({ csrfToken }) => {
       password: password,
       redirect: false,
     }).then((res) => {
-      if (res.status === 200) {
+      if (res && res.status === 200) {
         router.push("/admin");
       } else {
         setError("Invalid credentials");
@@ -87,20 +91,22 @@ const SignIn = ({ csrfToken }) => {
         <button
           type="button"
           className="absolute text-gray-800 top-10 right-16 dark:text-gray-200"
-          onClick={() => toggleDarkMode()}
+          onClick={() => gContext?.toggleDarkMode()}
         >
-          {darkMode ? <BsSun size={20} /> : <BsMoonStars size={20} />}
+          {gContext?.darkMode ? <BsSun size={20} /> : <BsMoonStars size={20} />}
         </button>
       </div>
     </Layout>
   );
 };
-export async function getServerSideProps(context) {
+export const getServerSideProps: GetServerSideProps<{
+  csrfToken: any;
+}> = async (context) => {
   return {
     props: {
       csrfToken: await getCsrfToken(context),
     },
   };
-}
+};
 
 export default SignIn;
