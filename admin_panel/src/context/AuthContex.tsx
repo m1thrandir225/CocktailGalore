@@ -8,7 +8,7 @@ import React, {
 
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { loginApi, logoutApi } from "../api/auth";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext<any | null>(null);
 
@@ -23,6 +23,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     false,
   );
   const [error, setError] = useState<any | null>(null);
+  const navigate = useNavigate();
   const login = async (email: string, password: string) => {
     try {
       const response = await loginApi(email, password);
@@ -33,6 +34,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setAccessToken(accessToken);
         setRefreshToken(refreshToken);
         setIsAuthenticated(true);
+        navigate("/");
       }
     } catch (err: any) {
       if (err.response.status === 400) {
@@ -47,10 +49,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!user) return null;
     try {
       await logoutApi(user.id);
-      setUser(null);
-      setAccessToken(null);
-      setRefreshToken(null);
-      setIsAuthenticated(false);
+      await setUser(null);
+      await setAccessToken(null);
+      await setRefreshToken(null);
+      await setIsAuthenticated(false);
+      navigate("/login");
     } catch (err: any) {
       setError(err.message);
     }
@@ -62,13 +65,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }, 3500);
     }
   }, [error]);
-  return (
-    <AuthContext.Provider
-      value={{ user, login, logout, isAuthenticated, error }}
-    >
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      user,
+      login,
+      logout,
+      isAuthenticated,
+      error,
+    }),
+    [user, login, logout, isAuthenticated, error],
   );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

@@ -9,12 +9,9 @@ export const Login = () => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const { login, error, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/");
-    }
-  }, [isAuthenticated]);
+  const handleClick = async () => {
+    await login(email, password);
+  };
   const theme = useTheme();
   return (
     <div className="flex flex-col justify-center items-center  bg-white h-screen w-screen dark:bg-gray-900">
@@ -53,7 +50,7 @@ export const Login = () => {
           />
           <button
             type="button"
-            onClick={async () => await login(email, password)}
+            onClick={handleClick}
             className="px-8 py-2 font-sans text-xl text-gray-700 transition-colors duration-100 ease-in-out bg-gray-300 rounded-md drop-shadow-sm dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-500 dark:hover:bg-gray-400 hover:text-gray-100 dark:hover:text-gray-800"
           >
             Continue

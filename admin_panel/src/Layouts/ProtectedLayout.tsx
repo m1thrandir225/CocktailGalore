@@ -10,11 +10,11 @@ const ProtectedLayout = () => {
   const outlet = useOutlet();
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
-  useEffect(() => {
-    if (!isAuthenticated || !user) {
-      navigate("/login");
-    }
-  }, [isAuthenticated, user]);
+
+  //if not logged in redirected to login page
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/login" />;
+  }
 
   return (
     <AuthProvider>

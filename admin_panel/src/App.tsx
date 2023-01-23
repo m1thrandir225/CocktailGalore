@@ -15,25 +15,35 @@ import Cocktails from "./pages/Cocktails";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import ThemeProvider from "./context/ThemeContext";
+import Insights from "./pages/Insights";
+import Flavours from "./pages/Flavours";
+import Users from "./pages/Users";
+import MyProfile from "./pages/MyProfile";
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <>
+      <Route element={<AuthLayout />}>
+        <Route path="/login" element={<Login />} />
+        <Route element={<ProtectedLayout />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/cocktails" element={<Cocktails />} />
+          <Route path="/insights" element={<Insights />} />
+          <Route path="/flavours" element={<Flavours />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/profile" element={<MyProfile />} />
+        </Route>
+      </Route>
+    </>,
+  ),
+);
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <ThemeProvider>
-          <Routes>
-            <Route element={<AuthLayout />}>
-              <Route path="/login" element={<Login />} />
-            </Route>
-            <Route element={<ProtectedLayout />}>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/cocktails" element={<Cocktails />} />
-              <Route path="/settings" element={<Settings />} />
-            </Route>
-          </Routes>
-        </ThemeProvider>
-      </AuthProvider>
-    </BrowserRouter>
+    <ThemeProvider>
+      <RouterProvider router={router} />
+    </ThemeProvider>
   );
 }
 
