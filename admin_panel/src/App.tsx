@@ -1,34 +1,40 @@
-import { Outlet } from "react-router-dom";
 import {
-  createBrowserRouter,
-  RouterProvider,
-  createRoutesFromElements,
+  BrowserRouter,
   Route,
+  RouterProvider,
+  Routes,
+  createBrowserRouter,
+  createRoutesFromElements,
+  useNavigate,
 } from "react-router-dom";
-import { Login } from "./Login";
 import { AuthLayout } from "./Layouts/AuthLayout";
 import ProtectedLayout from "./Layouts/ProtectedLayout";
-import Dashboard from "./pages/Dashboard";
+import { Login } from "./Login";
+import { AuthProvider } from "./context/AuthContex";
 import Cocktails from "./pages/Cocktails";
+import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
-
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <>
-      <Route element={<AuthLayout />}>
-        <Route element={<Login />} path="/login" />
-      </Route>
-      <Route path="/" element={<ProtectedLayout />}>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/cocktails" element={<Cocktails />} />
-        <Route path="/settings" element={<Settings />} />
-      </Route>
-    </>,
-  ),
-);
+import ThemeProvider from "./context/ThemeContext";
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <ThemeProvider>
+          <Routes>
+            <Route element={<AuthLayout />}>
+              <Route path="/login" element={<Login />} />
+            </Route>
+            <Route element={<ProtectedLayout />}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/cocktails" element={<Cocktails />} />
+              <Route path="/settings" element={<Settings />} />
+            </Route>
+          </Routes>
+        </ThemeProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  );
 }
 
 export default App;

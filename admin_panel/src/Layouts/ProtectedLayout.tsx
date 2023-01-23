@@ -1,22 +1,36 @@
-import React from "react";
-import { useAuth } from "../context/AuthContex";
-import { Navigate, useOutlet } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
+import React, { useContext, useEffect } from "react";
+import { AuthContext, AuthProvider, useAuth } from "../context/AuthContex";
+import { Navigate, useNavigate, useOutlet } from "react-router-dom";
+import Sidebar from "../components/LayoutComponents/Sidebar";
 import { useState } from "react";
+import Topbar from "../components/LayoutComponents/Topbar";
 
 const ProtectedLayout = () => {
-  const { user } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const outlet = useOutlet();
   const [collapsed, setCollapsed] = useState(false);
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!isAuthenticated || !user) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, user]);
 
   return (
-    <div className="w-screen h-screen flex flex-row justify-start items-start">
-      <Sidebar collapsed={collapsed} loading={false} user={user} />
-      <main>{outlet}</main>
-    </div>
+    <AuthProvider>
+      <div className="w-screen h-screen flex flex-row justify-start items-start">
+        <Sidebar
+          collapsed={collapsed}
+          loading={false}
+          user={user}
+          setCollapsed={setCollapsed}
+        />
+        <main className="bg-white dark:bg-gray-900 h-screen w-screen flex flex-col justify-start items-start px-8">
+          <Topbar />
+          {outlet}
+        </main>
+      </div>
+    </AuthProvider>
   );
 };
 

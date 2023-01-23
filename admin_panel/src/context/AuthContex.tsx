@@ -1,12 +1,16 @@
-import React, { useContext, createContext, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import React, {
+  useContext,
+  createContext,
+  useMemo,
+  useEffect,
+  useState,
+} from "react";
+
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { loginApi, logoutApi } from "../api/auth";
-const AuthContext = createContext<any>({
-  user: null,
-  login: () => {},
-  logout: () => {},
-});
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+
+export const AuthContext = createContext<any | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -14,22 +18,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useLocalStorage("user", null);
   const [accessToken, setAccessToken] = useLocalStorage("accessToken", null);
   const [refreshToken, setRefreshToken] = useLocalStorage("refreshToken", null);
-  const navigate = useNavigate();
-
+  const [isAuthenticated, setIsAuthenticated] = useLocalStorage(
+    "isAuthenticated",
+    false,
+  );
+  const [error, setError] = useState<any | null>(null);
   const login = async (email: string, password: string) => {
     try {
-      const { user, accessToken, refreshToken } = await loginApi(
-        email,
-        password,
-      );
-      if (user && accessToken && refreshToken) {
+      const response = await loginApi(email, password);
+
+      if (response) {
+        const { user, accessToken, refreshToken } = response.data;
         setUser(user);
         setAccessToken(accessToken);
         setRefreshToken(refreshToken);
-        navigate("/");
+        setIsAuthenticated(true);
       }
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
+      if (err.response.status === 400) {
+        setError("Invalid credentials");
+      }
+      if (err.response.status === 404) {
+        setError(err.response.data.message);
+      }
     }
   };
   const logout = async () => {
@@ -39,13 +50,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setUser(null);
       setAccessToken(null);
       setRefreshToken(null);
-    } catch (err) {
-      console.log(err);
+      setIsAuthenticated(false);
+    } catch (err: any) {
+      setError(err.message);
     }
   };
-
+  useEffect(() => {
+    if (error != null) {
+      setTimeout(() => {
+        setError(null);
+      }, 3500);
+    }
+  }, [error]);
   return (
-    <AuthContext.Provider value={{ login, logout, user }}>
+    <AuthContext.Provider
+      value={{ user, login, logout, isAuthenticated, error }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -5,7 +5,7 @@ export const loginApi = async (email: string, password: string) => {
     email: email,
     password: password,
   });
-  return response.data;
+  return response;
 };
 
 export const logoutApi = async (id: number) => {
