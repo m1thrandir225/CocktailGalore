@@ -1,36 +1,34 @@
-import { useState } from "react";
 import { Outlet } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  createRoutesFromElements,
+  Route,
+} from "react-router-dom";
+import { Login } from "./Login";
+import { AuthLayout } from "./Layouts/AuthLayout";
+import ProtectedLayout from "./Layouts/ProtectedLayout";
+import Dashboard from "./pages/Dashboard";
+import Cocktails from "./pages/Cocktails";
+import Settings from "./pages/Settings";
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <>
+      <Route element={<AuthLayout />}>
+        <Route element={<Login />} path="/login" />
+      </Route>
+      <Route path="/" element={<ProtectedLayout />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/cocktails" element={<Cocktails />} />
+        <Route path="/settings" element={<Settings />} />
+      </Route>
+    </>,
+  ),
+);
 
 function App() {
-  const [collapsed, setCollapsed] = useState(true);
-  return (
-    <div className="w-screen h-screen flex flex-row justify-start items-start">
-      <div
-        className={`${
-          collapsed ? "w-24" : "w-72"
-        } bg-gray-100 flex flex-col justify-start items-start h-screen shadow-lg`}
-      >
-        <div className="w-full h-auto bg-gray-200 flex flex-col justify-center items-center p-8 gap-4">
-          <img
-            src={"/vite.svg"}
-            alt="Vite Logo"
-            className={`${
-              collapsed ? "w-8 h-8" : "h-16 w-16"
-            } object-contain rounded-full border-2 border-gray-800`}
-          />
-          {collapsed ? null : (
-            <h1 className="text-2xl font-bold font-sans text-gray-800">
-              Hello, User
-            </h1>
-          )}
-        </div>
-        <div className="w-full h-auto flex flex-col justify-start items-start p-8 gap-4"></div>
-      </div>
-      <main>
-        <Outlet />
-      </main>
-    </div>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
