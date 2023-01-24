@@ -10,7 +10,6 @@ interface IMenuItem {
 
 const MenuItem: React.FC<IMenuItem> = ({ icon, title, to, isCollapsed }) => {
   const { pathname } = useLocation();
-  console.log(pathname);
   return (
     <Link
       to={to}

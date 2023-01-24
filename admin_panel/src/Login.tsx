@@ -1,16 +1,35 @@
 import React, { useEffect } from "react";
-import { useAuth } from "./context/AuthContex";
 import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineHome } from "react-icons/ai";
 import { BsSun, BsMoonStars } from "react-icons/bs";
 import { useTheme } from "./context/ThemeContext";
-
+import { useSignIn } from "react-auth-kit";
+import { loginApi } from "./api/auth";
 export const Login = () => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const { login, error, isAuthenticated } = useAuth();
+  const [error, setError] = React.useState<string | null>(null);
+  const signIn = useSignIn();
+  const navigate = useNavigate();
   const handleClick = async () => {
-    await login(email, password);
+    const response = await loginApi(email, password);
+    if (response.status === 200) {
+      signIn({
+        token: response.data.accessToken,
+        refreshToken: response.data.refreshToken,
+        expiresIn: 60 + 30,
+        authState: { user: response.data.user },
+        tokenType: "Bearer",
+      });
+      localStorage.setItem("refreshToken", response.data.refreshToken);
+      navigate("/");
+    } else {
+      if (response.status === 400) {
+        setError("Invalid credentials");
+      } else if (response.status === 404) {
+        setError(response.data.message);
+      }
+    }
   };
   const theme = useTheme();
   return (

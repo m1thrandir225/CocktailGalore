@@ -8,8 +8,9 @@ import { FaRegLemon } from "react-icons/fa";
 import { FiUsers } from "react-icons/fi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { MdDashboard } from "react-icons/md";
-import { useAuth } from "../../context/AuthContex";
-import { useNavigation } from "react-router-dom";
+import { useAuthUser, useSignOut } from "react-auth-kit";
+import { logoutApi } from "../../api/auth";
+import { useNavigate } from "react-router-dom";
 
 interface ISidebarProps {
   collapsed: boolean;
@@ -24,8 +25,16 @@ const Sidebar: React.FC<ISidebarProps> = ({
   user,
   setCollapsed,
 }) => {
-  const { logout } = useAuth();
-
+  const auth = useAuthUser();
+  const signOut = useSignOut();
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    const response = await logoutApi(auth()?.user.id);
+    if (response.status == 200) {
+      signOut();
+      navigate("/login");
+    }
+  };
   return (
     <div
       className={`flex flex-col justify-start  h-screen  bg-gray-100 text-gray-700 transition-[width] ease-in-out duration-500 drop-shadow-lg 
@@ -122,7 +131,7 @@ const Sidebar: React.FC<ISidebarProps> = ({
                 ? "justify-center rounded-none"
                 : "justify-start rounded-lg"
             }`}
-            onClick={() => logout()}
+            onClick={handleLogout}
           >
             <AiOutlineLogout size={24} />
             <span

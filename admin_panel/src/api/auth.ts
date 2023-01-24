@@ -12,5 +12,5 @@ export const logoutApi = async (id: number) => {
   const response = await axiosInstance.post("/logout", {
     id: id,
   });
-  return response.data;
+  return response;
 };

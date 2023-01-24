@@ -7,10 +7,8 @@ import {
   createRoutesFromElements,
   useNavigate,
 } from "react-router-dom";
-import { AuthLayout } from "./Layouts/AuthLayout";
 import ProtectedLayout from "./Layouts/ProtectedLayout";
 import { Login } from "./Login";
-import { AuthProvider } from "./context/AuthContex";
 import Cocktails from "./pages/Cocktails";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
@@ -19,30 +17,76 @@ import Insights from "./pages/Insights";
 import Flavours from "./pages/Flavours";
 import Users from "./pages/Users";
 import MyProfile from "./pages/MyProfile";
-
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <>
-      <Route element={<AuthLayout />}>
-        <Route path="/login" element={<Login />} />
-        <Route element={<ProtectedLayout />}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/cocktails" element={<Cocktails />} />
-          <Route path="/insights" element={<Insights />} />
-          <Route path="/flavours" element={<Flavours />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/profile" element={<MyProfile />} />
-        </Route>
-      </Route>
-    </>,
-  ),
-);
+import { RequireAuth } from "react-auth-kit";
 
 function App() {
   return (
     <ThemeProvider>
-      <RouterProvider router={router} />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/"
+            element={
+              <RequireAuth loginPath="/login">
+                <ProtectedLayout>
+                  <Dashboard />
+                </ProtectedLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/cocktails"
+            element={
+              <RequireAuth loginPath="/login">
+                <ProtectedLayout>
+                  <Cocktails />
+                </ProtectedLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/insights"
+            element={
+              <RequireAuth loginPath="/login">
+                <ProtectedLayout>
+                  <Insights />
+                </ProtectedLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/flavours"
+            element={
+              <RequireAuth loginPath="/login">
+                <ProtectedLayout>
+                  <Flavours />
+                </ProtectedLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <RequireAuth loginPath="/login">
+                <ProtectedLayout>
+                  <Users />
+                </ProtectedLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <RequireAuth loginPath="/login">
+                <ProtectedLayout>
+                  <Settings />
+                </ProtectedLayout>
+              </RequireAuth>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
     </ThemeProvider>
   );
 }
