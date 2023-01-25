@@ -17,7 +17,7 @@ export async function allFlavours(req: Request, res: Response) {
 }
 
 export async function getFlavour(req: Request, res: Response) {
-  const { id } = req.body;
+  const id = parseInt(req.params.id as string, 10);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.array() });
