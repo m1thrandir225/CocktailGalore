@@ -34,7 +34,7 @@ const DataGrid: React.FC<IDataGrid> = ({
             >
               <input
                 type="checkbox"
-                checked={selectedRow.length === rows.length}
+                checked={selectedRow.length === rows?.length}
                 onChange={() => handleSelectAll()}
               />
             </th>
@@ -46,9 +46,9 @@ const DataGrid: React.FC<IDataGrid> = ({
           </tr>
         </thead>
         <tbody>
-          {rows.map((row) => (
+          {rows?.map((row) => (
             <tr
-              key={row.name}
+              key={row?.name}
               className="bg-white border-b dark:bg-gray-900 dark:border-gray-700"
             >
               <td
