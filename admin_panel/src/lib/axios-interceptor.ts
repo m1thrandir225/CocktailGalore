@@ -1,7 +1,10 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.BASE_URL,
+  baseURL:
+    import.meta.env.MODE === "development"
+      ? "http://localhost:4000"
+      : "https://galore-cocktails-more-production.up.railway.app/",
   headers: {
     "Content-Type": "application/json",
   },
