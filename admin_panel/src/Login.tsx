@@ -5,15 +5,29 @@ import { BsSun, BsMoonStars } from "react-icons/bs";
 import { useTheme } from "./context/ThemeContext";
 import { useSignIn } from "react-auth-kit";
 import { loginApi } from "./api/auth";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoginSchema, loginSchema } from "./validation/loginValidation";
+
 export const Login = () => {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [error, setError] = React.useState<string | null>(null);
+  const theme = useTheme();
   const signIn = useSignIn();
   const navigate = useNavigate();
-  const handleClick = async () => {
-    const response = await loginApi(email, password);
-    if (response.status === 200) {
+
+  const {
+    register,
+    handleSubmit,
+
+    formState: { errors, isLoading, isSubmitSuccessful },
+    setError,
+    resetField,
+  } = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit: SubmitHandler<LoginSchema> = async (data) => {
+    try {
+      const response = await loginApi(data.email, data.password);
       signIn({
         token: response.data.accessToken,
         refreshToken: response.data.refreshToken,
@@ -23,57 +37,75 @@ export const Login = () => {
       });
       localStorage.setItem("refreshToken", response.data.refreshToken);
       navigate("/");
-    } else {
-      if (response.status === 400) {
-        setError("Invalid credentials");
-      } else if (response.status === 404) {
-        setError(response.data.message);
+    } catch (error: any) {
+      if (error.response.status === 404) {
+        if (error.response.data.message === "User not found, invalid email") {
+          setError("email", {
+            type: "manual",
+            message: error.response.data.message,
+          });
+          resetField("email", { keepError: true });
+        } else {
+          setError("password", {
+            type: "manual",
+            message: error.response.data.message,
+          });
+          resetField("password", { keepError: true });
+        }
       }
     }
   };
-  const theme = useTheme();
   return (
     <div className="flex flex-col justify-center items-center  bg-white h-screen w-screen dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center w-screen h-screen transition-colors duration-150 ease-in-out bg-gray-100 dark:bg-gray-900">
-        {error && (
-          <p className="my-4 font-sans font-bold text-red-500 uppercase ">
-            {error}
-          </p>
-        )}
         <div className="w-auto py-8 px-16 rounded-md drop-shadow-lg h-[500px] bg-gray-200 dark:bg-gray-800 flex flex-col justify-center items-center">
           <h1 className="my-4 text-3xl font-bold text-gray-700 dark:text-gray-300">
             Login
           </h1>
-
-          <input
-            name="username"
-            type="email"
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            className={`px-4 py-2 my-4 text-gray-700 bg-gray-100 border-2 rounded-md outline-none  drop-shadow-sm focus:border-blue-500 dark:focus:border-blue-400 dark:bg-gray-700 dark:text-gray-300 transition-colors ease-in-out duration-500 ${
-              error != null
-                ? "border-red-500"
-                : "border-gray-100 dark:border-gray-700"
-            }`}
-          />
-          <input
-            name="password"
-            type="password"
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            className={`px-4 py-2 my-4 text-gray-700 bg-gray-100 border-2 rounded-md outline-none drop-shadow-sm focus:border-blue-500 dark:focus:border-blue-400 dark:bg-gray-700 dark:text-gray-300 transition-colors ease-in-out duration-500 ${
-              error != null
-                ? "border-red-500"
-                : "border-gray-100 dark:border-gray-700"
-            }`}
-          />
-          <button
-            type="button"
-            onClick={handleClick}
-            className="px-8 py-2 font-sans text-xl text-gray-700 transition-colors duration-100 ease-in-out bg-gray-300 rounded-md drop-shadow-sm dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-500 dark:hover:bg-gray-400 hover:text-gray-100 dark:hover:text-gray-800"
+          <div> {errors.email?.message && errors.password?.message}</div>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col justify-center items-center"
           >
-            Continue
-          </button>
+            <input
+              id="email"
+              type="email"
+              {...register("email")}
+              placeholder="Email"
+              className={`px-4 py-2 mt-4 text-gray-700 bg-gray-100 border-2 rounded-md outline-none  drop-shadow-sm focus:border-blue-500 dark:focus:border-blue-400 dark:bg-gray-700 dark:text-gray-300 transition-colors ease-in-out duration-500 ${
+                errors.email != null
+                  ? "border-red-500"
+                  : "border-gray-100 dark:border-gray-700"
+              }`}
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm mb-4 mt-2 text-left self-start">
+                {errors.email?.message}
+              </p>
+            )}
+            <input
+              id="password"
+              {...register("password")}
+              type="password"
+              placeholder="Password"
+              className={`px-4 py-2 mt-4 text-gray-700 bg-gray-100 border-2 rounded-md outline-none drop-shadow-sm focus:border-blue-500 dark:focus:border-blue-400 dark:bg-gray-700 dark:text-gray-300 transition-colors ease-in-out duration-500 ${
+                errors.password != null
+                  ? "border-red-500"
+                  : "border-gray-100 dark:border-gray-700"
+              }`}
+            />
+            {errors.password && (
+              <p className="text-red-500 text-sm text-left mb-4 mt-2 self-start">
+                {errors.password?.message}
+              </p>
+            )}
+            <button
+              type="submit"
+              className="px-8 py-2 mt-4 font-sans text-xl text-gray-700 transition-colors duration-100 ease-in-out bg-gray-300 rounded-md drop-shadow-sm dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-500 dark:hover:bg-gray-400 hover:text-gray-100 dark:hover:text-gray-800"
+            >
+              Continue
+            </button>
+          </form>
         </div>
 
         <button
