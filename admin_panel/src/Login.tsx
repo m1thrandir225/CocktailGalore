@@ -1,24 +1,25 @@
-import React, { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { AiOutlineHome } from "react-icons/ai";
-import { BsSun, BsMoonStars } from "react-icons/bs";
-import { useTheme } from "./context/ThemeContext";
-import { useSignIn } from "react-auth-kit";
-import { loginApi } from "./api/auth";
-import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSignIn } from "react-auth-kit";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { BsMoonStars, BsSun } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
+import { loginApi } from "./api/auth";
+import { useTheme } from "./context/ThemeContext";
 import { LoginSchema, loginSchema } from "./validation/loginValidation";
+import ClipLoader from "react-spinners/ClipLoader";
+import Loader from "./components/Reusable/Loader";
+import { useState } from "react";
 
 export const Login = () => {
   const theme = useTheme();
   const signIn = useSignIn();
   const navigate = useNavigate();
-
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
 
-    formState: { errors, isLoading, isSubmitSuccessful },
+    formState: { errors, isSubmitSuccessful },
     setError,
     resetField,
   } = useForm<LoginSchema>({
@@ -27,6 +28,7 @@ export const Login = () => {
 
   const onSubmit: SubmitHandler<LoginSchema> = async (data) => {
     try {
+      setIsLoading(true);
       const response = await loginApi(data.email, data.password);
       signIn({
         token: response.data.accessToken,
@@ -53,10 +55,14 @@ export const Login = () => {
           resetField("password", { keepError: true });
         }
       }
+    } finally {
+      setIsLoading(false);
     }
   };
+  console.log(isLoading);
   return (
     <div className="flex flex-col justify-center items-center  bg-white h-screen w-screen dark:bg-gray-900">
+      {isLoading && <Loader loading={isLoading} />}
       <div className="flex flex-col items-center justify-center w-screen h-screen transition-colors duration-150 ease-in-out bg-gray-100 dark:bg-gray-900">
         <div className="w-auto py-8 px-16 rounded-md drop-shadow-lg h-[500px] bg-gray-200 dark:bg-gray-800 flex flex-col justify-center items-center">
           <h1 className="my-4 text-3xl font-bold text-gray-700 dark:text-gray-300">
