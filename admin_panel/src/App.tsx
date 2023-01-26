@@ -32,101 +32,99 @@ function App() {
           fetcher: (url: string) => axiosInstance(url).then((r) => r.data),
         }}
       >
-        <BrowserRouter>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/"
-              element={
-                <RequireAuth loginPath="/login">
-                  <ProtectedLayout>
-                    <Dashboard />
-                  </ProtectedLayout>
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/cocktails"
-              element={
-                <RequireAuth loginPath="/login">
-                  <ProtectedLayout>
-                    <Cocktails />
-                  </ProtectedLayout>
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/insights"
-              element={
-                <RequireAuth loginPath="/login">
-                  <ProtectedLayout>
-                    <Insights />
-                  </ProtectedLayout>
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/flavours"
-              element={
-                <RequireAuth loginPath="/login">
-                  <ProtectedLayout>
-                    <Flavours />
-                  </ProtectedLayout>
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/flavours/new"
-              element={
-                <RequireAuth loginPath="/login">
-                  <ProtectedLayout>
-                    <AddFlavour />
-                  </ProtectedLayout>
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/flavours/flavour/:id"
-              element={
-                <RequireAuth loginPath="/login">
-                  <ProtectedLayout>
-                    <EditFlavour />
-                  </ProtectedLayout>
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/users"
-              element={
-                <RequireAuth loginPath="/login">
-                  <ProtectedLayout>
-                    <Users />
-                  </ProtectedLayout>
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/users/user/:id"
-              element={
-                <RequireAuth loginPath="/login">
-                  <ProtectedLayout>
-                    <EditUser />
-                  </ProtectedLayout>
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <RequireAuth loginPath="/login">
-                  <ProtectedLayout>
-                    <Settings />
-                  </ProtectedLayout>
-                </RequireAuth>
-              }
-            />
-          </Routes>
-        </BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/"
+            element={
+              <RequireAuth loginPath="/login">
+                <ProtectedLayout>
+                  <Dashboard />
+                </ProtectedLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/cocktails"
+            element={
+              <RequireAuth loginPath="/login">
+                <ProtectedLayout>
+                  <Cocktails />
+                </ProtectedLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/insights"
+            element={
+              <RequireAuth loginPath="/login">
+                <ProtectedLayout>
+                  <Insights />
+                </ProtectedLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/flavours"
+            element={
+              <RequireAuth loginPath="/login">
+                <ProtectedLayout>
+                  <Flavours />
+                </ProtectedLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/flavours/new"
+            element={
+              <RequireAuth loginPath="/login">
+                <ProtectedLayout>
+                  <AddFlavour />
+                </ProtectedLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/flavours/flavour/:id"
+            element={
+              <RequireAuth loginPath="/login">
+                <ProtectedLayout>
+                  <EditFlavour />
+                </ProtectedLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <RequireAuth loginPath="/login">
+                <ProtectedLayout>
+                  <Users />
+                </ProtectedLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/users/user/:id"
+            element={
+              <RequireAuth loginPath="/login">
+                <ProtectedLayout>
+                  <EditUser />
+                </ProtectedLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <RequireAuth loginPath="/login">
+                <ProtectedLayout>
+                  <Settings />
+                </ProtectedLayout>
+              </RequireAuth>
+            }
+          />
+        </Routes>
       </SWRConfig>
     </ThemeProvider>
   );
