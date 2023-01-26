@@ -18,6 +18,20 @@ const upload = multer({ storage: storage, fileFilter: fileFilter }).single(
   "profileImage",
 );
 
+export async function getAllUsers(req: Request, res: Response) {
+  const users = await db.user.findMany({
+    select: {
+      id: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      userType: true,
+      profileImage: true,
+    },
+  });
+  return res.status(200).json({ users: users });
+}
+
 export async function getUser(req: Request, res: Response) {
   const id = parseInt(req.params.id as string, 10);
   const errors = validationResult(req);
@@ -277,4 +291,45 @@ export async function deleteUser(req: Request, res: Response) {
     return res.status(400).json({ errors: [{ msg: "User not found" }] });
   }
   return res.status(200).json({ msg: "User deleted" });
+}
+
+export async function deleteUsers(req: Request, res: Response) {
+  const { ids } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  if (!ids) {
+    return res.status(400).json({ errors: [{ msg: "No ids provided" }] });
+  }
+  ids.map(async (id: number) => {
+    const usersToDelete = await db.user.update({
+      where: {
+        id,
+      },
+      data: {
+        favouriteCocktails: {
+          set: [],
+        },
+        readInsights: {
+          set: [],
+        },
+        likedFlavours: {
+          set: [],
+        },
+      },
+    });
+    if (!usersToDelete) {
+      return res.status(400).json({ errors: [{ msg: "User not found" }] });
+    }
+    const deletedUsers = await db.user.delete({
+      where: {
+        id,
+      },
+    });
+    if (!deletedUsers) {
+      return res.status(400).json({ errors: [{ msg: "User not found" }] });
+    }
+  });
+  return res.status(200).json({ msg: "Users deleted" });
 }

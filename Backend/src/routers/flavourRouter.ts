@@ -8,10 +8,10 @@ flavourRouter.get("/", FlavourController.allFlavours);
 
 flavourRouter.get("/flavour/:id", FlavourController.getFlavour);
 
-flavourRouter.post("/flavour/:id", FlavourController.createFlavour);
+flavourRouter.post("/flavour", FlavourController.createFlavour);
 
 flavourRouter.put("/flavour/:id", FlavourController.updateFlavour);
 
-flavourRouter.delete("/flavour/:id", FlavourController.deleteFlavour);
+flavourRouter.delete("/flavour", FlavourController.deleteFlavour);
 
 export default flavourRouter;

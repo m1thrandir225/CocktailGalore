@@ -5,20 +5,33 @@ import Loader from "../../components/Reusable/Loader";
 
 import { MdDeleteOutline, MdAdd, MdEdit } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../lib/axios-interceptor";
+import { deleteFlavour } from "../../api/flavours";
 
 const columns = ["Id", "Name"];
 
 function Flavours() {
   const [selectedRows, setSelectedRows] = React.useState<any[]>([]);
-  const { data, isLoading } = useSWR("/flavours");
+  const { data, isLoading, mutate, isValidating } = useSWR("/flavours");
   const navigate = useNavigate();
+
   const handleEdit = () => {
     navigate(`/flavours/flavour/${selectedRows[0].id}`);
   };
   const handleAdd = () => {
     navigate("/flavours/new");
   };
-  const handleDelete = () => {};
+  const handleDelete = async () => {
+    const ids = selectedRows.map((row) => row.id);
+    console.log(ids);
+    const response = await deleteFlavour(ids);
+    if (response.status === 200) {
+      setSelectedRows([]);
+      setTimeout(() => {
+        mutate("/flavours");
+      }, 3000);
+    }
+  };
   return (
     <div className="flex flex-col w-full h-full">
       <h1 className="text-gray-800 dark:text-gray-200 font-bold font-sans text-2xl">
@@ -55,7 +68,7 @@ function Flavours() {
         </div>
       </div>
       {isLoading ? (
-        <Loader loading={isLoading} />
+        <Loader loading={isLoading || isValidating} />
       ) : (
         <DataGrid
           columns={columns}

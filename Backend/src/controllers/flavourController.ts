@@ -59,7 +59,8 @@ export async function createFlavour(req: Request, res: Response) {
 }
 
 export async function updateFlavour(req: Request, res: Response) {
-  const { id, name } = req.body;
+  const { name } = req.body;
+  const id = parseInt(req.params.id as string, 10);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.array() });
@@ -81,35 +82,42 @@ export async function updateFlavour(req: Request, res: Response) {
 }
 
 export async function deleteFlavour(req: Request, res: Response) {
-  const { id } = req.body;
+  const { ids } = req.body;
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.array() });
   }
-  const flavour = await db.flavour.update({
-    where: {
-      id,
-    },
-    data: {
-      cocktails: {
-        set: [],
-      },
-      likedBy: {
-        set: [],
-      },
-    },
-  });
-  if (!flavour) {
-    return res.status(400).send({ message: "Error deleting flavour" });
+  console.log(req.body);
+  if (!ids) {
+    return res.status(400).send({ message: "No ids provided" });
   }
-  const deletedFlavour = await db.flavour.delete({
-    where: {
-      id,
-    },
+  ids.map(async (id: number) => {
+    const flavour = await db.flavour.update({
+      where: {
+        id,
+      },
+      data: {
+        cocktails: {
+          set: [],
+        },
+        likedBy: {
+          set: [],
+        },
+      },
+    });
+    if (!flavour) {
+      return res.status(400).send({ message: "Error deleting flavour" });
+    }
+    const deletedFlavour = await db.flavour.delete({
+      where: {
+        id,
+      },
+    });
+    if (!deletedFlavour) {
+      return res.status(400).send({ message: "Error deleting flavour" });
+    }
   });
-  if (!deletedFlavour) {
-    return res.status(400).send({ message: "Error deleting flavour" });
-  }
   return res.status(200).send({
     message: "Flavour deleted successfully",
   });

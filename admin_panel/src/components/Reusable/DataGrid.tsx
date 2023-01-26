@@ -34,7 +34,9 @@ const DataGrid: React.FC<IDataGrid> = ({
             >
               <input
                 type="checkbox"
-                checked={selectedRow.length === rows?.length}
+                checked={
+                  selectedRow.length === rows?.length && rows?.length > 0
+                }
                 onChange={() => handleSelectAll()}
               />
             </th>
@@ -69,7 +71,7 @@ const DataGrid: React.FC<IDataGrid> = ({
                 <td
                   key={index}
                   scope="row"
-                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="truncate max-w-md px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   {value}
                 </td>

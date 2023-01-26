@@ -22,7 +22,11 @@ const fileFilter = (req: any, file: any, cb: any) => {
     cb(null, false);
   }
 };
+
 const upload = multer({ storage: storage, fileFilter: fileFilter });
+
+//allusers
+userRouter.get("/", UserController.getAllUsers);
 
 //get user data
 userRouter.get("/user/:id", param("id").notEmpty(), UserController.getUser);
@@ -36,3 +40,5 @@ userRouter.post(
 );
 
 userRouter.delete("/user/:id", UserController.deleteUser);
+//delete multiple users
+userRouter.delete("/", UserController.deleteUsers);

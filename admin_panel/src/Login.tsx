@@ -59,7 +59,7 @@ export const Login = () => {
       setIsLoading(false);
     }
   };
-  console.log(isLoading);
+
   return (
     <div className="flex flex-col justify-center items-center  bg-white h-screen w-screen dark:bg-gray-900">
       {isLoading && <Loader loading={isLoading} />}
