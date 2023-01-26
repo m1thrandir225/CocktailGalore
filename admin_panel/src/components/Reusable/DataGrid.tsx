@@ -49,7 +49,11 @@ const DataGrid: React.FC<IDataGrid> = ({
           {rows?.map((row) => (
             <tr
               key={row?.name}
-              className="bg-white border-b dark:bg-gray-900 dark:border-gray-700"
+              className={` border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700 transition-colors ease-in-out duration-150 ${
+                selectedRow.includes(row)
+                  ? "bg-amber-100 dark:bg-gray-500 bg-opacity-50"
+                  : "bg-white dark:bg-gray-900"
+              }`}
             >
               <td
                 scope="row"

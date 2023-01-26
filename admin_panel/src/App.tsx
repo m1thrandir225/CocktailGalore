@@ -14,12 +14,14 @@ import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import ThemeProvider from "./context/ThemeContext";
 import Insights from "./pages/Insights";
-import Flavours from "./pages/Flavours";
+import Flavours from "./pages/Flavours/Flavours";
 import Users from "./pages/Users";
 import MyProfile from "./pages/MyProfile";
+import EditFlavour from "./pages/Flavours/EditFlavour";
 import { RequireAuth } from "react-auth-kit";
 import { SWRConfig } from "swr";
 import axiosInstance from "./lib/axios-interceptor";
+import AddFlavour from "./pages/Flavours/AddFlavour";
 
 function App() {
   return (
@@ -68,6 +70,26 @@ function App() {
                 <RequireAuth loginPath="/login">
                   <ProtectedLayout>
                     <Flavours />
+                  </ProtectedLayout>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/flavours/new"
+              element={
+                <RequireAuth loginPath="/login">
+                  <ProtectedLayout>
+                    <AddFlavour />
+                  </ProtectedLayout>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/flavours/flavour/:id"
+              element={
+                <RequireAuth loginPath="/login">
+                  <ProtectedLayout>
+                    <EditFlavour />
                   </ProtectedLayout>
                 </RequireAuth>
               }

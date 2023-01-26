@@ -31,10 +31,16 @@ axiosInstance.interceptors.response.use(
       if (error.response.status === 403 && !originalRequest._retry) {
         originalRequest._retry = true;
         const refreshToken = localStorage.getItem("refreshToken");
-        if (refreshToken !== null) {
+        const authState = JSON.parse(
+          localStorage.getItem("_auth_state") || "{}",
+        );
+        const user = authState.user;
+
+        if (refreshToken !== null && user.id !== null) {
           try {
             const response = await axiosInstance.post("/refresh_token", {
               refreshToken: refreshToken,
+              id: user.id,
             });
             localStorage.setItem("_auth", response.data.accessToken);
             return axiosInstance(originalRequest);
