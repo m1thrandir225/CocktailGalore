@@ -37,7 +37,7 @@ const Sidebar: React.FC<ISidebarProps> = ({
   };
   return (
     <div
-      className={`flex flex-col justify-start  h-screen  bg-gray-100 text-gray-700 transition-[width] ease-in-out duration-500 drop-shadow-lg 
+      className={`flex flex-col justify-start  h-full  bg-gray-100 text-gray-700 transition-[width] ease-in-out duration-500 drop-shadow-lg 
     dark:bg-gray-700 dark:text-gray-200 ${collapsed ? "w-20" : "w-64"}`}
     >
       <div
@@ -62,7 +62,7 @@ const Sidebar: React.FC<ISidebarProps> = ({
           Hello, {user.firstName}
         </h1>
       </div>
-      <div className="flex flex-col items-start justify-between h-screen">
+      <div className="flex flex-col items-start justify-between h-full">
         <div className="w-full">
           <div
             className={`flex flex-col items-stretch justify-start  ${

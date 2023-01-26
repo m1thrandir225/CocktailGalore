@@ -40,17 +40,17 @@ const DataGrid: React.FC<IDataGrid> = ({
                 onChange={() => handleSelectAll()}
               />
             </th>
-            {columns.map((column) => (
-              <th key={column} scope="col" className="px-6 py-3">
+            {columns.map((column, index) => (
+              <th key={index} scope="col" className="px-6 py-3">
                 {column}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {rows?.map((row) => (
+          {rows?.map((row, index) => (
             <tr
-              key={row?.name}
+              key={index}
               className={` border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700 transition-colors ease-in-out duration-150 ${
                 selectedRow.includes(row)
                   ? "bg-amber-100 dark:bg-gray-500 bg-opacity-50"

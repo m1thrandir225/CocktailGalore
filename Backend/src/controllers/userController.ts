@@ -47,8 +47,14 @@ export async function getUser(req: Request, res: Response) {
       email: true,
       firstName: true,
       lastName: true,
+      profileImage: true,
       favouriteCocktails: true,
-      likedFlavours: true,
+      likedFlavours: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
       readInsights: true,
     },
   });

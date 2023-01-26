@@ -1,36 +1,36 @@
-import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { UserValidation, userSchema } from "../../validation/userValidation";
+import type { KeyedMutator } from "swr";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updateUserData } from "../../api/users";
-import { KeyedMutator } from "swr";
+import type { UserPasswordValidation } from "../../validation/userValidation";
+import { userPasswordSchema } from "../../validation/userValidation";
+import { updateUserPassword } from "../../api/users";
 
-interface EditUserInformationProps {
+interface EditUserPasswordProps {
   user: any;
   mutate: KeyedMutator<any>;
 }
 
-const EditUserInformation: React.FC<EditUserInformationProps> = ({
+const EditUserPassword: React.FC<EditUserPasswordProps> = ({
   user,
   mutate,
 }) => {
   const {
-    handleSubmit,
-    formState: { isSubmitSuccessful },
     register,
-    setValue,
-  } = useForm<UserValidation>({
-    resolver: zodResolver(userSchema),
+    handleSubmit,
+    formState: { isSubmitSuccessful, errors },
+    reset,
+  } = useForm<UserPasswordValidation>({
+    resolver: zodResolver(userPasswordSchema),
   });
-
-  const onSubmit: SubmitHandler<UserValidation> = async (data) => {
-    console.log(data);
-    const response = await updateUserData(user?.id, data);
+  const onSubmit: SubmitHandler<UserPasswordValidation> = async (data) => {
+    const response = await updateUserPassword(
+      user?.id,
+      data.currentPassword,
+      data.newPassword,
+    );
     if (response.status === 200) {
       mutate(`/users/user/${user.id}`);
-      setValue("firstName", "");
-      setValue("lastName", "");
-      setValue("email", "");
+      reset();
     }
   };
   return (
@@ -41,51 +41,51 @@ const EditUserInformation: React.FC<EditUserInformationProps> = ({
       }`}
     >
       <h1 className="text-2xl font-bold font-sans text-gray-800 dark:text-gray-200 w-full">
-        Basic Information
+        User Password
       </h1>
       <div className="flex flex-col justify-start items-stretch gap-4 w-full">
         <div>
           <label
-            htmlFor="firstName"
+            htmlFor="currentPassword"
             className="text-lg text-gray-800 dark:text-gray-200 font-medium font-sans"
           >
-            First Name
+            Current Password
           </label>
           <input
-            type="text"
-            id="firstName"
-            placeholder={user?.firstName}
-            {...register("firstName")}
+            type="password"
+            id="currentPassword"
+            placeholder="Enter your current password"
+            {...register("currentPassword")}
             className="p-4 rounded-md text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 w-full outline-none focus:ring-2 focus:ring-amber-400 transition-all ease-in-out duration-200"
           />
         </div>
         <div>
           <label
-            htmlFor="lastName"
+            htmlFor="newPassword"
             className="text-lg text-gray-800 dark:text-gray-200 font-medium font-sans"
           >
-            Last Name
+            New Password
           </label>
           <input
-            type="text"
-            id="lastName"
-            placeholder={user?.lastName}
-            {...register("lastName")}
+            type="password"
+            id="newPassword"
+            placeholder="Enter a new password"
+            {...register("newPassword")}
             className="p-4 rounded-md text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 w-full outline-none focus:ring-2 focus:ring-amber-400 transition-all ease-in-out duration-200"
           />
         </div>
         <div>
           <label
-            htmlFor="email"
+            htmlFor="confirmPassword"
             className="text-lg text-gray-800 dark:text-gray-200 font-medium font-sans"
           >
-            Email
+            Confirm New Password
           </label>
           <input
-            type="email"
-            id="email"
-            placeholder={user?.email}
-            {...register("email")}
+            type="password"
+            id="confirmPassword"
+            placeholder="Confirm your new password"
+            {...register("confirmPassword")}
             className="p-4 rounded-md text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 w-full outline-none focus:ring-2 focus:ring-amber-400 transition-all ease-in-out duration-200"
           />
         </div>
@@ -100,4 +100,4 @@ const EditUserInformation: React.FC<EditUserInformationProps> = ({
   );
 };
 
-export default EditUserInformation;
+export default EditUserPassword;

@@ -15,7 +15,7 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
         user={auth()?.user}
         setCollapsed={setCollapsed}
       />
-      <main className="bg-white dark:bg-gray-900 h-screen w-screen flex flex-col justify-start items-start px-8">
+      <main className="bg-white dark:bg-gray-900 h-full w-screen flex flex-col justify-start items-start px-8">
         <Topbar />
         {children}
       </main>
