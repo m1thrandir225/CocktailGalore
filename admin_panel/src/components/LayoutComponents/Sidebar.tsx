@@ -14,7 +14,6 @@ import { useNavigate } from "react-router-dom";
 
 interface ISidebarProps {
   collapsed: boolean;
-  user: any;
   loading: boolean;
   setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -22,10 +21,10 @@ interface ISidebarProps {
 const Sidebar: React.FC<ISidebarProps> = ({
   collapsed,
   loading,
-  user,
   setCollapsed,
 }) => {
   const auth = useAuthUser();
+  const user = auth()?.user;
   const signOut = useSignOut();
   const navigate = useNavigate();
   const handleLogout = async () => {

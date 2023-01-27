@@ -9,12 +9,14 @@ import { LoginSchema, loginSchema } from "./validation/loginValidation";
 import ClipLoader from "react-spinners/ClipLoader";
 import Loader from "./components/Reusable/Loader";
 import { useState } from "react";
+import React from "react";
 
-export const Login = () => {
+const Login: React.FC = () => {
   const theme = useTheme();
   const signIn = useSignIn();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -125,3 +127,5 @@ export const Login = () => {
     </div>
   );
 };
+
+export default Login;
