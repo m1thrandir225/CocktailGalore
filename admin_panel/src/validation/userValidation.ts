@@ -6,7 +6,12 @@ export const userSchema = z.object({
   email: z.string().email({ message: "Email is required" }),
 });
 
-export type UserValidation = z.infer<typeof userSchema>;
+export const userProfilePictureSchema = z.object({
+  profileImage: z.instanceof(FileList).refine((data) => data.length > 0, {
+    message: "Profile picture is required",
+    path: ["profileImage"],
+  }),
+});
 
 export const userPasswordSchema = z
   .object({
@@ -22,3 +27,7 @@ export const userPasswordSchema = z
   });
 
 export type UserPasswordValidation = z.infer<typeof userPasswordSchema>;
+export type UserValidation = z.infer<typeof userSchema>;
+export type UserProfilePictureValidation = z.infer<
+  typeof userProfilePictureSchema
+>;

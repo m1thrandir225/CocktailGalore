@@ -1,10 +1,13 @@
 import React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { updateUserProfile } from "../../api/users";
 import { KeyedMutator } from "swr";
-
+import { User } from "../../types/apiTypes";
+import type { UserProfilePictureValidation } from "../../validation/userValidation";
+import { userProfilePictureSchema } from "../../validation/userValidation";
+import { zodResolver } from "@hookform/resolvers/zod";
 interface EditUserProfileImageProps {
-  user: any;
+  user: User;
   mutate: KeyedMutator<any>;
 }
 
@@ -14,10 +17,15 @@ const EditUserProfileImage: React.FC<EditUserProfileImageProps> = ({
 }) => {
   const {
     register,
-    formState: { isSubmitSuccessful },
+    setError,
+    formState: { isSubmitSuccessful, errors },
     handleSubmit,
-  } = useForm();
-  const onSubmit = async (data: any) => {
+  } = useForm<UserProfilePictureValidation>({
+    resolver: zodResolver(userProfilePictureSchema),
+  });
+  const onSubmit: SubmitHandler<UserProfilePictureValidation> = async (
+    data,
+  ) => {
     const response = await updateUserProfile(user?.id, data?.profileImage[0]);
     if (response.status === 200) {
       mutate(`/users/user/${user.id}`);
@@ -54,6 +62,11 @@ const EditUserProfileImage: React.FC<EditUserProfileImageProps> = ({
               className="block  text-sm text-gray-500  file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-200 max-w-xs file:text-gray-800 hover:file:bg-amber-100"
             />
           </label>
+          {errors?.profileImage && (
+            <p className="text-red-500 text-sm font-medium font-sans">
+              {errors?.profileImage?.message}
+            </p>
+          )}
         </div>
       </div>
       <button

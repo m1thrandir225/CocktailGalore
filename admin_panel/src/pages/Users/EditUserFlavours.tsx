@@ -1,7 +1,6 @@
 import { User } from "../../types/apiTypes";
 
 const EditUserFlavours = ({ user }: { user: User }) => {
-  console.log(user);
   return (
     <div
       className={`flex flex-col justify-start items-start shadow-lg p-8 rounded-md w-[400px] gap-4 dark:bg-gray-700 hover:ring-2 transition-all ease-in-out duration-300 `}

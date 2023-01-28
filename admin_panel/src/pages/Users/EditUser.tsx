@@ -19,8 +19,12 @@ function EditUser() {
   const { id } = useParams();
   const { data, isLoading, mutate, isValidating } = useSWR<ReturnSWR>(
     `/users/user/${id}`,
+    {
+      revalidateOnFocus: false,
+    },
   );
-  if (isLoading || !data) return <Loader loading={isLoading} />;
+  if (isLoading || !data?.user || isValidating)
+    return <Loader loading={isLoading} />;
   return (
     <div className="flex flex-col items-start justify-start gap-8 w-full place-self-start h-full overflow-y-scroll">
       <h1 className="text-2xl text-gray-800 dark:text-gray-200 font-bold font-sans text-left place-self-start">
