@@ -1,19 +1,18 @@
-import React from "react";
-import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  cocktailSchema,
-  CocktailValidation,
-} from "../../validation/cocktailValidation";
-import ListInput from "../../components/Reusable/ListInput";
-import { CocktailCategory, Flavour } from "../../types/apiTypes";
-import useSWR from "swr";
-import SelectMultiple from "../../components/Reusable/SelectMultiple";
-import { createCocktail } from "../../api/cocktails";
+import React from "react";
+import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import useSWR from "swr";
+import { createCocktail } from "../../api/cocktails";
 import Loader from "../../components/Reusable/Loader";
 import RoundedButtonIcon from "../../components/Reusable/RoundedButtonIcon";
-import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
+import SelectMultiple from "../../components/Reusable/SelectMultiple";
+import { CocktailCategory, Flavour } from "../../types/apiTypes";
+import {
+  CocktailValidation,
+  cocktailSchema,
+} from "../../validation/cocktailValidation";
 const AddCocktail = () => {
   const [ingredients, setIngredients] = React.useState<string[]>([""]);
   const [instructions, setInstructions] = React.useState<string[]>([""]);
