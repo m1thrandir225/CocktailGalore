@@ -13,10 +13,16 @@ export type Cocktail = {
   id: number;
   name: string;
   timeToMake: number;
-  ingredients: string;
-  instructions: string;
+  ingredients: JSON;
+  instructions: JSON;
   image: string;
   flavours: Flavour[];
+  categories: CocktailCategory[];
+};
+
+export type CocktailCategory = {
+  id: number;
+  name: string;
 };
 
 export type Author = {

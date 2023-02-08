@@ -4,7 +4,7 @@ const baseURLExternal =
   "https://galore-cocktails-more-production.up.railway.app/";
 
 const axiosInstance = axios.create({
-  baseURL: "https://galore-cocktails-more-production.up.railway.app/",
+  baseURL: "http://localhost:4000/",
   headers: {
     "Access-Control-Allow-Origin": "*", // Required for CORS support to work
     "Content-Type": "application/json",

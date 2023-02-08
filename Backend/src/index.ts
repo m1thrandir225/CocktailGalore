@@ -1,3 +1,4 @@
+import { cocktailCategoryRouter } from "./routers/cocktailCategoryRouter";
 import path from "path";
 import { userRouter } from "./routers/userRouter";
 import * as dotenv from "dotenv";
@@ -24,6 +25,7 @@ app.use(verifyToken);
 app.use("/users", userRouter);
 app.use("/flavours", flavourRouter);
 app.use("/cocktails", cocktailRouter);
+app.use("/categories", cocktailCategoryRouter);
 app.use("/insights", insightRouter);
 
 app.listen(PORT, () => {

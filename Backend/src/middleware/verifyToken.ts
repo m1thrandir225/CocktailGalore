@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as jwt from "jsonwebtoken";
 
-const verifyToken = (req: Request, res: Response, next: NextFunction) => {
+function verifyToken(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers["authorization"]?.split(" ");
   if (typeof authHeader !== "undefined") {
     const token = authHeader[1];
@@ -20,6 +20,6 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   } else {
     res.sendStatus(403);
   }
-};
+}
 
 export default verifyToken;

@@ -5,6 +5,7 @@ import useSWR from "swr";
 import Loader from "../../components/Reusable/Loader";
 import DataGrid from "../../components/Reusable/DataGrid";
 import { deleteUsers } from "../../api/users";
+import PageTitle from "../../components/Reusable/PageTitle";
 const columns = [
   "Id",
   "Email",
@@ -34,9 +35,7 @@ function Users() {
   };
   return (
     <div className="flex flex-col w-full h-full">
-      <h1 className="text-gray-800 dark:text-gray-200 font-bold font-sans text-2xl">
-        Users
-      </h1>
+      <PageTitle title="Users" />
       <div className="flex flex-row justify-between items-center w-full my-4">
         <div className="flex flex-row items-center gap-4">
           <button
@@ -61,16 +60,13 @@ function Users() {
           </button>
         </div>
       </div>
-      {isLoading ? (
-        <Loader loading={isLoading || isValidating} />
-      ) : (
-        <DataGrid
-          columns={columns}
-          rows={data?.users}
-          setSelectRow={setSelectedRows}
-          selectedRow={selectedRows}
-        />
-      )}
+      <DataGrid
+        columns={columns}
+        rows={data?.users}
+        setSelectRow={setSelectedRows}
+        selectedRow={selectedRows}
+        loading={isLoading || isValidating}
+      />
     </div>
   );
 }

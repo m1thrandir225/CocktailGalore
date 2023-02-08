@@ -41,8 +41,8 @@ model Cocktail {
   name         String
   flavours     Flavour[]
   timeToMake   Int
-  ingredients  String
-  instructions String
+  ingredients  Json?
+  instructions Json?
   image        String
   favouriteBy  User[]
   category     CocktailCategory[]

@@ -6,6 +6,7 @@ import { BiDrink, BiMenu } from "react-icons/bi";
 import { BsSignpost } from "react-icons/bs";
 import { FaRegLemon } from "react-icons/fa";
 import { FiUsers } from "react-icons/fi";
+import { GiOrangeSlice } from "react-icons/gi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { MdDashboard } from "react-icons/md";
 import { useAuthUser, useSignOut } from "react-auth-kit";
@@ -78,6 +79,12 @@ const Sidebar: React.FC<ISidebarProps> = ({
               title="Cocktails"
               to="/cocktails"
               icon={<BiDrink />}
+              isCollapsed={collapsed}
+            />
+            <MenuItem
+              title="Categories"
+              to="/categories"
+              icon={<GiOrangeSlice />}
               isCollapsed={collapsed}
             />
             <MenuItem

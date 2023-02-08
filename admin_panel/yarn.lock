@@ -112,6 +112,13 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.16.17.tgz#c5a1a4bfe1b57f0c3e61b29883525c6da3e5c091"
   integrity sha512-y+EHuSchhL7FjHgvQL/0fnnFmO4T1bhvWANX6gcnqTjtnKWbTvUMCpGnv2+t+31d7RzyEAYAd4u2fnIhHL6N/Q==
 
+"@headlessui/react@^1.7.9":
+  version "1.7.9"
+  resolved "https://registry.yarnpkg.com/@headlessui/react/-/react-1.7.9.tgz#fcb4cf50afbb2161cf7ea8e2301805ec05c24e49"
+  integrity sha512-Bobh/+mDciu8kEE2hvdukFYjbfaG4MEkK/6TjWOgqcODLKYpRhWPKPE+dCcCSz/YrwjFVrEAMOiWtfk6sW20/w==
+  dependencies:
+    client-only "^0.0.1"
+
 "@hookform/resolvers@^2.9.10":
   version "2.9.10"
   resolved "https://registry.yarnpkg.com/@hookform/resolvers/-/resolvers-2.9.10.tgz#e7e88942ee34e97b7bc937b0be4694194c9cd420"
@@ -351,6 +358,11 @@ chokidar@^3.5.3:
     readdirp "~3.6.0"
   optionalDependencies:
     fsevents "~2.3.2"
+
+client-only@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/client-only/-/client-only-0.0.1.tgz#38bba5d403c41ab150bff64a95c85013cf73bca1"
+  integrity sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==
 
 color-name@^1.1.4:
   version "1.1.4"

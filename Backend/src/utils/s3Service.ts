@@ -22,4 +22,5 @@ export const s3Delete = async (key: string, keyPath: string) => {
     Key: `${keyPath}/${key}`,
   };
   const result = s3.deleteObject(params).promise();
+  return result;
 };

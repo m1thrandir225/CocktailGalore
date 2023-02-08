@@ -3,36 +3,29 @@ import useSWR from "swr";
 import DataGrid from "../../components/Reusable/DataGrid";
 import { MdAdd, MdDeleteOutline, MdEdit } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { deleteFlavour } from "../../api/flavours";
+import type { CocktailCategory } from "../../types/apiTypes";
 import PageTitle from "../../components/Reusable/PageTitle";
 
 const columns = ["Id", "Name"];
 
-function Flavours() {
-  const [selectedRows, setSelectedRows] = React.useState<any[]>([]);
-  const { data, isLoading, mutate, isValidating } = useSWR("/flavours");
+function CategoryPage() {
+  const [selectedRows, setSelectedRows] = React.useState<CocktailCategory[]>(
+    [],
+  );
+  const { data, isLoading, mutate, isValidating } = useSWR("/categories");
   const navigate = useNavigate();
 
-  const handleEdit = () => {
-    navigate(`/flavours/flavour/${selectedRows[0].id}`);
+  const handleEdit = (id: number) => {
+    navigate(`/categories/category/${id}`);
   };
   const handleAdd = () => {
-    navigate("/flavours/new");
+    navigate("/categories/category/new");
   };
-  const handleDelete = async () => {
-    const ids = selectedRows.map((row) => row.id);
-    console.log(ids);
-    const response = await deleteFlavour(ids);
-    if (response.status === 200) {
-      setSelectedRows([]);
-      setTimeout(() => {
-        mutate("/flavours");
-      }, 3000);
-    }
-  };
+  const handleDelete = async () => {};
+
   return (
     <div className="flex flex-col w-full h-full">
-      <PageTitle title="Flavours" />
+      <PageTitle title="Cocktail Categories" />
       <div className="flex flex-row justify-between items-center w-full my-4">
         <div className="flex flex-row items-center gap-4">
           <button
@@ -57,7 +50,7 @@ function Flavours() {
             className={`w-10 h-10 bg-amber-400 rounded-full flex items-center justify-center text-gray-800  dark:text-gray-100 shadow-lg ${
               selectedRows.length !== 1 ? "opacity-50 cursor-not-allowed" : ""
             }`}
-            onClick={handleEdit}
+            onClick={() => handleEdit(selectedRows[0].id)}
           >
             <MdEdit size={24} />
           </button>
@@ -65,7 +58,7 @@ function Flavours() {
       </div>
       <DataGrid
         columns={columns}
-        rows={data?.flavours}
+        rows={data?.categories}
         setSelectRow={setSelectedRows}
         selectedRow={selectedRows}
         loading={isLoading || isValidating}
@@ -74,4 +67,4 @@ function Flavours() {
   );
 }
 
-export default Flavours;
+export default CategoryPage;

@@ -1,20 +1,24 @@
-import { AuthProvider, RequireAuth } from "react-auth-kit";
-import { SWRConfig } from "swr";
-import ThemeProvider from "./context/ThemeContext";
-import axiosInstance from "./lib/axios-interceptor";
-
-import { Routes, Route } from "react-router-dom";
+import { RequireAuth } from "react-auth-kit";
+import { Route, Routes } from "react-router-dom";
 import ProtectedLayout from "./Layouts/ProtectedLayout";
 import Login from "./Login";
+import AddCategory from "./pages/CocktailCategory/AddCategory";
+import EditCategory from "./pages/CocktailCategory/EditCategory";
+import AddCocktail from "./pages/Cocktails/AddCocktail";
+import CocktailsPage from "./pages/Cocktails/Cocktails";
+import EditCocktail from "./pages/Cocktails/EditCocktail";
 import Dashboard from "./pages/Dashboard";
-import Cocktails from "./pages/Cocktails";
 import AddFlavour from "./pages/Flavours/AddFlavour";
 import EditFlavour from "./pages/Flavours/EditFlavour";
 import Flavours from "./pages/Flavours/Flavours";
-import Insights from "./pages/Insights";
+import AddInsight from "./pages/Insights/AddInsight";
+import EditInsight from "./pages/Insights/EditInsight";
+import Insights from "./pages/Insights/Insights";
 import Settings from "./pages/Settings";
 import EditUser from "./pages/Users/EditUser";
 import Users from "./pages/Users/Users";
+import CategoryPage from "./pages/CocktailCategory/Categories";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -35,7 +39,57 @@ function App() {
         element={
           <RequireAuth loginPath="/login">
             <ProtectedLayout>
-              <Cocktails />
+              <CocktailsPage />
+            </ProtectedLayout>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/cocktails/new"
+        element={
+          <RequireAuth loginPath="/login">
+            <ProtectedLayout>
+              <AddCocktail />
+            </ProtectedLayout>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/cocktails/cocktail/:id"
+        element={
+          <RequireAuth loginPath="/login">
+            <ProtectedLayout>
+              <EditCocktail />
+            </ProtectedLayout>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/categories"
+        element={
+          <RequireAuth loginPath="/login">
+            <ProtectedLayout>
+              <CategoryPage />
+            </ProtectedLayout>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/categories/category/new"
+        element={
+          <RequireAuth loginPath="/login">
+            <ProtectedLayout>
+              <AddCategory />
+            </ProtectedLayout>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/categories/category/:id"
+        element={
+          <RequireAuth loginPath="/login">
+            <ProtectedLayout>
+              <EditCategory />
             </ProtectedLayout>
           </RequireAuth>
         }
@@ -46,6 +100,26 @@ function App() {
           <RequireAuth loginPath="/login">
             <ProtectedLayout>
               <Insights />
+            </ProtectedLayout>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/insights/new"
+        element={
+          <RequireAuth loginPath="/login">
+            <ProtectedLayout>
+              <AddInsight />
+            </ProtectedLayout>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/insights/insight/:id"
+        element={
+          <RequireAuth loginPath="/login">
+            <ProtectedLayout>
+              <EditInsight />
             </ProtectedLayout>
           </RequireAuth>
         }
@@ -106,6 +180,16 @@ function App() {
           <RequireAuth loginPath="/login">
             <ProtectedLayout>
               <Settings />
+            </ProtectedLayout>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <RequireAuth loginPath="/login">
+            <ProtectedLayout>
+              <Profile />
             </ProtectedLayout>
           </RequireAuth>
         }
