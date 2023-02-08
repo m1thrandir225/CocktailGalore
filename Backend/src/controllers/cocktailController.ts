@@ -44,12 +44,60 @@ export const getCategories = async (req: Request, res: Response) => {
   });
 };
 
+export const latestCocktail = async (req: Request, res: Response) => {
+  const cocktail = await db.cocktail.findFirst({
+    where: {
+      createdAt: {
+        gte: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
+      },
+    },
+    select: {
+      updatedAt: false,
+      name: true,
+      image: true,
+    },
+  });
+  return res.status(200).json({
+    cocktail: cocktail,
+  });
+};
+
 export const getCocktail = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id as string, 10);
+  const { latest, id } = req.query;
+
+  if (!id && !latest) {
+    return res.status(400).json({ message: "Bad request" });
+  }
+
+  if (latest === "true") {
+    const cocktail = await db.cocktail.findMany({
+      where: {
+        createdAt: {
+          gte: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        updatedAt: false,
+        name: true,
+        image: true,
+        _count: {
+          select: {
+            favouriteBy: true,
+          },
+        },
+      },
+    });
+    return res.status(200).json({
+      cocktails: cocktail,
+    });
+  }
 
   const cocktail = await db.cocktail.findUnique({
     where: {
-      id: id,
+      id: parseInt(id as string, 10),
     },
   });
   if (!cocktail) {

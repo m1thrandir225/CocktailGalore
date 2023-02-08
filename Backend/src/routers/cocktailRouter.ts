@@ -20,8 +20,7 @@ cocktailRouter.get("/", CocktailController.getCocktails);
 cocktailRouter.get("/categories", CocktailController.getCategories);
 
 //cocktail by id
-cocktailRouter.get("/cocktail/:id/", CocktailController.getCocktail);
-
+cocktailRouter.get("/cocktail", CocktailController.getCocktail);
 //cocktails by certain category
 cocktailRouter.get("/:category", CocktailController.getCocktailsByCategory);
 
