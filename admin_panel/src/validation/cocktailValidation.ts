@@ -7,11 +7,19 @@ export const cocktailSchema = z.object({
     .min(1, { message: "Time to make is required" })
     .max(100),
   ingredients: z
-    .array(z.string().min(1, { message: "Ingredient must be valid" }))
+    .array(
+      z.object({
+        id: z.number(),
+        name: z.string().min(1, { message: "Name is required" }).max(100),
+      }),
+    )
     .min(1, { message: "At least one ingredient is required" }),
-  instructions: z
-    .array(z.string().min(1, { message: "Instruction must be valid" }))
-    .min(1, { message: "At least one instruction is required" }),
+  instructions: z.array(
+    z.object({
+      id: z.number(),
+      text: z.string().min(1, { message: "Text is required" }).max(100),
+    }),
+  ),
   image: z.instanceof(FileList, { message: "Image must be valid" }),
 });
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   cocktailSchema,
@@ -12,6 +12,8 @@ import SelectMultiple from "../../components/Reusable/SelectMultiple";
 import { createCocktail } from "../../api/cocktails";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../components/Reusable/Loader";
+import RoundedButtonIcon from "../../components/Reusable/RoundedButtonIcon";
+import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 const AddCocktail = () => {
   const [ingredients, setIngredients] = React.useState<string[]>([""]);
   const [instructions, setInstructions] = React.useState<string[]>([""]);
@@ -41,8 +43,26 @@ const AddCocktail = () => {
     register,
     formState: { isSubmitSuccessful, errors, isSubmitting },
     handleSubmit,
+    control,
   } = useForm<CocktailValidation>({
     resolver: zodResolver(cocktailSchema),
+    defaultValues: {
+      ingredients: [{ id: 1, name: "" }],
+      instructions: [{ id: 1, text: "" }],
+    },
+  });
+  const { append, fields, remove } = useFieldArray({
+    control,
+    name: "ingredients",
+  });
+
+  const {
+    append: appendInstructions,
+    fields: fieldsInstructions,
+    remove: removeInstructions,
+  } = useFieldArray({
+    control,
+    name: "instructions",
   });
   const navigate = useNavigate();
   const onSubmit: SubmitHandler<CocktailValidation> = async (data) => {
@@ -54,9 +74,6 @@ const AddCocktail = () => {
       categoryIds,
     };
     const response = await createCocktail(cocktail);
-    if (response.status === 200) {
-      navigate("/cocktails");
-    }
   };
 
   return (
@@ -97,33 +114,77 @@ const AddCocktail = () => {
             </span>
           )}
         </div>
-
-        <ListInput
-          label="Ingredients"
-          items={ingredients}
-          setItems={setIngredients}
-          register={register}
-          registerName="ingredients"
-          errors={errors.ingredients}
-        />
-        {errors.ingredients && (
-          <span className="text-red-500 text-sm">
-            {errors.ingredients.message}
-          </span>
-        )}
-        <ListInput
-          label="Instructions"
-          items={instructions}
-          setItems={setInstructions}
-          register={register}
-          registerName="instructions"
-          errors={errors.instructions}
-        />
-        {errors.instructions && (
-          <span className="text-red-500 text-sm">
-            {errors.instructions.message}
-          </span>
-        )}
+        <div className="flex flex-col justify-start items-start w-full gap-2">
+          <div className="flex flex-row justify-between items-center w-full">
+            <label className="text-lg w-full text-gray-800 dark:text-gray-200 font-medium font-sans">
+              Ingredients
+            </label>
+            <div className="flex flex-row justify-start items-center w-auto gap-2">
+              <RoundedButtonIcon
+                icon={<AiOutlinePlus />}
+                onClick={() => append({ id: fields.length + 1, name: "" })}
+              />
+              <RoundedButtonIcon
+                disabled={fields.length === 1}
+                icon={<AiOutlineMinus />}
+                onClick={() => remove(fields.length - 1)}
+              />
+            </div>
+          </div>
+          {fields.map((field, index) => (
+            <div key={index} className="w-full">
+              <input
+                {...register(`ingredients.${index}.name`)}
+                type="text"
+                className={`p-4 rounded-md text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 w-full outline-none focus:ring-2 focus:ring-amber-400 transition-all ease-in-out duration-200`}
+              />
+              {errors.ingredients?.[index]?.message && (
+                <span className="text-red-500 text-sm">
+                  {errors.ingredients?.[index]?.message}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-col justify-start items-start w-full gap-2">
+          <div className="flex flex-row justify-between items-center w-full">
+            <label className="text-lg w-full text-gray-800 dark:text-gray-200 font-medium font-sans">
+              Instructions
+            </label>
+            <div className="flex flex-row justify-start items-center w-auto gap-2">
+              <RoundedButtonIcon
+                icon={<AiOutlinePlus />}
+                onClick={() =>
+                  appendInstructions({
+                    id: fieldsInstructions.length + 1,
+                    text: "",
+                  })
+                }
+              />
+              <RoundedButtonIcon
+                disabled={fieldsInstructions.length === 1}
+                icon={<AiOutlineMinus />}
+                onClick={() =>
+                  removeInstructions(fieldsInstructions.length - 1)
+                }
+              />
+            </div>
+          </div>
+          {fieldsInstructions.map((field, index) => (
+            <div key={index} className="w-full">
+              <input
+                {...register(`instructions.${index}.text`)}
+                type="text"
+                className={`p-4 rounded-md text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 w-full outline-none focus:ring-2 focus:ring-amber-400 transition-all ease-in-out duration-200`}
+              />
+              {errors.instructions?.[index]?.message && (
+                <span className="text-red-500 text-sm">
+                  {errors.instructions?.[index]?.message}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
         <div className="flex flex-col justify-start items-start w-full gap-2">
           <label
             htmlFor="image"

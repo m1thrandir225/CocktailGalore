@@ -86,12 +86,8 @@ export const createCocktail = async (req: Request, res: Response) => {
   const timeToMake = parseInt(req.body.timeToMake as string, 10);
   const cocktailImage = req.file;
   const imageName = uuid() + cocktailImage?.originalname;
-  ingredients = JSON.parse(ingredients)
-    .split(",")
-    .map((i: string) => i.trim());
-  instructions = JSON.parse(instructions)
-    .split(",")
-    .map((i: string) => i.trim());
+  ingredients = JSON.parse(ingredients);
+  instructions = JSON.parse(instructions);
   categoryIds = JSON.parse(categoryIds)
     .split(",")
     .map((id: string) => parseInt(id, 10));

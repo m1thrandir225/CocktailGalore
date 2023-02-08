@@ -3,8 +3,14 @@ import axiosInstance from "../lib/axios-interceptor";
 interface newCocktail {
   name: string;
   timeToMake: string;
-  ingredients: string[];
-  instructions: string[];
+  ingredients: {
+    id: number;
+    name: string;
+  }[];
+  instructions: {
+    id: number;
+    text: string;
+  }[];
   image: FileList;
   flavourIds: number[];
   categoryIds: number[];
@@ -14,14 +20,8 @@ export const createCocktail = async (cocktail: newCocktail) => {
   const formData = new FormData();
   formData.append("name", cocktail.name);
   formData.append("timeToMake", cocktail.timeToMake);
-  formData.append(
-    "ingredients",
-    JSON.stringify(cocktail.ingredients.join(",")),
-  );
-  formData.append(
-    "instructions",
-    JSON.stringify(cocktail.instructions.join(",")),
-  );
+  formData.append("ingredients", JSON.stringify(cocktail.ingredients));
+  formData.append("instructions", JSON.stringify(cocktail.instructions));
   formData.append("cocktailImage", cocktail.image[0]);
   formData.append("flavourIds", JSON.stringify(cocktail.flavourIds.join(",")));
   formData.append(

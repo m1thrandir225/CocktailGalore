@@ -124,7 +124,19 @@ const DataGrid: React.FC<IDataGrid> = ({
                   scope="row"
                   className="truncate max-w-md px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white  transition-all ease-in-out duration-150"
                 >
-                  {typeof value === "object" ? value.join(", ") : value}
+                  {typeof value === "object"
+                    ? Object.values(value).map(
+                        (innerValue: any, index: number) => (
+                          <div key={index}>
+                            {typeof innerValue === "object"
+                              ? innerValue?.name ||
+                                innerValue?.title ||
+                                innerValue?.text
+                              : innerValue}
+                          </div>
+                        ),
+                      )
+                    : value}
                 </td>
               ))}
             </tr>

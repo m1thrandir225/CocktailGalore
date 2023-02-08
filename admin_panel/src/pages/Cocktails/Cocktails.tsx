@@ -35,7 +35,7 @@ function CocktailsPage() {
     } else {
       const response = await deleteCocktails(ids);
     }
-    mutate();
+    mutate("/cocktails");
   };
   return (
     <div className="flex flex-col w-full h-full">
