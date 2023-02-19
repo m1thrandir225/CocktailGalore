@@ -20,8 +20,6 @@ const Navigation = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = React.useState(false);
   const [firstTime, setFirstTime] = React.useState(true);
-  console.log("accessToken", accessToken);
-  console.log("refreshToken", refreshToken);
   React.useEffect(() => {
     const getTokens = async () => {
       try {

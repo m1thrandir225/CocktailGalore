@@ -243,3 +243,52 @@ export const deleteCocktails = async (req: Request, res: Response) => {
   }
   return res.status(200).json({ message: "Cocktails deleted" });
 };
+
+//daily recommendation cocktail per user based on users liked flavours and cocktails
+export const dailyRecommendation = async (req: Request, res: Response) => {
+  const userId = parseInt(req.params.id as string, 10);
+  console.log(userId);
+  const user = await db.user.findUnique({
+    where: {
+      id: userId,
+    },
+    include: {
+      favouriteCocktails: {
+        select: {
+          id: true,
+        },
+      },
+      likedFlavours: {
+        select: {
+          id: true,
+        },
+      },
+    },
+  });
+  const flavourIds = user?.likedFlavours.map((flavour) => flavour.id);
+  const cocktailIds = user?.favouriteCocktails.map((cocktail) => cocktail.id);
+  const cocktails = await db.cocktail.findMany({
+    where: {
+      flavours: {
+        every: {
+          id: {
+            in: flavourIds,
+          },
+        },
+      },
+      id: {
+        notIn: cocktailIds,
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      image: true,
+    },
+  });
+  const randomCocktail =
+    cocktails[Math.floor(Math.random() * cocktails.length)];
+  return res.status(200).json({
+    cocktail: randomCocktail,
+  });
+};

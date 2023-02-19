@@ -21,7 +21,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(cors());
 app.use("/", authRouter);
-app.use(verifyToken);
+//app.use(verifyToken);
 app.use("/users", userRouter);
 app.use("/flavours", flavourRouter);
 app.use("/cocktails", cocktailRouter);

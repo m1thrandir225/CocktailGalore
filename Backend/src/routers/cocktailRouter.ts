@@ -40,4 +40,9 @@ cocktailRouter.delete("/cocktail/:id", CocktailController.deleteCocktail);
 //delete mukltiple cocktails
 cocktailRouter.delete("/", CocktailController.deleteCocktails);
 
+//generate daily cocktail recommendation
+cocktailRouter.get(
+  "/recommendation/:id",
+  CocktailController.dailyRecommendation,
+);
 export default cocktailRouter;
