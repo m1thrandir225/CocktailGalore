@@ -71,7 +71,7 @@ const WelcomeScreen = ({ navigation, route }: NavigationProps) => {
             style={{ fontFamily: "Montserrat_700Bold", letterSpacing: 3.5 }}
           >
             GALORE
-          </Text>{" "}
+          </Text>
         </Text>
         <View style={style.buttonsContainer}>
           <Pressable

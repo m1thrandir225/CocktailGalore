@@ -39,6 +39,13 @@ userRouter.post(
   UserController.updateUser,
 );
 
+userRouter.post(
+  "/user/:id/changeProfileImage",
+  upload.single("profileImage"),
+  UserController.changeProfileImage,
+);
+userRouter.post("/user/:id", param("id").notEmpty(), UserController.updateUser);
+
 userRouter.delete("/user/:id", UserController.deleteUser);
 //delete multiple users
 userRouter.delete("/", UserController.deleteUsers);

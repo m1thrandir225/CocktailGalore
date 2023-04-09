@@ -262,6 +262,8 @@ export async function updateUser(req: Request, res: Response) {
   }
 }
 
+export async function changeProfileImage(req: Request, res: Response) {}
+
 export async function deleteUser(req: Request, res: Response) {
   const id = parseInt(req.params.id as string, 10);
   const errors = validationResult(req);

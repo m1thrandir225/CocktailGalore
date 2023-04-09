@@ -12,7 +12,7 @@ import {
 import { setCredentials, logout, selectAccessToken } from "../slices/authSlice";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://galore-cocktails-more-production.up.railway.app/",
+  baseUrl: "https://3431-95-180-229-114.eu.ngrok.io/",
   prepareHeaders: (headers, { getState }) => {
     const accessToken = selectAccessToken(getState() as RootState);
     if (accessToken) {

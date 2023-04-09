@@ -45,12 +45,13 @@ const Navigation = () => {
 
   React.useEffect(() => {
     if (accessToken != null && refreshToken != null) {
-      if (user != null && user.likedFlavours.length > 0) {
+      if (user != null) {
         setFirstTime(false);
       }
     } else {
       setFirstTime(true);
     }
+    console.log(user);
   }, [accessToken, refreshToken, user]);
 
   if (loading) {

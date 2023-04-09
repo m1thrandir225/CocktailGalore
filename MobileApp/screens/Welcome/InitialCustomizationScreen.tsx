@@ -47,6 +47,7 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
     isFetching,
     currentData,
   } = useGetFlavoursQuery();
+
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const pickImage = async () => {
@@ -74,7 +75,8 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
       try {
         setLoading(true);
         const response = await FileSystem.uploadAsync(
-          "https://galore-cocktails-more-production.up.railway.app/users/updateUser/profileImage",
+          "https://galore-cocktails-more-production.up.railway.app/users/user/" +
+            user?.id,
           profilePictureUri,
           {
             httpMethod: "POST",
@@ -209,8 +211,7 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
                     fontSize: 20,
                   }}
                 >
-                  {" "}
-                  Error:{" "}
+                  Error:
                 </Text>
                 <Pressable onPress={() => setError(null)}>
                   <Feather name="x-circle" size={24} color={RedLight} />
@@ -250,7 +251,7 @@ const InitialCustomizationScreen = ({ navigation, route }: NavigationProps) => {
           />
         </Pressable>
         <Text style={[styles.title, { marginBottom: 15 }]}>
-          Customize your {"\n"} flavour profile{" "}
+          Customize your {"\n"} flavour profile
         </Text>
         <Text style={[styles.subtitle, { marginBottom: 50 }]}>
           Select your favorite flavors {"\n"} for cocktails so we can give
